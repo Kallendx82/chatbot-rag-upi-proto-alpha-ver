@@ -63,6 +63,10 @@ class Settings(BaseSettings):
 
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.1"
+    # Context window passed to Ollama. Ollama's own default (2048) is too small
+    # for a grounded RAG prompt and silently truncates the source chunks; 8192
+    # fits the system prompt + ~5 chunks + question comfortably.
+    ollama_num_ctx: int = 8192
 
     openai_base_url: str = "https://api.openai.com/v1"
     openai_api_key: str = ""

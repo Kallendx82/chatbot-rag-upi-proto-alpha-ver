@@ -135,6 +135,14 @@ Queries are loaded from `Dataset/evaluation.csv` (columns: `query`, `context`). 
 - **Auto-language detection:** Indonesian queries get Indonesian answers, English queries get English answers — no setting required.
 - **Content-fingerprint dedup at retrieval:** the corpus has ~50% duplicate boilerplate (Surat Rekomendasi PMBP templates). The backend oversamples by 3x and drops near-duplicate chunks before they reach the LLM, so top-5 always shows 5 *different* perspectives.
 - **Low-content chunk filter:** chunks that are >65% digits/punctuation (corrupted tuition tables) are removed at prompt time. They retrieve well but the LLM can't extract anything from them.
+- **Context window sized for RAG:** Ollama defaults `num_ctx` to 2048 tokens, which silently truncates a grounded prompt (system rules + ~5 source chunks + question can reach ~2k tokens). We set `OLLAMA_NUM_CTX=8192` so every retrieved source is actually seen by the model.
+
+## Future work
+
+- **Frontier LLM via API.** The generation backend is the main quality ceiling: an 8B local model cannot match a frontier model. The backend already ships an OpenAI-compatible path (`app/rag/llm.py::_generate_openai`), so a production deployment could point at a hosted model — e.g. **Groq's free Llama 3.3 70B** (`https://api.groq.com/openai/v1`, model `llama-3.3-70b-versatile`) for a large jump in answer quality at zero cost, or OpenAI/Anthropic for the best results. This was kept out of the thesis system on purpose: a fully **local, offline, private** stack is a defensible design choice for a university chatbot that handles student data.
+- **Conversation memory.** Follow-up questions (e.g. "When exactly?") currently retrieve on the bare follow-up text. Sending the previous turn(s) to retrieval would let the system resolve references.
+- **Table-aware extraction.** Tuition / quota tables are extracted by PyMuPDF as digit soup; `pdfplumber` or `camelot` re-extraction of those specific PDFs would recover them.
+- **Cross-encoder reranker.** Reranking the top-N retrieved chunks before generation would lift precision on ambiguous queries (~adds 200 ms).
 
 ## Data not in the repo
 

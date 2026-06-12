@@ -106,9 +106,14 @@ class LLMService:
                 "options": {
                     "temperature": temp,
                     "num_predict": self._settings.llm_max_tokens,
+                    # Ollama defaults num_ctx to 2048, which silently truncates
+                    # our grounded prompt (system rules + ~5 source chunks +
+                    # question can reach ~2k tokens). 8192 ensures every
+                    # retrieved source is actually seen by the model.
+                    "num_ctx": self._settings.ollama_num_ctx,
                 },
             },
-            timeout=120.0,
+            timeout=180.0,
         )
         resp.raise_for_status()
         return (resp.json().get("response") or "").strip()
