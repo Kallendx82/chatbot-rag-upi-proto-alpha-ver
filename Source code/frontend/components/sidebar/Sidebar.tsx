@@ -104,7 +104,10 @@ export function Sidebar() {
         <Button
           variant="default"
           className="w-full justify-start gap-2"
-          onClick={() => newConversation()}
+          onClick={() => {
+            newConversation();
+            if (window.innerWidth < 1024) setSidebar(false);
+          }}
         >
           <MessageSquarePlus className="h-4 w-4" />
           Percakapan baru
@@ -177,12 +180,16 @@ export function Sidebar() {
                         )}
                       >
                         <button
-                          onClick={() => setActive(c.id)}
+                          onClick={() => {
+                            setActive(c.id);
+                            // Auto-close sidebar after selecting on mobile
+                            if (window.innerWidth < 1024) setSidebar(false);
+                          }}
                           className="min-w-0 flex-1 truncate text-left text-sm"
                         >
                           {c.title}
                         </button>
-                        <div className="flex shrink-0 items-center opacity-0 transition-opacity group-hover:opacity-100">
+                        <div className="flex shrink-0 items-center opacity-100 transition-opacity group-hover:opacity-100 lg:opacity-0">
                           <Button
                             variant="ghost"
                             size="icon-sm"

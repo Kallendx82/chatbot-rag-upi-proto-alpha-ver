@@ -58,7 +58,7 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>((set) => ({
-  sidebarOpen: true,
+  sidebarOpen: false,
   settingsOpen: false,
   inspectedSource: null,
   debugPanelOpen: false,

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { ChatPanel } from "@/components/chat/ChatPanel";
@@ -26,6 +27,11 @@ export function AppShell() {
   const mounted = useMounted();
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const setSidebar = useUIStore((s) => s.setSidebar);
+
+  // Open sidebar by default only on large screens; keep closed on mobile.
+  useEffect(() => {
+    if (window.innerWidth >= 1024) setSidebar(true);
+  }, [setSidebar]);
 
   if (!mounted) {
     // Minimal skeleton during hydration - avoids SSR/client store mismatch.

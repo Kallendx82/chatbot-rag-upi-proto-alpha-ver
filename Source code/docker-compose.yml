@@ -1,0 +1,55 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount the FAISS index and dataset so it doesn't need to be rebuilt
+      - ../Dataset/_pipeline/index:/app/index:ro
+      - ../Dataset/_pipeline/chunked/chunks.jsonl:/app/chunks.jsonl:ro
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - FAISS_INDEX_PATH=/app/index/faiss.index
+      - CHUNKS_META_PATH=/app/index/chunks_meta.json
+      - PDF_DATA_DIR=/app/data
+      - DEFAULT_TOP_K=5
+      - LLM_MODEL=llama3.1:8b-instruct-q4_K_M
+      - LLM_TEMPERATURE=0.1
+      - OLLAMA_NUM_CTX=4096
+      - LLM_REQUEST_TIMEOUT=120
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # GPU support (uncomment if host has NVIDIA GPU with Docker GPU support)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  ollama_data:

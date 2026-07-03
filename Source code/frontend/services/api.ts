@@ -106,18 +106,20 @@ export const api = {
     });
   },
 
-  chat(body: ChatRequest): Promise<ChatResponse> {
+  chat(body: ChatRequest, signal?: AbortSignal): Promise<ChatResponse> {
     return request<ChatResponse>("/api/chat", {
       method: "POST",
       body: JSON.stringify(body),
       timeoutMs: 120_000,
+      signal,
     });
   },
 
-  retrieve(body: RetrieveRequest): Promise<RetrieveResponse> {
+  retrieve(body: RetrieveRequest, signal?: AbortSignal): Promise<RetrieveResponse> {
     return request<RetrieveResponse>("/api/retrieve", {
       method: "POST",
       body: JSON.stringify(body),
+      signal,
     });
   },
 
@@ -148,6 +150,9 @@ export const api = {
  * ONLY the body of this function with an EventSource/ReadableStream reader that
  * yields deltas as they arrive; the hook's interface does not change.
  */
-export async function fetchChat(body: ChatRequest): Promise<ChatResponse> {
-  return api.chat(body);
+export async function fetchChat(
+  body: ChatRequest,
+  signal?: AbortSignal,
+): Promise<ChatResponse> {
+  return api.chat(body, signal);
 }

@@ -114,7 +114,7 @@ export function useChat() {
               const retrieval = await api.retrieve({
                 query: userText,
                 top_k: topK,
-              });
+              }, abort.signal);
               setMessageSources(convId, assistantId, retrieval.results);
             } catch {
               // Retrieval is also performed by /api/chat. This preflight call
@@ -129,7 +129,7 @@ export function useChat() {
             temperature,
             language,
             model,
-          });
+          }, abort.signal);
 
           // Render progressively, then finalize with the canonical content.
           await animateInto(

@@ -70,7 +70,7 @@ export function ChatInput({
           placeholder={
             disabled
               ? disabledReason || "Layanan tidak tersedia"
-              : "Tanyakan informasi seputar UPI… (Enter untuk kirim, Shift+Enter baris baru)"
+              : "Tanyakan informasi seputar UPI…"
           }
           className="max-h-[200px] flex-1 border-0 bg-transparent px-2 py-2 shadow-none focus-visible:ring-0"
         />
