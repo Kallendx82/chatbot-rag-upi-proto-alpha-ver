@@ -300,7 +300,7 @@ ollama run upi-chat "Tes: Berapa biaya daftar Magister?"
 ### Pakai di chatbot Anda
 
 Tambahkan ke dropdown Model di frontend
-(`Claude/frontend/components/settings/SettingsModal.tsx`):
+(`Source code/frontend/components/settings/SettingsModal.tsx`):
 
 ```tsx
 <SelectItem value="upi-chat">UPI Fine-tuned (hasil skripsi)</SelectItem>
