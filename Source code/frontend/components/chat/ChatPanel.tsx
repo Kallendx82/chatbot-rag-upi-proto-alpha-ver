@@ -17,7 +17,7 @@ export function ChatPanel() {
   const active = useConversationStore((s) =>
     s.conversations.find((c) => c.id === s.activeId),
   );
-  const { send, stop, retry, isSending } = useChat();
+  const { send, stop, retry, editAndRetry, isSending } = useChat();
   const { state } = useHealth();
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -43,11 +43,13 @@ export function ChatPanel() {
           className="flex-1 overflow-y-auto scrollbar-thin"
         >
           <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-6">
-            {messages.map((m) => (
+            {messages.map((m, i) => (
               <MessageBubble
                 key={m.id}
                 message={m}
-                onRetry={m.role === "assistant" ? retry : undefined}
+                nextMessage={messages[i + 1]}
+                onRetry={retry}
+                onEditRetry={editAndRetry}
               />
             ))}
           </div>

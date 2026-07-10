@@ -157,7 +157,10 @@ export function useChat() {
           lastErr = err;
           const status = err instanceof ApiError ? err.status : -1;
           if (status === -2 || abort.signal.aborted) {
-            removeMessage(convId, assistantId);
+            // User-initiated Stop: keep the turn (as an error state) instead
+            // of deleting it, so edit/retry/copy stay available under the
+            // user bubble — matches every other failure mode.
+            setMessageError(convId, assistantId, "__stopped__");
             setIsSending(false);
             abortRef.current = null;
             activeTurnRef.current = null;
@@ -181,7 +184,6 @@ export function useChat() {
       addAssistantPlaceholder,
       appendToMessage,
       finalizeAssistantMessage,
-      removeMessage,
       setMessageSources,
       setMessageError,
     ],
@@ -202,16 +204,17 @@ export function useChat() {
     [isSending, getActive, newConversation, addUserMessage, generate],
   );
 
-  /** Stop an in-flight render (the animation; network is fire-and-forget here). */
+  /**
+   * Stop an in-flight turn. Aborting here lets generate()'s own catch block
+   * mark the assistant message as "__stopped__" (rather than deleting it),
+   * so the user bubble keeps its edit/retry/copy actions instead of the
+   * question silently losing its answer.
+   */
   const stop = useCallback(() => {
-    const activeTurn = activeTurnRef.current;
     abortRef.current?.abort();
-    if (activeTurn) {
-      removeMessage(activeTurn.convId, activeTurn.assistantId);
-      activeTurnRef.current = null;
-    }
+    activeTurnRef.current = null;
     setIsSending(false);
-  }, [removeMessage]);
+  }, []);
 
   /**
    * Retry / regenerate: drop ONLY the target assistant message and re-answer
@@ -235,5 +238,28 @@ export function useChat() {
     [getActive, removeMessage, generate],
   );
 
-  return { send, stop, retry, isSending };
+  /**
+   * Edit a user message in place (no new bubble) and regenerate its answer.
+   * Drops the stale assistant reply, if any, before re-asking.
+   */
+  const editAndRetry = useCallback(
+    async (userMessage: ChatMessage, newText: string) => {
+      const text = newText.trim();
+      if (!text) return;
+      const conv = getActive();
+      if (!conv) return;
+      const idx = conv.messages.findIndex((m) => m.id === userMessage.id);
+      if (idx === -1) return;
+      const next = conv.messages[idx + 1];
+      useConversationStore.getState().editUserMessage(conv.id, userMessage.id, text);
+      if (next?.role === "assistant") {
+        removeMessage(conv.id, next.id);
+      }
+      useConversationStore.getState().setActive(conv.id);
+      await generate(conv.id, text);
+    },
+    [getActive, removeMessage, generate],
+  );
+
+  return { send, stop, retry, editAndRetry, isSending };
 }

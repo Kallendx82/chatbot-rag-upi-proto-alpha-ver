@@ -6,16 +6,19 @@ import {
   AlertTriangle,
   Check,
   Copy,
+  Pencil,
   RefreshCw,
   ShieldCheck,
   ShieldAlert,
   Timer,
   User,
+  X,
 } from "lucide-react";
 
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
@@ -27,26 +30,119 @@ import { useSettingsStore } from "@/store/settingsStore";
 import type { ChatMessage } from "@/types";
 import { cn } from "@/lib/utils";
 
+/**
+ * Stored error text for a broken turn is either a free-form message (already
+ * localized at the time it happened) or one of two stable markers set by
+ * code that doesn't know the user's current language preference — a Stop
+ * click, or rehydrating a turn orphaned by an abrupt session end. Markers are
+ * translated here, at render time, using the CURRENT language setting.
+ */
+function errorText(error: string | undefined, language: "id" | "en"): string {
+  if (error === "__stopped__") {
+    return language === "en"
+      ? "Stopped by you before finishing."
+      : "Dihentikan oleh Anda sebelum selesai.";
+  }
+  if (error === "__interrupted__") {
+    return language === "en"
+      ? "The session ended before this question was answered."
+      : "Sesi berakhir sebelum pertanyaan ini sempat dijawab.";
+  }
+  return (
+    error ||
+    (language === "en" ? "Failed to load the answer." : "Gagal memuat jawaban.")
+  );
+}
+
 export function MessageBubble({
   message,
+  nextMessage,
   onRetry,
+  onEditRetry,
 }: {
   message: ChatMessage;
+  /** The message immediately after this one, used to detect a broken answer
+   * when rendering the user bubble's own edit/retry/copy actions. */
+  nextMessage?: ChatMessage;
   onRetry?: (m: ChatMessage) => void;
+  onEditRetry?: (userMessage: ChatMessage, newText: string) => void;
 }) {
   const isUser = message.role === "user";
   const debugMode = useSettingsStore((s) => s.debugMode);
+  const language = useSettingsStore((s) => s.language);
   const [copied, setCopied] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(message.content);
+  const editRef = useRef<HTMLTextAreaElement>(null);
 
-  const copy = async () => {
+  const brokenAnswer =
+    isUser && nextMessage?.role === "assistant" && nextMessage.status === "error";
+
+  const copy = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(message.content);
+      await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
       /* clipboard unavailable */
     }
   };
+
+  const startEdit = () => {
+    setDraft(message.content);
+    setEditing(true);
+    requestAnimationFrame(() => editRef.current?.focus());
+  };
+
+  const submitEdit = () => {
+    const text = draft.trim();
+    setEditing(false);
+    if (text && text !== message.content) {
+      onEditRetry?.(message, text);
+    }
+  };
+
+  if (isUser && editing) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+        className="flex flex-row-reverse gap-3"
+      >
+        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <User className="h-4 w-4" />
+        </div>
+        <div className="flex min-w-0 max-w-[min(46rem,85%)] flex-1 flex-col items-end gap-2">
+          <Textarea
+            ref={editRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                submitEdit();
+              } else if (e.key === "Escape") {
+                setEditing(false);
+              }
+            }}
+            className="w-full resize-none text-[15px] leading-7"
+            rows={Math.min(8, Math.max(2, draft.split("\n").length))}
+          />
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
+              <X className="h-3.5 w-3.5" />
+              {language === "en" ? "Cancel" : "Batal"}
+            </Button>
+            <Button size="sm" onClick={submitEdit} disabled={!draft.trim()}>
+              <RefreshCw className="h-3.5 w-3.5" />
+              {language === "en" ? "Save & resend" : "Simpan & kirim ulang"}
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -88,7 +184,7 @@ export function MessageBubble({
           ) : message.status === "error" ? (
             <div className="flex items-start gap-2 text-sm text-destructive">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-              <span>{message.error || "Gagal memuat jawaban."}</span>
+              <span>{errorText(message.error, language)}</span>
             </div>
           ) : message.status === "streaming" && !message.content ? (
             <TypingDots documentsFound={Boolean(message.sources?.length)} />
@@ -136,7 +232,11 @@ export function MessageBubble({
               <div className="ml-auto flex items-center gap-1">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon-sm" onClick={copy}>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => copy(message.content)}
+                    >
                       {copied ? (
                         <Check className="h-3.5 w-3.5" />
                       ) : (
@@ -167,17 +267,55 @@ export function MessageBubble({
           </div>
         )}
 
-        {/* Error retry */}
-        {!isUser && message.status === "error" && onRetry && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-2"
-            onClick={() => onRetry(message)}
-          >
-            <RefreshCw className="h-3.5 w-3.5" />
-            Coba lagi
-          </Button>
+        {/* User bubble: edit / retry / copy for a turn whose answer failed,
+            was stopped, or was orphaned by an abrupt session end. Placed
+            under the QUESTION rather than the broken answer, since the
+            question is what the user acts on next. */}
+        {isUser && brokenAnswer && (
+          <div className="mt-1.5 flex items-center gap-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon-sm" onClick={startEdit}>
+                  <Pencil className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {language === "en" ? "Edit question" : "Edit pertanyaan"}
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => onRetry?.(nextMessage!)}
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {language === "en" ? "Resend" : "Kirim ulang"}
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => copy(message.content)}
+                >
+                  {copied ? (
+                    <Check className="h-3.5 w-3.5" />
+                  ) : (
+                    <Copy className="h-3.5 w-3.5" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {language === "en" ? "Copy question" : "Salin pertanyaan"}
+              </TooltipContent>
+            </Tooltip>
+          </div>
         )}
       </div>
     </motion.div>

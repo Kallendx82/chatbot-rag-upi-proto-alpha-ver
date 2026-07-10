@@ -62,6 +62,11 @@ interface ConversationState {
     messageId: string,
     error: string,
   ) => void;
+  editUserMessage: (
+    conversationId: string,
+    messageId: string,
+    content: string,
+  ) => void;
   removeMessage: (conversationId: string, messageId: string) => void;
 }
 
@@ -239,6 +244,20 @@ export const useConversationStore = create<ConversationState>()(
           ),
         })),
 
+      editUserMessage: (conversationId, messageId, content) =>
+        set((s) => ({
+          conversations: s.conversations.map((c) =>
+            c.id === conversationId
+              ? touch({
+                  ...c,
+                  messages: c.messages.map((m) =>
+                    m.id === messageId ? { ...m, content } : m,
+                  ),
+                })
+              : c,
+          ),
+        })),
+
       removeMessage: (conversationId, messageId) =>
         set((s) => ({
           conversations: s.conversations.map((c) =>
@@ -251,6 +270,35 @@ export const useConversationStore = create<ConversationState>()(
     {
       name: "upi-rag-conversations",
       version: 1,
+      // A tab/laptop that dies mid-answer leaves a message frozen in
+      // "streaming" (or a "pending" turn with no assistant reply at all)
+      // persisted to localStorage — on next load that rendered as an
+      // infinite "sedang memproses" spinner with no way to recover. Convert
+      // any such orphaned turn into a normal error state on rehydrate so the
+      // usual edit/retry/copy affordances apply.
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        for (const conv of state.conversations) {
+          for (let i = 0; i < conv.messages.length; i++) {
+            const m = conv.messages[i];
+            if (m.role === "assistant" && m.status === "streaming") {
+              m.status = "error";
+              m.error = "__interrupted__";
+            }
+          }
+          const last = conv.messages[conv.messages.length - 1];
+          if (last?.role === "user") {
+            conv.messages.push({
+              id: uid("msg_"),
+              role: "assistant",
+              content: "",
+              createdAt: Date.now(),
+              status: "error",
+              error: "__interrupted__",
+            });
+          }
+        }
+      },
     },
   ),
 );

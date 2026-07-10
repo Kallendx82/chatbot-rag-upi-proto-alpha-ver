@@ -114,7 +114,12 @@ export interface ChatMessage {
     generationMs: number;
     totalMs: number;
   };
-  /** Error detail when status === "error". */
+  /**
+   * Error detail when status === "error". The markers "__stopped__" and
+   * "__interrupted__" are rendered as localized text by the UI (rather than
+   * baking a language-specific string into persisted state) so the message
+   * still reads correctly if the user switches language later.
+   */
   error?: string;
 }
 
