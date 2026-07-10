@@ -1,0 +1,386 @@
+[
+  {
+    "doc_id": "ref_fakultas_upi",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\Pedoman-Penyelenggaran-Pendidikan-UPI-Tahun-2024-rev.pdf",
+    "url": null,
+    "title": "Daftar Fakultas di UPI",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar fakultas di Universitas Pendidikan Indonesia (UPI). Berdasarkan Pedoman Penyelenggaraan Pendidikan UPI Tahun 2024, UPI memiliki 9 (sembilan) fakultas, Sekolah Pascasarjana, dan 5 kampus daerah. Fakultas/jurusan di UPI yaitu: 1. Fakultas Ilmu Pendidikan (FIP); 2. Fakultas Pendidikan Ilmu Pengetahuan Sosial (FPIPS); 3. Fakultas Pendidikan Bahasa dan Sastra (FPBS); 4. Fakultas Pendidikan Matematika dan Ilmu Pengetahuan Alam (FPMIPA); 5. Fakultas Pendidikan Teknologi dan Kejuruan (FPTK); 6. Fakultas Pendidikan Olahraga dan Kesehatan (FPOK); 7. Fakultas Pendidikan Ekonomi dan Bisnis (FPEB); 8. Fakultas Pendidikan Seni dan Desain (FPSD); 9. Fakultas Kedokteran (FK). Selain itu terdapat Sekolah Pascasarjana (SPs) serta 5 Kampus UPI di Daerah: Kampus Cibiru, Kampus Sumedang, Kampus Tasikmalaya, Kampus Purwakarta, dan Kampus Serang.",
+    "chunk_length": 842,
+    "chunk_index": 0,
+    "chunk_id": "ref_fakultas_upi::0",
+    "keywords": [
+      "fakultas",
+      "daftar fakultas",
+      "fip",
+      "fpmipa",
+      "upi"
+    ]
+  },
+  {
+    "doc_id": "ref_kampus_upi",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\Pedoman-Penyelenggaran-Pendidikan-UPI-Tahun-2024-rev.pdf",
+    "url": null,
+    "title": "Kampus UPI di Daerah",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Lokasi kampus Universitas Pendidikan Indonesia (UPI). Kampus utama UPI adalah Kampus Bumi Siliwangi di Kota Bandung. Selain itu, UPI memiliki 5 (lima) kampus daerah, yaitu: Kampus UPI di Cibiru (Bandung), Kampus UPI di Sumedang, Kampus UPI di Tasikmalaya, Kampus UPI di Purwakarta, dan Kampus UPI di Serang. UPI juga menyelenggarakan Sekolah Pascasarjana (SPs) untuk program magister dan doktor.",
+    "chunk_length": 395,
+    "chunk_index": 0,
+    "chunk_id": "ref_kampus_upi::0",
+    "keywords": [
+      "kampus",
+      "kampus daerah",
+      "cibiru",
+      "sumedang",
+      "serang",
+      "upi"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_00",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Fakultas Ilmu Pendidikan",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Fakultas Ilmu Pendidikan, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Fakultas Ilmu Pendidikan antara lain: S1 ADMINISTRASI PENDIDIKAN; S1 BIMBINGAN DAN KONSELING; S1 PENDIDIKAN MASYARAKAT; S1 PENDIDIKAN KHUSUS; S1 TEKNOLOGI PENDIDIKAN; S1 PENDIDIKAN GURU SEKOLAH DASAR; S1 PENDIDIKAN GURU PENDIDIKAN ANAK USIA DINI; S1 PERPUSTAKAAN DAN SAINS INFORMASI; S1 PSIKOLOGI. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 505,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_00::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "fakultas ilmu pendidikan"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_01",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Fakultas Pendidikan Ilmu Pengetahuan Sosial",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Fakultas Pendidikan Ilmu Pengetahuan Sosial, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Fakultas Pendidikan Ilmu Pengetahuan Sosial antara lain: S1 PENDIDIKAN KEWARGANEGARAAN; S1 PENDIDIKAN SEJARAH; S1 PENDIDIKAN GEOGRAFI; S1 ILMU PENDIDIKAN AGAMA ISLAM; S1 PENDIDIKAN ILMU PENGETAHUAN SOSIAL; S1 PENDIDIKAN SOSIOLOGI; S1 PENDIDIKAN PARIWISATA; S1 MANAJEMEN RESORT DAN LEISURE; S1 MANAJEMEN PEMASARAN PARIWISATA; S1 MANAJEMEN INDUSTRI KATERING; D4 SURVEI PEMETAAN DAN INFORMASI GEOGRAFIS; S1 SAINS INFORMASI GEOGRAFI; S1 ILMU KOMUNIKASI; S1 ILMU HUKUM. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 691,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_01::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "fakultas pendidikan ilmu pengetahuan sosial"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_02",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Fakultas Pendidikan Bahasa Dan Sastra",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Fakultas Pendidikan Bahasa Dan Sastra, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Fakultas Pendidikan Bahasa Dan Sastra antara lain: S1 PENDIDIKAN BAHASA DAN SASTRA INDONESIA; S1 PENDIDIKAN BAHASA SUNDA; S1 PENDIDIKAN BAHASA INGGRIS; S1 PENDIDIKAN BAHASA ARAB; S1 PENDIDIKAN BAHASA JEPANG; S1 PENDIDIKAN BAHASA JERMAN; S1 PENDIDIKAN BAHASA PERANCIS; S1 PENDIDIKAN BAHASA KOREA; S1 BAHASA DAN SASTRA INGGRIS; S1 BAHASA DAN SASTRA INDONESIA. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 578,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_02::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "fakultas pendidikan bahasa dan sastra"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_03",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Fakultas Pendidikan Matematika Dan Ilmu Pengetahuan Alam",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Fakultas Pendidikan Matematika Dan Ilmu Pengetahuan Alam, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Fakultas Pendidikan Matematika Dan Ilmu Pengetahuan Alam antara lain: S1 PENDIDIKAN MATEMATIKA; S1 PENDIDIKAN FISIKA; S1 PENDIDIKAN BIOLOGI; S1 PENDIDIKAN KIMIA; S1 PENDIDIKAN ILMU KOMPUTER; S1 PENDIDIKAN ILMU PENGETAHUAN ALAM; S1 MATEMATIKA; S1 FISIKA; S1 BIOLOGI; S1 KIMIA; S1 ILMU KOMPUTER. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 533,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_03::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "fakultas pendidikan matematika dan ilmu pengetahuan alam"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_04",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Fakultas Pendidikan Teknik Dan Industri",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Fakultas Pendidikan Teknik Dan Industri, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Fakultas Pendidikan Teknik Dan Industri antara lain: S1 PENDIDIKAN TEKNIK ARSITEKTUR; S1 PENDIDIKAN TEKNIK BANGUNAN; S1 PENDIDIKAN TEKNIK ELEKTRO; S1 PENDIDIKAN TEKNIK MESIN; S1 PENDIDIKAN KESEJAHTERAAN KELUARGA; S1 PENDIDIKAN TATA BOGA; S1 PENDIDIKAN TATA BUSANA; S1 PENDIDIKAN TEKNOLOGI AGROINDUSTRI; S1 PENDIDIKAN TEKNIK OTOMOTIF; S1 PENDIDIKAN TEKNIK OTOMASI INDUSTRI DAN ROBOTIKA; S1 TEKNIK ELEKTRO; S1 ARSITEKTUR; S1 TEKNIK SIPIL; S1 TEKNIK LOGISTIK; S1 TEKNOLOGI PANGAN; S1 TEKNIK KIMIA; S1 TEKNIK ENERGI TERBARUKAN. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 746,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_04::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "fakultas pendidikan teknik dan industri"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_05",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Fakultas Pendidikan Olah Raga Dan Kesehatan",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Fakultas Pendidikan Olah Raga Dan Kesehatan, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Fakultas Pendidikan Olah Raga Dan Kesehatan antara lain: S1 PENDIDIKAN KEPELATIHAN OLAHRAGA; S1 PENDIDIKAN JASMANI KESEHATAN DAN REKREASI; S1 PENDIDIKAN GURU SEKOLAH DASAR PENDIDIKAN JASMANI; S1 ILMU KEOLAHRAGAAN; S1 KEPERAWATAN; S1 KEPELATIHAN FISIK OLAHRAGA; S1 GIZI. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 496,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_05::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "fakultas pendidikan olah raga dan kesehatan"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_06",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Kampus Upi Di Cibiru",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Kampus Upi Di Cibiru, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Kampus Upi Di Cibiru antara lain: S1 PENDIDIKAN GURU SEKOLAH DASAR; S1 PENDIDIKAN GURU PENDIDIKAN ANAK USIA DINI; S1 PENDIDIKAN MULTIMEDIA; S1 REKAYASA PERANGKAT LUNAK; S1 TEKNIK KOMPUTER. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 392,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_06::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "kampus upi di cibiru"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_07",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Kampus Upi Di Sumedang",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Kampus Upi Di Sumedang, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Kampus Upi Di Sumedang antara lain: S1 PENDIDIKAN GURU SEKOLAH DASAR; S1 PENDIDIKAN GURU SEKOLAH DASAR PENDIDIKAN JASMANI; S1 KEPERAWATAN; S1 INDUSTRI PARIWISATA. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 368,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_07::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "kampus upi di sumedang"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_08",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Kampus Upi Di Purwakarta",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Kampus Upi Di Purwakarta, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Kampus Upi Di Purwakarta antara lain: S1 PENDIDIKAN GURU SEKOLAH DASAR; S1 PENDIDIKAN GURU PENDIDIKAN ANAK USIA DINI; S1 PENDIDIKAN SISTEM DAN TEKNOLOGI INFORMASI; S1 SISTEM TELEKOMUNIKASI; S1 MEKATRONIKA DAN KECERDASAN BUATAN. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 435,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_08::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "kampus upi di purwakarta"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_09",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Kampus Upi Di Tasikmalaya",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Kampus Upi Di Tasikmalaya, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Kampus Upi Di Tasikmalaya antara lain: S1 PENDIDIKAN GURU SEKOLAH DASAR; S1 PENDIDIKAN GURU PENDIDIKAN ANAK USIA DINI; S1 KEWIRAUSAHAAN; S1 BISNIS DIGITAL; S1 DESAIN PRODUK INDUSTRI. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 391,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_09::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "kampus upi di tasikmalaya"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_10",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Kampus Upi Di Serang",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Kampus Upi Di Serang, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Kampus Upi Di Serang antara lain: S1 PENDIDIKAN GURU SEKOLAH DASAR; S1 PENDIDIKAN GURU PENDIDIKAN ANAK USIA DINI; S1 PENDIDIKAN KELAUTAN DAN PERIKANAN; S1 SISTEM INFORMASI KELAUTAN; S1 LOGISTIK KELAUTAN. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 407,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_10::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "kampus upi di serang"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_11",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Fakultas Pendidikan Ekonomi Dan Bisnis",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Fakultas Pendidikan Ekonomi Dan Bisnis, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Fakultas Pendidikan Ekonomi Dan Bisnis antara lain: S1 PENDIDIKAN AKUNTANSI; S1 PENDIDIKAN BISNIS; S1 PENDIDIKAN MANAJEMEN PERKANTORAN; S1 PENDIDIKAN EKONOMI; S1 MANAJEMEN; S1 AKUNTANSI; S1 ILMU EKONOMI DAN KEUANGAN ISLAM. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 444,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_11::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "fakultas pendidikan ekonomi dan bisnis"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_12",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Fakultas Pendidikan Seni Dan Desain",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Fakultas Pendidikan Seni Dan Desain, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Fakultas Pendidikan Seni Dan Desain antara lain: S1 PENDIDIKAN SENI RUPA; S1 PENDIDIKAN SENI TARI; S1 PENDIDIKAN SENI MUSIK; S1 DESAIN KOMUNIKASI VISUAL; S1 FILM DAN TELEVISI; S1 MUSIK. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 404,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_12::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "fakultas pendidikan seni dan desain"
+    ]
+  },
+  {
+    "doc_id": "ref_prodi_13",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PMB UPI\\Biaya Pendidikan UPI Tahun Akademik 2025-2026\\KEPUTUSAN REKTOR UNIVERSITAS PENDIDIKAN INDONESIA NOMOR 4-UN40-KU.00.00-2026\\Lampiran NOMOR 4-UN40-KU.00.00-2026.xlsx",
+    "url": null,
+    "title": "Program Studi — Fakultas Kedokteran",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Daftar program studi (jurusan) di Fakultas Kedokteran, Universitas Pendidikan Indonesia (UPI). Program studi yang ada di Fakultas Kedokteran antara lain: S1 KEDOKTERAN. (Sumber: Keputusan Rektor UPI Tahun 2026 tentang UKT / daftar program studi UPI.)",
+    "chunk_length": 250,
+    "chunk_index": 0,
+    "chunk_id": "ref_prodi_13::0",
+    "keywords": [
+      "program studi",
+      "prodi",
+      "jurusan",
+      "fakultas kedokteran"
+    ]
+  },
+  {
+    "doc_id": "ref_beasiswa_umum",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PPID",
+    "url": null,
+    "title": "Jenis Beasiswa di UPI",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Jenis-jenis beasiswa di Universitas Pendidikan Indonesia (UPI). UPI menyalurkan beragam beasiswa bagi mahasiswa, baik dari pemerintah, pemerintah daerah, perusahaan, bank, maupun yayasan. Jenis beasiswa yang umum tersedia antara lain: KIP-Kuliah (sebelumnya Bidikmisi); Beasiswa Peningkatan Prestasi Akademik (PPA); Beasiswa Unggulan Kemendikbudristek; Beasiswa Pendidikan Indonesia (BPI) untuk S1, S2, dan S3; Beasiswa Bank Indonesia; Beasiswa Cendekia BAZNAS; Beasiswa Karya Salemba Empat (KSE); Beasiswa Djarum; Beasiswa dari Pemerintah Provinsi Jawa Barat (JFL/JFLS); Beasiswa Afirmasi/ADik untuk mahasiswa difabel; serta beasiswa dari berbagai bank dan perusahaan (BRI, BNI, dll). Pengelolaan beasiswa dilakukan oleh Direktorat Kemahasiswaan UPI (dan Sekolah Pascasarjana untuk jenjang pascasarjana). Jenis beasiswa yang tersedia dapat berbeda tiap tahun. (Sumber: Laporan Tahunan UPI.)",
+    "chunk_length": 891,
+    "chunk_index": 0,
+    "chunk_id": "ref_beasiswa_umum::0",
+    "keywords": [
+      "beasiswa",
+      "jenis beasiswa",
+      "kip kuliah",
+      "ppa",
+      "bidikmisi"
+    ]
+  },
+  {
+    "doc_id": "ref_beasiswa_2022",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PPID",
+    "url": null,
+    "title": "Beasiswa UPI Tahun 2022",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Beasiswa di UPI pada tahun 2022. Menurut Laporan Tahunan UPI 2022, terdapat sekitar 15 jenis beasiswa dari 13 lembaga pemberi beasiswa dengan total 7.935 mahasiswa penerima. Jenis beasiswa tahun 2022 antara lain: KIP-Kuliah (KIPK), Beasiswa Karya Salemba Empat (KSE), Beasiswa Pancakarsa Kabupaten Bogor, Beasiswa SMART BRILIAN (Lembaga Amil Zakat BRI), Beasiswa BRI, Beasiswa Bank Indonesia, Beasiswa Cendekia BAZNAS, Beasiswa Unggulan Kemendikbudristek, Beasiswa Pendidikan Indonesia (S1/S2/S3), Beasiswa Djarum, Beasiswa JFL/JFLS Pemerintah Provinsi Jawa Barat, Beasiswa ADik untuk difabel, Beasiswa RMP Pemerintah Kota Bandung, serta beasiswa dari beberapa yayasan. (Sumber: Laporan Tahunan UPI 2022.)",
+    "chunk_length": 705,
+    "chunk_index": 0,
+    "chunk_id": "ref_beasiswa_2022::0",
+    "keywords": [
+      "beasiswa",
+      "beasiswa 2022",
+      "kipk",
+      "upi"
+    ]
+  },
+  {
+    "doc_id": "ref_beasiswa_2017",
+    "source": "D:\\Project\\RAG_UPI\\Dataset\\PPID",
+    "url": null,
+    "title": "Beasiswa UPI Tahun 2017",
+    "category": "Referensi UPI",
+    "source_type": "pdf",
+    "page": 1,
+    "section": "Referensi ringkas",
+    "text": "Beasiswa di UPI pada tahun 2017. Menurut Laporan Tahunan UPI 2017, jenis beasiswa yang disalurkan kepada mahasiswa antara lain: Bidikmisi, Beasiswa Afirmasi, Beasiswa Peningkatan Prestasi Akademik (PPA) termasuk kuota tambahan, Beasiswa Pemerintah Provinsi Jawa Barat, Beasiswa Kabupaten Bandung Barat (KBB), Beasiswa Bank Indonesia (BI), Bawaku Prestasi, Bawaku SKTM, dan Beasiswa BNI. (Sumber: Laporan Tahunan UPI 2017.)",
+    "chunk_length": 422,
+    "chunk_index": 0,
+    "chunk_id": "ref_beasiswa_2017::0",
+    "keywords": [
+      "beasiswa",
+      "beasiswa 2017",
+      "bidikmisi",
+      "ppa"
+    ]
+  }
+]
