@@ -10,10 +10,6 @@ import { useSettingsStore, useUIStore } from "@/store/settingsStore";
 import type { SourceChunk } from "@/types";
 import { scorePercent } from "@/lib/utils";
 
-/** API base, mirroring services/api.ts (proxy in dev, env-driven in prod). */
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") || "/backend-api";
-
 /** The grid of citation cards shown beneath an assistant answer. */
 export function SourceList({ sources }: { sources: SourceChunk[] }) {
   if (!sources?.length) return null;
@@ -40,12 +36,15 @@ export function SourceInspector() {
   const inspectSource = useUIStore((s) => s.inspectSource);
   const language = useSettingsStore((s) => s.language);
 
-  const isPdf = inspected?.source_type?.toLowerCase() === "pdf";
   const openPdf = () => {
     if (!inspected) return;
-    const anchor = inspected.page != null ? `#page=${inspected.page}` : "";
-    const url = `${API_BASE}/api/source/${encodeURIComponent(inspected.doc_id)}${anchor}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    // Open the in-app pdf.js viewer instead of the browser's native one: the
+    // native viewer's handling of `#page=N` varies per machine (PDF-handling
+    // extensions ignore it), so citations kept opening at page 1.
+    const params = new URLSearchParams({ doc: inspected.doc_id });
+    if (inspected.page != null) params.set("page", String(inspected.page));
+    if (inspected.title) params.set("title", inspected.title);
+    window.open(`/viewer?${params.toString()}`, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -117,7 +116,7 @@ export function SourceInspector() {
                 )}
               </div>
 
-              {isPdf && (
+              {inspected.doc_id && (
                 <Button
                   variant="outline"
                   className="w-full justify-center gap-2"

@@ -6,7 +6,6 @@ import {
   AlertTriangle,
   Check,
   Copy,
-  GraduationCap,
   RefreshCw,
   ShieldCheck,
   ShieldAlert,
@@ -14,6 +13,7 @@ import {
   User,
 } from "lucide-react";
 
+import { BrandLogo } from "@/components/ui/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -67,7 +67,7 @@ export function MessageBubble({
         {isUser ? (
           <User className="h-4 w-4" />
         ) : (
-          <GraduationCap className="h-4 w-4" />
+          <BrandLogo className="h-6 w-6" iconClassName="h-4 w-4" />
         )}
       </div>
 
@@ -96,7 +96,7 @@ export function MessageBubble({
             <>
               <MarkdownMessage content={message.content} />
               {message.status === "streaming" && (
-                <span className="ml-0.5 inline-block h-4 w-[2px] animate-blink bg-accent align-middle" />
+                <span className="ml-0.5 inline-block h-4 w-[2px] animate-blink bg-primary align-middle" />
               )}
             </>
           )}

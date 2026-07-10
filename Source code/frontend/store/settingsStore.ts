@@ -45,6 +45,8 @@ export const useSettingsStore = create<SettingsState>()(
 interface UIState {
   sidebarOpen: boolean;
   settingsOpen: boolean;
+  /** Auth dialog (login/daftar) — deliberately separate from Settings. */
+  authModalOpen: boolean;
   /** The source chunk currently expanded in the citation drawer, if any. */
   inspectedSource: SourceChunk | null;
   /** Whether the retrieval debug panel is open. */
@@ -53,6 +55,7 @@ interface UIState {
   toggleSidebar: () => void;
   setSidebar: (open: boolean) => void;
   setSettingsOpen: (open: boolean) => void;
+  setAuthModalOpen: (open: boolean) => void;
   inspectSource: (s: SourceChunk | null) => void;
   setDebugPanelOpen: (open: boolean) => void;
 }
@@ -60,12 +63,14 @@ interface UIState {
 export const useUIStore = create<UIState>((set) => ({
   sidebarOpen: false,
   settingsOpen: false,
+  authModalOpen: false,
   inspectedSource: null,
   debugPanelOpen: false,
 
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
   setSidebar: (open) => set({ sidebarOpen: open }),
   setSettingsOpen: (open) => set({ settingsOpen: open }),
+  setAuthModalOpen: (open) => set({ authModalOpen: open }),
   inspectSource: (s) => set({ inspectedSource: s }),
   setDebugPanelOpen: (open) => set({ debugPanelOpen: open }),
 }));

@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { GraduationCap } from "lucide-react";
+
+import { BrandLogo } from "@/components/ui/BrandLogo";
 
 // Dashboard sengaja dibiarkan bersih (tanpa rekomendasi pertanyaan).
 // `onPick` dipertahankan agar pemanggil (ChatPanel) tetap kompatibel.
@@ -15,7 +16,7 @@ export function WelcomeScreen(_props: { onPick: (prompt: string) => void }) {
         className="flex flex-col items-center text-center"
       >
         <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
-          <GraduationCap className="h-8 w-8" />
+          <BrandLogo className="h-12 w-12" iconClassName="h-8 w-8" />
         </div>
         <h1 className="font-serif text-3xl font-semibold tracking-tight">
           Asisten Informasi UPI

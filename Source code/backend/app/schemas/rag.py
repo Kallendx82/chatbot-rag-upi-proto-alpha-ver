@@ -122,3 +122,15 @@ class HealthResponse(BaseModel):
 # --------------------------------------------------------------------------
 class ErrorResponse(BaseModel):
     detail: str
+
+
+class ClientErrorReport(BaseModel):
+    """Crash report sent by the frontend error boundary.
+
+    Field lengths are capped so a buggy (or malicious) client cannot flood
+    the log files with megabytes per request.
+    """
+
+    message: str = Field(..., min_length=1, max_length=2_000)
+    stack: Optional[str] = Field(None, max_length=20_000)
+    url: Optional[str] = Field(None, max_length=2_000)

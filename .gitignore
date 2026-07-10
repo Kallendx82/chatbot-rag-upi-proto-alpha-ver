@@ -36,6 +36,23 @@ Results from Drive/
 **/*.pem
 **/*.key
 **/secrets.json
+.anthropic_key
+
+# -- Runtime user data (SQLite auth/sessions DB) ------------------------------
+Source code/backend/app/data/*.db
+Source code/backend/app/data/*.db-shm
+Source code/backend/app/data/*.db-wal
+
+# -- Claude Code local settings ----------------------------------------------
+.claude/
+
+# -- Thesis material & scratch extractions (personal, not app code) ----------
+Skripsi/
+Skripsi terdahulu/
+knowledge_layer/
+_u2/
+_u4/
+_page42.txt
 
 # -- IDE / OS ----------------------------------------------------------------
 .vscode/

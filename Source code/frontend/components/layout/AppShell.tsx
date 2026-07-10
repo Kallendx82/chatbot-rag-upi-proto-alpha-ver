@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { AuthModal } from "@/components/auth/AuthModal";
 import { ChatPanel } from "@/components/chat/ChatPanel";
 import { DebugPanel } from "@/components/debug/DebugPanel";
 import { SettingsModal } from "@/components/settings/SettingsModal";
@@ -11,6 +12,7 @@ import { SourceInspector } from "@/components/citations/SourceInspector";
 import { TopBar } from "@/components/layout/TopBar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useMounted } from "@/hooks/useMounted";
+import { startAutoSync } from "@/services/sessionSync";
 import { useUIStore } from "@/store/settingsStore";
 
 /**
@@ -32,6 +34,12 @@ export function AppShell() {
   useEffect(() => {
     if (window.innerWidth >= 1024) setSidebar(true);
   }, [setSidebar]);
+
+  // Push the active conversation to the server after each completed turn
+  // (no-op while logged out). Idempotent.
+  useEffect(() => {
+    startAutoSync();
+  }, []);
 
   if (!mounted) {
     // Minimal skeleton during hydration - avoids SSR/client store mismatch.
@@ -82,6 +90,7 @@ export function AppShell() {
         <SourceInspector />
         <DebugPanel />
         <SettingsModal />
+        <AuthModal />
       </div>
     </TooltipProvider>
   );

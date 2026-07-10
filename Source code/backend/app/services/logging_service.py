@@ -23,6 +23,7 @@ _LOG_DIR = Path("./app/data/logs")
 _RETRIEVAL_LOG = _LOG_DIR / "retrieval.jsonl"
 _CHAT_LOG = _LOG_DIR / "chat.jsonl"
 _FAILED_LOG = _LOG_DIR / "failed_retrieval.jsonl"
+_CLIENT_ERROR_LOG = _LOG_DIR / "client_errors.jsonl"
 
 _write_lock = threading.Lock()
 
@@ -61,6 +62,36 @@ def log_retrieval(
     _append(_RETRIEVAL_LOG, record)
     if n_results == 0:
         _append(_FAILED_LOG, record)
+
+
+def log_client_error(
+    message: str,
+    stack: str | None,
+    url: str | None,
+    user_agent: str | None,
+) -> None:
+    """Record a crash reported by the frontend error boundary.
+
+    The UI deliberately shows users only a generic maintenance message; the
+    technical detail (error message + stack trace + page URL) lands here so
+    the developer can diagnose it from the backend logs alone.
+    """
+    logger.error(
+        "Client-side error at %s: %s\n%s",
+        url or "<unknown page>",
+        message,
+        stack or "<no stack trace>",
+    )
+    _append(
+        _CLIENT_ERROR_LOG,
+        {
+            "ts": _now(),
+            "message": message,
+            "stack": stack,
+            "url": url,
+            "user_agent": user_agent,
+        },
+    )
 
 
 def log_chat(

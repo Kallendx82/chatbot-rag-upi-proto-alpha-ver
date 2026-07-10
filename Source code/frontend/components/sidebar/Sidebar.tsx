@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
-  GraduationCap,
   MessageSquarePlus,
   PanelLeftClose,
   Pencil,
@@ -14,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 
+import { BrandLogo } from "@/components/ui/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -75,7 +75,7 @@ export function Sidebar() {
           className="flex items-center gap-2 rounded-lg p-1 -m-1 text-left transition-colors hover:bg-surface/70"
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <GraduationCap className="h-4 w-4" />
+            <BrandLogo className="h-6 w-6" iconClassName="h-4 w-4" />
           </div>
           <span className="font-serif text-sm font-semibold leading-tight">
             UPI&nbsp;RAG

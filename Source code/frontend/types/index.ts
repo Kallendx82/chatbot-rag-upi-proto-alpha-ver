@@ -142,6 +142,57 @@ export interface Settings {
 }
 
 // ---------------------------------------------------------------------------
+// Auth + server-saved chat sessions
+// ---------------------------------------------------------------------------
+export interface AuthUser {
+  id: number;
+  username: string;
+  is_admin: boolean;
+  created_at: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: AuthUser;
+}
+
+export interface ServerSessionSummary {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  message_count: number;
+}
+
+/** Wire format of one saved message; `extra` carries sources + metrics. */
+export interface StoredMessage {
+  role: string;
+  content: string;
+  extra?: {
+    sources?: SourceChunk[];
+    metrics?: ChatMessage["metrics"];
+  } | null;
+  created_at?: string | null;
+}
+
+export interface ServerSessionDetail {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  messages: StoredMessage[];
+}
+
+export interface StatsResponse {
+  total_questions: number;
+  questions_per_day: { date: string; count: number }[];
+  top_questions: { question: string; count: number }[];
+  total_users: number;
+  total_sessions: number;
+  total_saved_questions: number;
+}
+
+// ---------------------------------------------------------------------------
 // API error shape
 // ---------------------------------------------------------------------------
 export class ApiError extends Error {

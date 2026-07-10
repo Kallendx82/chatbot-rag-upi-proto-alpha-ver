@@ -10,14 +10,19 @@
 # Usage:
 #   .\start.ps1            # start everything, open browser
 #   .\start.ps1 -NoOpen    # start everything, don't open browser
-#   .\start.ps1 -start.ps1start.ps1Status    # report what's running, then exit
+#   .\start.ps1 -Status    # report what's running, then exit
 #   .\start.ps1 -Stop      # kill running backend + frontend windows
+#   .\start.ps1 -Dev       # force frontend dev mode (hot reload)
 # =============================================================================
 [CmdletBinding()]
 param(
     [switch]$NoOpen,
     [switch]$Status,
     [switch]$Stop,
+    # Force the frontend into dev mode (hot reload). Without this switch the
+    # launcher serves the production build when one exists (npm run build) -
+    # much faster page loads, important when exposing via Cloudflare tunnel.
+    [switch]$Dev,
     [string]$BackendPort = "8000",
     [string]$FrontendPort = "3000",
     [string]$DefaultModel = "llama3.1:8b-instruct-q4_K_M"
@@ -206,15 +211,17 @@ Set-Location '$Backend'
     Start-Process powershell -ArgumentList "-NoExit","-Command",$beCmd -WindowStyle Normal
 }
 
-# Wait for backend /health (allows up to 60s — embedder takes a few sec to load)
-Info "Waiting for backend /health ..."
+# Wait for backend /health. First start loads the embedding model, FAISS
+# index, BM25, and 1.880 Q&A exemplars - typically 2-3 minutes. Allow 5.
+Info "Waiting for backend /health (first load takes 2-3 minutes) ..."
 $beReady = $false
-for ($i=0; $i -lt 120; $i++) {
-    Start-Sleep -Milliseconds 500
+for ($i=0; $i -lt 300; $i++) {
+    Start-Sleep -Milliseconds 1000
     if (Test-Url "http://127.0.0.1:$BackendPort/health") { $beReady = $true; break }
+    if ($i -gt 0 -and $i % 30 -eq 0) { Info "  still loading... ($i s)" }
 }
 if ($beReady) { Ok "Backend healthy on :$BackendPort" }
-else { Warn "Backend not healthy after 60s; check its window for errors" }
+else { Warn "Backend not healthy after 5 minutes; check its window for errors" }
 
 # ---------------------------------------------------------------------------
 # Frontend
@@ -223,11 +230,28 @@ if (Test-Port $FrontendPort) {
     $proc = Get-ProcessOnPort $FrontendPort
     Warn "Port $FrontendPort already in use (PID $($proc.Id) $($proc.ProcessName)); skipping frontend launch"
 } else {
-    Info "Starting frontend (next dev) on :$FrontendPort..."
+    # Production build (next start) when available: pages are pre-compiled, so
+    # first loads are instant - dev mode compiles each route on first visit,
+    # which feels very slow through a Cloudflare tunnel. After changing
+    # frontend code run:  cd frontend ; npm run build   (or launch with -Dev).
+    $buildId = Join-Path $Frontend ".next\BUILD_ID"
+    $useProd = (-not $Dev) -and (Test-Path $buildId)
+    if ($useProd) {
+        Info "Starting frontend (next start - production build) on :$FrontendPort..."
+        $feRun = "npm run start"
+    } else {
+        if (-not $Dev -and -not (Test-Path $buildId)) {
+            Warn "No production build found (frontend\.next\BUILD_ID); falling back to dev mode."
+            Warn "Build once for faster serving:  cd `"$Frontend`" ; npm run build"
+        }
+        Info "Starting frontend (next dev) on :$FrontendPort..."
+        $feRun = "npm run dev"
+    }
     $feCmd = @"
 Write-Host 'UPI RAG frontend - port $FrontendPort' -ForegroundColor Cyan
 Set-Location '$Frontend'
-npm run dev
+`$env:NODE_OPTIONS = '--no-deprecation'
+$feRun
 "@
     Start-Process powershell -ArgumentList "-NoExit","-Command",$feCmd -WindowStyle Normal
 }

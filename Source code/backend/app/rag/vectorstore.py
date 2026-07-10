@@ -173,6 +173,60 @@ class FaissVectorStore:
             self._doc_sources = cache
         return cache.get(str(doc_id))
 
+    def resolve_source(self, doc_id: str) -> str | None:
+        """Return an EXISTING file path for a document id, or None.
+
+        Chunk metadata stores absolute source paths recorded at ingestion time.
+        Some files have since moved within the dataset tree, so the stored path
+        no longer resolves. When that happens we fall back to a lazily-built
+        index of the actual files under the dataset root, matched by filename.
+        This recovers documents that were merely relocated (not deleted).
+
+        Web-scraped chunks store a `.md` source under a `text/` subfolder
+        (e.g. `.../UPI Cibiru/text/page.md`); the scraper also saved the
+        rendered page as a sibling PDF one level up (`.../UPI Cibiru/page.pdf`).
+        We prefer that PDF twin when it exists, so these sources can be opened
+        the same way as native PDF documents.
+        """
+        src = self.doc_source(doc_id)
+        if not src:
+            return None
+        path = Path(src)
+        if path.suffix.lower() == ".md" and path.parent.name.lower() == "text":
+            pdf_twin = path.parent.parent / f"{path.stem}.pdf"
+            if pdf_twin.is_file():
+                return str(pdf_twin)
+        if path.is_file():
+            return src
+        return self._basename_index().get(path.name.lower())
+
+    def _basename_index(self) -> dict[str, str]:
+        """Lazily map lowercased filename -> existing path, scanned once."""
+        idx = getattr(self, "_basename_idx", None)
+        if idx is not None:
+            return idx
+        idx = {}
+        root = self._dataset_root()
+        if root is not None and root.is_dir():
+            for p in root.rglob("*"):
+                if p.is_file():
+                    idx.setdefault(p.name.lower(), str(p))
+        self._basename_idx = idx
+        return idx
+
+    def _dataset_root(self) -> Path | None:
+        """Derive the dataset root (the 'Dataset' dir) from a stored source path."""
+        for row in self._meta:
+            src = row.get("source")
+            if not src:
+                continue
+            parts = Path(src).parts
+            for i, part in enumerate(parts):
+                if part.lower() == "dataset":
+                    return Path(*parts[: i + 1])
+            return Path(src).parent.parent
+        return None
+
     # -- retrieval ---------------------------------------------------------
     def search(
         self,

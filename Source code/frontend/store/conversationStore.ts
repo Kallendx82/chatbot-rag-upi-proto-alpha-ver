@@ -15,6 +15,14 @@ import { persist } from "zustand/middleware";
 import type { ChatMessage, Conversation, SourceChunk } from "@/types";
 import { deriveTitle, uid } from "@/lib/utils";
 
+/** Mirror a rename/delete to the server when a user is logged in. */
+function mirrorToServer(fn: (token: string) => Promise<unknown>): void {
+  void import("@/store/authStore").then(({ useAuthStore }) => {
+    const token = useAuthStore.getState().token;
+    if (token) fn(token).catch(() => {});
+  });
+}
+
 interface ConversationState {
   conversations: Conversation[];
   activeId: string | null;
@@ -89,20 +97,35 @@ export const useConversationStore = create<ConversationState>()(
         return id;
       },
 
-      deleteConversation: (id) =>
+      deleteConversation: (id) => {
         set((s) => {
           const remaining = s.conversations.filter((c) => c.id !== id);
           const activeId =
             s.activeId === id ? (remaining[0]?.id ?? null) : s.activeId;
           return { conversations: remaining, activeId };
-        }),
+        });
+        mirrorToServer((token) =>
+          import("@/services/api").then(({ api }) =>
+            api.deleteSession(token, id),
+          ),
+        );
+      },
 
-      renameConversation: (id, title) =>
+      renameConversation: (id, title) => {
         set((s) => ({
           conversations: s.conversations.map((c) =>
             c.id === id ? touch({ ...c, title: title.trim() || c.title }) : c,
           ),
-        })),
+        }));
+        const finalTitle = title.trim();
+        if (finalTitle) {
+          mirrorToServer((token) =>
+            import("@/services/api").then(({ api }) =>
+              api.renameSession(token, id, finalTitle),
+            ),
+          );
+        }
+      },
 
       setActive: (id) => set({ activeId: id }),
 

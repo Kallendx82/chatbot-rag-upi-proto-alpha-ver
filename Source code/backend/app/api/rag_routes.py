@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import FileResponse
 
 from app.core.config import Settings, get_settings
@@ -15,11 +15,13 @@ from app.core.container import get_rag_service
 from app.schemas.rag import (
     ChatRequest,
     ChatResponse,
+    ClientErrorReport,
     RetrievalDebugResponse,
     RetrieveRequest,
     RetrieveResponse,
     SourceChunk,
 )
+from app.services.logging_service import log_client_error
 from app.services.rag_service import RagService
 
 router = APIRouter()
@@ -147,10 +149,20 @@ def open_source_pdf(doc_id: str, request: Request) -> FileResponse:
     index metadata; the file path comes from our own data (no user-controlled
     path traversal). We still verify the file exists and is a PDF before
     returning it, displayed inline (Content-Disposition: inline) in a new tab.
+
+    The frontend appends a `.pdf` suffix to `doc_id` in the request URL (e.g.
+    `/source/240cf3...bba.pdf#page=30`): several browsers only honour the
+    `#page=N` PDF open-parameter when the URL path itself looks like a PDF
+    file, so the suffix is required for reliable deep-linking. Strip it here
+    before doing the doc_id lookup.
     """
+    if doc_id.lower().endswith(".pdf"):
+        doc_id = doc_id[: -len(".pdf")]
     container = request.app.state.container
     store = getattr(container, "store", None)
-    src = store.doc_source(doc_id) if store is not None else None
+    # resolve_source verifies the stored path exists and, if it was relocated
+    # within the dataset, recovers it by filename before giving up.
+    src = store.resolve_source(doc_id) if store is not None else None
     if not src:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND,
@@ -167,8 +179,29 @@ def open_source_pdf(doc_id: str, request: Request) -> FileResponse:
             status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
             "Sumber ini bukan berkas PDF, sehingga tidak dapat dibuka.",
         )
-    return FileResponse(
-        str(path),
-        media_type="application/pdf",
-        headers={"Content-Disposition": f'inline; filename="{path.name}"'},
+    # No Content-Disposition header: Chrome's PDF viewer drops the `#page=N`
+    # fragment when the response carries `inline; filename=...`, which made
+    # every citation open at page 1. The browser renders application/pdf
+    # inline by default, and downloads fall back to the URL's `.pdf` name.
+    return FileResponse(str(path), media_type="application/pdf")
+
+
+@router.post("/client-error", tags=["logging"])
+def report_client_error(body: ClientErrorReport, request: Request) -> Response:
+    """Receive a crash report from the frontend error boundary.
+
+    The frontend shows end users only a generic maintenance message; the
+    technical detail is logged server-side (console + client_errors.jsonl)
+    so it can be diagnosed without asking users to open the browser console.
+
+    Returns an explicit 204 Response: declaring `status_code=204` on the
+    decorator trips FastAPI's "204 must not have a response body" assertion
+    on some versions when combined with a return annotation.
+    """
+    log_client_error(
+        message=body.message,
+        stack=body.stack,
+        url=body.url,
+        user_agent=request.headers.get("user-agent"),
     )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

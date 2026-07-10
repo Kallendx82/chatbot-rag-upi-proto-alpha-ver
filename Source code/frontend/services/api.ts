@@ -19,12 +19,17 @@
  */
 import {
   ApiError,
+  type AuthResponse,
   type ChatRequest,
   type ChatResponse,
   type HealthResponse,
   type RetrievalDebugResponse,
   type RetrieveRequest,
   type RetrieveResponse,
+  type ServerSessionDetail,
+  type ServerSessionSummary,
+  type StatsResponse,
+  type StoredMessage,
 } from "@/types";
 
 const BASE_URL =
@@ -137,7 +142,135 @@ export const api = {
       { method: "GET" },
     );
   },
+
+  // --- auth ---------------------------------------------------------------
+  register(username: string, password: string): Promise<AuthResponse> {
+    return request<AuthResponse>("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+      timeoutMs: 15_000,
+    });
+  },
+
+  login(username: string, password: string): Promise<AuthResponse> {
+    return request<AuthResponse>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+      timeoutMs: 15_000,
+    });
+  },
+
+  logout(token: string): Promise<void> {
+    return requestVoid("/api/auth/logout", {
+      method: "POST",
+      headers: authHeader(token),
+      timeoutMs: 10_000,
+    });
+  },
+
+  // --- server-saved chat sessions ------------------------------------------
+  listSessions(token: string): Promise<ServerSessionSummary[]> {
+    return request<ServerSessionSummary[]>("/api/sessions", {
+      method: "GET",
+      headers: authHeader(token),
+      timeoutMs: 15_000,
+    });
+  },
+
+  createSession(
+    token: string,
+    id: string,
+    title: string,
+  ): Promise<ServerSessionSummary> {
+    return request<ServerSessionSummary>("/api/sessions", {
+      method: "POST",
+      headers: authHeader(token),
+      body: JSON.stringify({ id, title }),
+      timeoutMs: 15_000,
+    });
+  },
+
+  getSession(token: string, id: string): Promise<ServerSessionDetail> {
+    return request<ServerSessionDetail>(
+      `/api/sessions/${encodeURIComponent(id)}`,
+      { method: "GET", headers: authHeader(token), timeoutMs: 20_000 },
+    );
+  },
+
+  renameSession(token: string, id: string, title: string): Promise<unknown> {
+    return request<unknown>(`/api/sessions/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      headers: authHeader(token),
+      body: JSON.stringify({ title }),
+      timeoutMs: 10_000,
+    });
+  },
+
+  deleteSession(token: string, id: string): Promise<void> {
+    return requestVoid(`/api/sessions/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: authHeader(token),
+      timeoutMs: 10_000,
+    });
+  },
+
+  saveMessages(
+    token: string,
+    id: string,
+    messages: StoredMessage[],
+  ): Promise<unknown> {
+    return request<unknown>(
+      `/api/sessions/${encodeURIComponent(id)}/messages`,
+      {
+        method: "PUT",
+        headers: authHeader(token),
+        body: JSON.stringify({ messages }),
+        timeoutMs: 20_000,
+      },
+    );
+  },
+
+  // --- stats (admin) --------------------------------------------------------
+  stats(token: string): Promise<StatsResponse> {
+    return request<StatsResponse>("/api/stats", {
+      method: "GET",
+      headers: authHeader(token),
+      timeoutMs: 20_000,
+    });
+  },
 };
+
+function authHeader(token: string): Record<string, string> {
+  return { Authorization: `Bearer ${token}` };
+}
+
+/** Like request<T> but tolerates empty (204) response bodies. */
+async function requestVoid(
+  path: string,
+  options: RequestInit & { timeoutMs?: number } = {},
+): Promise<void> {
+  const { timeoutMs = 15_000, ...init } = options;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${BASE_URL}${path}`, {
+      ...init,
+      signal: controller.signal,
+      headers: { "Content-Type": "application/json", ...(init.headers || {}) },
+    });
+    if (!res.ok && res.status !== 204) {
+      throw new ApiError(`Permintaan gagal (HTTP ${res.status}).`, res.status);
+    }
+  } catch (err) {
+    if (err instanceof ApiError) throw err;
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new ApiError("Permintaan melebihi batas waktu (timeout).", 408);
+    }
+    throw new ApiError("Tidak dapat terhubung ke server.", 0, err);
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 /**
  * Streaming chat.
