@@ -15,5 +15,24 @@ const nextConfig = {
       { source: "/backend-api/:path*", destination: `${backend}/:path*` },
     ];
   },
+  // Long-lived cache headers so Cloudflare's edge serves heavy static assets
+  // instead of the laptop's home upload link. pdf.worker.min.js (1.4 MB) is
+  // versioned manually — bump the filename if the pdfjs version changes.
+  async headers() {
+    return [
+      {
+        source: "/pdf.worker.min.js",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        source: "/:path*.(png|jpg|jpeg|svg|ico|webp)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400" },
+        ],
+      },
+    ];
+  },
 };
 export default nextConfig;

@@ -15,7 +15,10 @@ import { Button } from "@/components/ui/button";
 // scripts) instead of being bundled: webpack's minifier cannot process the
 // module-format worker file, and a local copy keeps the viewer working
 // offline, e.g. during an on-campus demo without internet access.
-pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+// Served with a .js extension (same module-format file): .mjs is not in
+// Cloudflare's default cacheable-extension list, .js is — so the 1.4 MB
+// worker gets edge-cached instead of tunneling from the laptop every time.
+pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
 
 /**
  * In-app PDF viewer that reliably opens at the cited page.
