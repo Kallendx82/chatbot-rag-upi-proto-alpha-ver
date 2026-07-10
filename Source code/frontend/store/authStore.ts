@@ -73,25 +73,19 @@ export const useAuthStore = create<AuthState>()(
       },
 
       triggerPasswordSave: (username: string, password: string) => {
-        // Gunakan Credential Management API untuk trigger browser password save.
-        // Hanya bekerja di HTTPS atau localhost.
-        if (
-          typeof window !== "undefined" &&
-          navigator.credentials &&
-          window.PasswordCredential
-        ) {
-          try {
-            const cred = new PasswordCredential({
-              id: username,
-              password: password,
-              name: username,
-            });
-            navigator.credentials.store(cred).catch(() => {
-              // User mungkin menolak atau browser tidak support; tidak masalah.
-            });
-          } catch {
-            // Credential API tidak tersedia; tidak masalah.
-          }
+        // Trigger browser password save using Credential Management API.
+        if (typeof window === "undefined" || !navigator.credentials) return;
+        try {
+          // Use the navigator credential store API, available in most modern browsers.
+          // Works over HTTPS or localhost. User can reject the save dialog.
+          void navigator.credentials.store({
+            type: "password",
+            id: username,
+            password: password,
+            name: username,
+          } as unknown as Credential);
+        } catch {
+          // Browser doesn't support it; that's fine.
         }
       },
     }),

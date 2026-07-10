@@ -1,18 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { BarChart3, ChevronDown, LogIn, LogOut, UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuDivider,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
@@ -31,6 +23,18 @@ export function UserMenu() {
   const logout = useAuthStore((s) => s.logout);
   const setAuthModalOpen = useUIStore((s) => s.setAuthModalOpen);
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [open]);
 
   if (!user) {
     return (
@@ -47,67 +51,67 @@ export function UserMenu() {
   }
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="gap-2 border border-white/25 bg-white/10 px-3 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:border-border dark:bg-surface dark:text-foreground dark:hover:bg-surface-muted"
-        >
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
-            {user.username.slice(0, 1).toUpperCase()}
-          </span>
-          <span className="max-w-[8rem] truncate text-xs font-medium">
-            {user.username}
-          </span>
-          <ChevronDown className="h-4 w-4 opacity-70" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuLabel className="text-center text-xs font-semibold text-muted-foreground">
-          Akun
-        </DropdownMenuLabel>
-        <DropdownMenuDivider />
+    <div ref={menuRef} className="relative">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setOpen(!open)}
+        className="gap-2 border border-white/25 bg-white/10 px-3 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:border-border dark:bg-surface dark:text-foreground dark:hover:bg-surface-muted"
+      >
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
+          {user.username.slice(0, 1).toUpperCase()}
+        </span>
+        <span className="max-w-[8rem] truncate text-xs font-medium">
+          {user.username}
+        </span>
+        <ChevronDown className={`h-4 w-4 opacity-70 transition-transform ${open ? "rotate-180" : ""}`} />
+      </Button>
 
-        {user.is_admin && (
-          <>
-            <DropdownMenuItem asChild>
+      {open && (
+        <div className="absolute right-0 mt-1 w-48 rounded-lg border border-border bg-surface shadow-lg z-50">
+          <div className="px-3 py-2 text-center text-xs font-semibold text-muted-foreground border-b border-border">
+            Akun
+          </div>
+
+          {user.is_admin && (
+            <>
               <Link
                 href="/stats"
-                className="flex items-center gap-2 cursor-pointer"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-surface-muted cursor-pointer transition-colors"
               >
                 <BarChart3 className="h-4 w-4" />
                 <span>Statistik penggunaan</span>
               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuDivider />
-          </>
-        )}
+              <div className="border-t border-border" />
+            </>
+          )}
 
-        <DropdownMenuItem
-          onClick={() => {
-            setOpen(false);
-            setAuthModalOpen(true);
-          }}
-          className="flex items-center gap-2 cursor-pointer text-muted-foreground hover:text-foreground"
-        >
-          <UserPlus className="h-4 w-4" />
-          <span>Ganti ke akun lain</span>
-        </DropdownMenuItem>
+          <button
+            onClick={() => {
+              setOpen(false);
+              setAuthModalOpen(true);
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-muted transition-colors text-left"
+          >
+            <UserPlus className="h-4 w-4" />
+            <span>Ganti ke akun lain</span>
+          </button>
 
-        <DropdownMenuDivider />
+          <div className="border-t border-border" />
 
-        <DropdownMenuItem
-          onClick={() => {
-            setOpen(false);
-            void logout();
-          }}
-          className="flex items-center gap-2 cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
-        >
-          <LogOut className="h-4 w-4" />
-          <span>Keluar</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <button
+            onClick={() => {
+              setOpen(false);
+              void logout();
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors text-left"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Keluar</span>
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
