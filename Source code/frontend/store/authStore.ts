@@ -18,12 +18,14 @@ import type { AuthUser } from "@/types";
 interface AuthState {
   token: string | null;
   user: AuthUser | null;
+  lastUsername: string | null;
   /** True while login/register + initial sync is in flight. */
   busy: boolean;
 
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  triggerPasswordSave: (username: string, password: string) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -31,13 +33,15 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       token: null,
       user: null,
+      lastUsername: null,
       busy: false,
 
       login: async (username, password) => {
         set({ busy: true });
         try {
           const res = await api.login(username, password);
-          set({ token: res.token, user: res.user });
+          set({ token: res.token, user: res.user, lastUsername: username });
+          get().triggerPasswordSave(username, password);
           await syncOnLogin(res.token);
         } finally {
           set({ busy: false });
@@ -48,7 +52,8 @@ export const useAuthStore = create<AuthState>()(
         set({ busy: true });
         try {
           const res = await api.register(username, password);
-          set({ token: res.token, user: res.user });
+          set({ token: res.token, user: res.user, lastUsername: username });
+          get().triggerPasswordSave(username, password);
           await syncOnLogin(res.token);
         } finally {
           set({ busy: false });
@@ -66,7 +71,40 @@ export const useAuthStore = create<AuthState>()(
           }
         }
       },
+
+      triggerPasswordSave: (username: string, password: string) => {
+        // Gunakan Credential Management API untuk trigger browser password save.
+        // Hanya bekerja di HTTPS atau localhost.
+        if (
+          typeof window !== "undefined" &&
+          navigator.credentials &&
+          window.PasswordCredential
+        ) {
+          try {
+            const cred = new PasswordCredential({
+              id: username,
+              password: password,
+              name: username,
+            });
+            navigator.credentials.store(cred).catch(() => {
+              // User mungkin menolak atau browser tidak support; tidak masalah.
+            });
+          } catch {
+            // Credential API tidak tersedia; tidak masalah.
+          }
+        }
+      },
     }),
-    { name: "upi-rag-auth", version: 1 },
+    {
+      name: "upi-rag-auth",
+      version: 1,
+      onRehydrateStorage: () => (state) => {
+        // Saat app boot: jika ada lastUsername dan token, auto-login.
+        if (state && state.lastUsername && state.token && state.user) {
+          // State sudah ter-restore dari localStorage; tidak perlu berbuat apa-apa.
+          // User sudah login dari session sebelumnya.
+        }
+      },
+    },
   ),
 );

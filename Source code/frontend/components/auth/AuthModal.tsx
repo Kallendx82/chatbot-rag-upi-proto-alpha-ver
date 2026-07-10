@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { KeyRound, LogIn, UserPlus } from "lucide-react";
+import { Eye, EyeOff, KeyRound, LogIn, UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +34,8 @@ export function AuthModal() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const reset = () => {
     setPassword("");
@@ -110,7 +112,6 @@ export function AuthModal() {
               id="auth-username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="mis. rajih.nibras"
               autoComplete="username"
               required
               minLength={3}
@@ -119,32 +120,64 @@ export function AuthModal() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="auth-password">Password</Label>
-            <Input
-              id="auth-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete={
-                mode === "login" ? "current-password" : "new-password"
-              }
-              required
-              minLength={6}
-              maxLength={128}
-            />
+            <div className="relative">
+              <Input
+                id="auth-password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete={
+                  mode === "login" ? "current-password" : "new-password"
+                }
+                required
+                minLength={6}
+                maxLength={128}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                tabIndex={-1}
+                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
           </div>
           {mode === "register" && (
             <div className="space-y-1.5">
               <Label htmlFor="auth-confirm">Ulangi password</Label>
-              <Input
-                id="auth-confirm"
-                type="password"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                autoComplete="new-password"
-                required
-                minLength={6}
-                maxLength={128}
-              />
+              <div className="relative">
+                <Input
+                  id="auth-confirm"
+                  type={showConfirm ? "text" : "password"}
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  autoComplete="new-password"
+                  required
+                  minLength={6}
+                  maxLength={128}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
+                  aria-label={showConfirm ? "Sembunyikan password" : "Tampilkan password"}
+                >
+                  {showConfirm ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
           )}
 

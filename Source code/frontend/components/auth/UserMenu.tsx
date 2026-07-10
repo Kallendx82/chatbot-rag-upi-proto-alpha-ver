@@ -1,9 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { BarChart3, LogIn, LogOut } from "lucide-react";
+import { BarChart3, ChevronDown, LogIn, LogOut, UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuDivider,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
@@ -21,6 +30,7 @@ export function UserMenu() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const setAuthModalOpen = useUIStore((s) => s.setAuthModalOpen);
+  const [open, setOpen] = useState(false);
 
   if (!user) {
     return (
@@ -37,48 +47,67 @@ export function UserMenu() {
   }
 
   return (
-    <div className="flex items-center gap-1.5">
-      <div className="flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 dark:border-border dark:bg-surface">
-        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
-          {user.username.slice(0, 1).toUpperCase()}
-        </span>
-        <span className="max-w-[9rem] truncate text-xs font-medium text-primary-foreground dark:text-foreground">
-          {user.username}
-        </span>
-      </div>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2 border border-white/25 bg-white/10 px-3 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:border-border dark:bg-surface dark:text-foreground dark:hover:bg-surface-muted"
+        >
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
+            {user.username.slice(0, 1).toUpperCase()}
+          </span>
+          <span className="max-w-[8rem] truncate text-xs font-medium">
+            {user.username}
+          </span>
+          <ChevronDown className="h-4 w-4 opacity-70" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuLabel className="text-center text-xs font-semibold text-muted-foreground">
+          Akun
+        </DropdownMenuLabel>
+        <DropdownMenuDivider />
 
-      {user.is_admin && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              asChild
-              className="text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:text-foreground dark:hover:bg-surface-muted"
-            >
-              <Link href="/stats" aria-label="Statistik pertanyaan">
+        {user.is_admin && (
+          <>
+            <DropdownMenuItem asChild>
+              <Link
+                href="/stats"
+                className="flex items-center gap-2 cursor-pointer"
+              >
                 <BarChart3 className="h-4 w-4" />
+                <span>Statistik penggunaan</span>
               </Link>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Statistik pertanyaan (admin)</TooltipContent>
-        </Tooltip>
-      )}
+            </DropdownMenuItem>
+            <DropdownMenuDivider />
+          </>
+        )}
 
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => void logout()}
-            aria-label="Keluar"
-            className="text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:text-foreground dark:hover:bg-surface-muted"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Keluar</TooltipContent>
-      </Tooltip>
-    </div>
+        <DropdownMenuItem
+          onClick={() => {
+            setOpen(false);
+            setAuthModalOpen(true);
+          }}
+          className="flex items-center gap-2 cursor-pointer text-muted-foreground hover:text-foreground"
+        >
+          <UserPlus className="h-4 w-4" />
+          <span>Ganti ke akun lain</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuDivider />
+
+        <DropdownMenuItem
+          onClick={() => {
+            setOpen(false);
+            void logout();
+          }}
+          className="flex items-center gap-2 cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Keluar</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
