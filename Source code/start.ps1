@@ -213,7 +213,7 @@ Set-Location '$Backend'
 
 # Wait for backend /health. First start loads the embedding model, FAISS
 # index, BM25, and 1.880 Q&A exemplars - typically 2-3 minutes. Allow 5.
-Info "Waiting for backend /health (first load takes 2-3 minutes) ..."
+Info "Waiting for backend /health ..."
 $beReady = $false
 for ($i=0; $i -lt 300; $i++) {
     Start-Sleep -Milliseconds 1000
