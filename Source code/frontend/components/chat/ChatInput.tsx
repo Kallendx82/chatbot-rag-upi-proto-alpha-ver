@@ -27,8 +27,23 @@ export function ChatInput({
   disabled?: boolean;
   disabledReason?: string;
 }) {
+  const DRAFT_KEY = "upi-rag-draft";
   const [value, setValue] = useState("");
   const ref = useRef<HTMLTextAreaElement>(null);
+  const restoredRef = useRef(false);
+
+  useEffect(() => {
+    if (restoredRef.current) return;
+    restoredRef.current = true;
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (saved) setValue(saved);
+  }, []);
+
+  useEffect(() => {
+    if (!restoredRef.current) return;
+    if (value) localStorage.setItem(DRAFT_KEY, value);
+    else localStorage.removeItem(DRAFT_KEY);
+  }, [value]);
 
   // Auto-grow up to a max height.
   useEffect(() => {

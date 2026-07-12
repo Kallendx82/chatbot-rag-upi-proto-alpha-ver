@@ -78,9 +78,9 @@ export function Sidebar() {
             <BrandLogo className="h-6 w-6" iconClassName="h-4 w-4" />
           </div>
           <span className="font-serif text-sm font-semibold leading-tight">
-            UPI&nbsp;RAG
+            Chatbot UPI
             <span className="block text-[10px] font-normal text-muted-foreground">
-              Asisten Informasi
+              -Using RAG systems- α ver.
             </span>
           </span>
         </button>

@@ -19,8 +19,11 @@ export function WelcomeScreen(_props: { onPick: (prompt: string) => void }) {
           <BrandLogo className="h-12 w-12" iconClassName="h-8 w-8" />
         </div>
         <h1 className="font-serif text-3xl font-semibold tracking-tight">
-          Asisten Informasi UPI
+          Chatbot UPI
         </h1>
+        <p className="mt-1 text-xs font-medium text-muted-foreground">
+          -Using RAG systems- α ver.
+        </p>
         <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
           Tanyakan informasi seputar Universitas Pendidikan Indonesia. Setiap
           jawaban didukung sumber dokumen resmi yang dapat Anda telusuri.

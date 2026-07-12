@@ -31,7 +31,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Asisten Informasi UPI — Chatbot RAG",
+  title: "Chatbot UPI — Using RAG Systems α ver.",
   description:
     "Chatbot sumber informasi sivitas Universitas Pendidikan Indonesia berbasis Retrieval-Augmented Generation.",
 };
