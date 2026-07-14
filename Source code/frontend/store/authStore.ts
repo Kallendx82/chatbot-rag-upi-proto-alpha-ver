@@ -23,7 +23,7 @@ interface AuthState {
   busy: boolean;
 
   login: (username: string, password: string) => Promise<void>;
-  register: (username: string, password: string) => Promise<void>;
+  register: (username: string, password: string, email: string) => Promise<void>;
   logout: () => Promise<void>;
   triggerPasswordSave: (username: string, password: string) => void;
 }
@@ -48,10 +48,10 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      register: async (username, password) => {
+      register: async (username, password, email) => {
         set({ busy: true });
         try {
-          const res = await api.register(username, password);
+          const res = await api.register(username, password, email);
           set({ token: res.token, user: res.user, lastUsername: username });
           get().triggerPasswordSave(username, password);
           await syncOnLogin(res.token);

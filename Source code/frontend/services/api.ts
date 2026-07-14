@@ -144,10 +144,10 @@ export const api = {
   },
 
   // --- auth ---------------------------------------------------------------
-  register(username: string, password: string): Promise<AuthResponse> {
+  register(username: string, password: string, email: string): Promise<AuthResponse> {
     return request<AuthResponse>("/api/auth/register", {
       method: "POST",
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password, email }),
       timeoutMs: 15_000,
     });
   },

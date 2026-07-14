@@ -20,6 +20,18 @@ import { cn } from "@/lib/utils";
 
 type Mode = "login" | "register";
 
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/;
+
+function validatePassword(pwd: string): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  if (pwd.length < 8) errors.push("Minimal 8 karakter");
+  if (!/[a-z]/.test(pwd)) errors.push("Minimal 1 huruf kecil");
+  if (!/[A-Z]/.test(pwd)) errors.push("Minimal 1 huruf besar");
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd))
+    errors.push("Minimal 1 karakter khusus (*, #, ^, &, dsb)");
+  return { valid: errors.length === 0, errors };
+}
+
 /**
  * Login / sign-up dialog. Deliberately its own modal, separate from Settings:
  * auth is an identity concern, not an app preference.
@@ -31,15 +43,19 @@ export function AuthModal() {
 
   const [mode, setMode] = useState<Mode>("login");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const reset = () => {
+    setEmail("");
     setPassword("");
     setConfirm("");
+    setPasswordErrors([]);
     setError(null);
   };
 
@@ -51,13 +67,27 @@ export function AuthModal() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (mode === "register" && password !== confirm) {
-      setError("Konfirmasi password tidak sama.");
-      return;
+    setPasswordErrors([]);
+
+    if (mode === "register") {
+      const { valid, errors } = validatePassword(password);
+      if (!valid) {
+        setPasswordErrors(errors);
+        return;
+      }
+      if (!email.trim()) {
+        setError("Email wajib diisi.");
+        return;
+      }
+      if (password !== confirm) {
+        setError("Konfirmasi password tidak sama.");
+        return;
+      }
     }
+
     try {
       if (mode === "login") await login(username.trim(), password);
-      else await register(username.trim(), password);
+      else await register(username.trim(), password, email.trim());
       close(false);
     } catch (err) {
       setError(
@@ -118,6 +148,22 @@ export function AuthModal() {
               maxLength={32}
             />
           </div>
+
+          {mode === "register" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="auth-email">Email</Label>
+              <Input
+                id="auth-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+                placeholder="nama@example.com"
+              />
+            </div>
+          )}
+
           <div className="space-y-1.5">
             <Label htmlFor="auth-password">Password</Label>
             <div className="relative">
@@ -125,12 +171,18 @@ export function AuthModal() {
                 id="auth-password"
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (mode === "register") {
+                    const { errors } = validatePassword(e.target.value);
+                    setPasswordErrors(errors);
+                  }
+                }}
                 autoComplete={
                   mode === "login" ? "current-password" : "new-password"
                 }
                 required
-                minLength={6}
+                minLength={mode === "register" ? 8 : 6}
                 maxLength={128}
                 className="pr-10"
               />
@@ -148,7 +200,16 @@ export function AuthModal() {
                 )}
               </button>
             </div>
+
+            {mode === "register" && passwordErrors.length > 0 && (
+              <div className="rounded-md bg-destructive/10 px-3 py-2 text-xs text-destructive space-y-1">
+                {passwordErrors.map((err, i) => (
+                  <div key={i}>• {err}</div>
+                ))}
+              </div>
+            )}
           </div>
+
           {mode === "register" && (
             <div className="space-y-1.5">
               <Label htmlFor="auth-confirm">Ulangi password</Label>
@@ -160,7 +221,7 @@ export function AuthModal() {
                   onChange={(e) => setConfirm(e.target.value)}
                   autoComplete="new-password"
                   required
-                  minLength={6}
+                  minLength={8}
                   maxLength={128}
                   className="pr-10"
                 />
