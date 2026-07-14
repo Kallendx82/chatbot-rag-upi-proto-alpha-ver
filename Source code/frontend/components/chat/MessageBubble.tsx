@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   ShieldAlert,
   Timer,
+  Trash2,
   User,
   X,
 } from "lucide-react";
@@ -59,6 +60,7 @@ export function MessageBubble({
   nextMessage,
   onRetry,
   onEditRetry,
+  onDelete,
 }: {
   message: ChatMessage;
   /** The message immediately after this one, used to detect a broken answer
@@ -66,6 +68,7 @@ export function MessageBubble({
   nextMessage?: ChatMessage;
   onRetry?: (m: ChatMessage) => void;
   onEditRetry?: (userMessage: ChatMessage, newText: string) => void;
+  onDelete?: (m: ChatMessage) => void;
 }) {
   const isUser = message.role === "user";
   const debugMode = useSettingsStore((s) => s.debugMode);
@@ -315,6 +318,22 @@ export function MessageBubble({
                 {language === "en" ? "Copy question" : "Salin pertanyaan"}
               </TooltipContent>
             </Tooltip>
+            {onDelete && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => onDelete(message)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {language === "en" ? "Delete message" : "Hapus pesan"}
+                </TooltipContent>
+              </Tooltip>
+            )}
           </div>
         )}
       </div>

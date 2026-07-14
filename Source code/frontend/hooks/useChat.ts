@@ -261,5 +261,29 @@ export function useChat() {
     [getActive, removeMessage, generate],
   );
 
-  return { send, stop, retry, editAndRetry, isSending };
+  const deleteAndFollowing = useCallback(
+    (target: ChatMessage) => {
+      const conv = getActive();
+      if (!conv) return;
+      const idx = conv.messages.findIndex((m) => m.id === target.id);
+      if (idx === -1) return;
+      const idsToDelete = conv.messages.slice(idx).map((m) => m.id);
+      const count = idsToDelete.length;
+      const language = useSettingsStore.getState().language;
+      const msg = language === "en"
+        ? `Delete this message and ${count - 1} following message(s)?`
+        : `Hapus pesan ini dan ${count - 1} pesan berikutnya?`;
+      if (!window.confirm(msg)) return;
+      for (const msgId of idsToDelete) {
+        removeMessage(conv.id, msgId);
+      }
+      const notif = language === "en"
+        ? `Deleted ${count} message(s)`
+        : `${count} pesan dihapus`;
+      alert(notif);
+    },
+    [getActive, removeMessage],
+  );
+
+  return { send, stop, retry, editAndRetry, deleteAndFollowing, isSending };
 }

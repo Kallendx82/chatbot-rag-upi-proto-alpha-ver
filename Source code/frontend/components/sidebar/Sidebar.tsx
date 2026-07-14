@@ -74,8 +74,8 @@ export function Sidebar() {
           aria-label="UPI RAG — mulai percakapan baru"
           className="flex items-center gap-2 rounded-lg p-1 -m-1 text-left transition-colors hover:bg-surface/70"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <BrandLogo className="h-6 w-6" iconClassName="h-4 w-4" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan text-primary-foreground">            
+            <BrandLogo className="h-9 w-9" iconClassName="h-4 w-4" />
           </div>
           <span className="font-serif text-sm font-semibold leading-tight">
             Chatbot UPI

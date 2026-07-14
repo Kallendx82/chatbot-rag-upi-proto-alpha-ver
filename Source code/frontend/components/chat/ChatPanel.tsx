@@ -17,7 +17,7 @@ export function ChatPanel() {
   const active = useConversationStore((s) =>
     s.conversations.find((c) => c.id === s.activeId),
   );
-  const { send, stop, retry, editAndRetry, isSending } = useChat();
+  const { send, stop, retry, editAndRetry, deleteAndFollowing, isSending } = useChat();
   const { state } = useHealth();
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -50,6 +50,7 @@ export function ChatPanel() {
                 nextMessage={messages[i + 1]}
                 onRetry={retry}
                 onEditRetry={editAndRetry}
+                onDelete={deleteAndFollowing}
               />
             ))}
           </div>

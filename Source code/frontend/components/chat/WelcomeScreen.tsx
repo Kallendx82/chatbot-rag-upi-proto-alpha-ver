@@ -15,8 +15,8 @@ export function WelcomeScreen(_props: { onPick: (prompt: string) => void }) {
         transition={{ duration: 0.4 }}
         className="flex flex-col items-center text-center"
       >
-        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
-          <BrandLogo className="h-12 w-12" iconClassName="h-8 w-8" />
+          <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-cyan text-primary-foreground">            
+          <BrandLogo className="h-24 w-24" iconClassName="h-8 w-8" />
         </div>
         <h1 className="font-serif text-3xl font-semibold tracking-tight">
           Chatbot UPI

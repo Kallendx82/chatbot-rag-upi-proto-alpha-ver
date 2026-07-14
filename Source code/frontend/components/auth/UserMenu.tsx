@@ -58,7 +58,7 @@ export function UserMenu() {
         onClick={() => setOpen(!open)}
         className="gap-2 border border-white/25 bg-white/10 px-3 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:border-border dark:bg-surface dark:text-foreground dark:hover:bg-surface-muted"
       >
-        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-accent-foreground">
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan text-[11px] font-semibold text-accent-foreground">
           {user.username.slice(0, 1).toUpperCase()}
         </span>
         <span className="max-w-[8rem] truncate text-xs font-medium">
