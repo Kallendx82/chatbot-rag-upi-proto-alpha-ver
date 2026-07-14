@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "Chatbot UPI",
-    "subtitle": "-Using RAG systems- α ver."
+    "subtitle": "-Berbasis Sistem RAG- α ver."
   },
   "sidebar": {
     "closeSidebar": "Tutup sidebar",
@@ -27,7 +27,7 @@
   },
   "welcome": {
     "heading": "Chatbot UPI",
-    "subtitle": "-Using RAG systems- α ver.",
+    "subtitle": "-Berbasis Sistem RAG- α ver.",
     "description": "Tanyakan informasi seputar Universitas Pendidikan Indonesia. Setiap jawaban didukung sumber dokumen resmi yang dapat Anda telusuri.",
     "placeholder": "Tanyakan informasi seputar UPI…",
     "footer": "Jawaban dihasilkan dari dokumen resmi UPI melalui RAG.",
@@ -51,7 +51,7 @@
     "backendModelHint": "Model lokal melalui Ollama. Llama 3.1 8B paling akurat; Llama 3.2 3B paling cepat.",
     "debugMode": "Mode debug",
     "debugModeDescription": "Tampilkan latensi & backend pada tiap jawaban.",
-    "reset": "Reset",
+    "reset": "Atur ulang",
     "save": "Simpan"
   },
   "auth": {

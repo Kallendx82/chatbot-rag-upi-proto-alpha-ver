@@ -80,10 +80,9 @@ export function SettingsModal() {
   const setOpen = useUIStore((s) => s.setSettingsOpen);
 
   const store = useSettingsStore();
-  // Use the *committed* language for the modal's own labels: a draft language
-  // change only takes effect after the user presses Save.
-  const t = TXT[store.language === "en" ? "en" : "id"];
   const { language: uiLanguage, setLanguage: setUILanguage } = useI18n();
+  // Use the UI language for the modal's own labels to reflect current interface language
+  const t = TXT[uiLanguage === "en" ? "en" : "id"];
 
   // Draft = local working copy. Edits stay here until the user presses Save.
   const [draft, setDraft] = useState<DraftSettings>(() => snapshot(store, uiLanguage));
