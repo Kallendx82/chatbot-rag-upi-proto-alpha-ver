@@ -11,23 +11,25 @@ import {
 } from "@/components/ui/tooltip";
 import { useHealth, type ConnectionState } from "@/hooks/useHealth";
 import { useUIStore } from "@/store/settingsStore";
+import { useI18n } from "@/contexts/I18nContext";
 import { cn } from "@/lib/utils";
 
-const STATUS_META: Record<
-  ConnectionState,
-  { label: string; dot: string; text: string }
-> = {
-  checking: { label: "Memeriksa…", dot: "bg-muted-foreground", text: "text-muted-foreground" },
-  online: { label: "Terhubung", dot: "bg-teal", text: "text-teal" },
-  degraded: { label: "Pipeline belum siap", dot: "bg-accent", text: "text-accent-foreground" },
-  offline: { label: "Terputus", dot: "bg-destructive", text: "text-destructive" },
-};
-
 export function TopBar() {
+  const { t } = useI18n();
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const setDebugPanelOpen = useUIStore((s) => s.setDebugPanelOpen);
   const { state } = useHealth();
+
+  const STATUS_META: Record<
+    ConnectionState,
+    { label: string; dot: string; text: string }
+  > = {
+    checking: { label: "Checking…", dot: "bg-muted-foreground", text: "text-muted-foreground" },
+    online: { label: t("header.connected"), dot: "bg-teal", text: "text-teal" },
+    degraded: { label: "Pipeline not ready", dot: "bg-accent", text: "text-accent-foreground" },
+    offline: { label: t("header.disconnected"), dot: "bg-destructive", text: "text-destructive" },
+  };
   const meta = STATUS_META[state];
 
   return (
@@ -40,13 +42,13 @@ export function TopBar() {
                 variant="ghost"
                 size="icon-sm"
                 onClick={toggleSidebar}
-                aria-label="Buka sidebar"
+                aria-label={t("sidebar.closeSidebar")}
                 className="text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:text-foreground dark:hover:bg-surface-muted"
               >
                 <PanelLeft className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Tampilkan sidebar</TooltipContent>
+            <TooltipContent>{t("sidebar.closeSidebar")}</TooltipContent>
           </Tooltip>
         )}
         <div className="flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1">
@@ -67,10 +69,10 @@ export function TopBar() {
               className="gap-2 border-white/30 bg-transparent text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:border-teal/40 dark:bg-surface dark:text-teal dark:hover:bg-teal/10"
             >
               <Bug className="h-4 w-4" />
-              <span className="hidden sm:inline">Retrieval Debug</span>
+              <span className="hidden sm:inline">{t("header.retrievalDebug")}</span>
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Alat inspeksi retrieval (tesis)</TooltipContent>
+          <TooltipContent>{t("header.retrievalDebug")}</TooltipContent>
         </Tooltip>
         <UserMenu />
       </div>

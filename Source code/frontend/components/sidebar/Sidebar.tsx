@@ -23,10 +23,12 @@ import {
 } from "@/components/ui/tooltip";
 import { useConversationStore } from "@/store/conversationStore";
 import { useUIStore } from "@/store/settingsStore";
+import { useI18n } from "@/contexts/I18nContext";
 import type { Conversation } from "@/types";
 import { cn, dayGroup } from "@/lib/utils";
 
 export function Sidebar() {
+  const { t } = useI18n();
   const {
     conversations,
     activeId,
@@ -71,16 +73,16 @@ export function Sidebar() {
       <div className="flex items-center justify-between gap-2 p-3">
         <button
           onClick={() => newConversation()}
-          aria-label="UPI RAG — mulai percakapan baru"
+          aria-label={`UPI RAG — ${t("sidebar.newChat")}`}
           className="flex items-center gap-2 rounded-lg p-1 -m-1 text-left transition-colors hover:bg-surface/70"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan text-primary-foreground">            
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan text-primary-foreground">
             <BrandLogo className="h-9 w-9" iconClassName="h-4 w-4" />
           </div>
           <span className="font-serif text-sm font-semibold leading-tight">
-            Chatbot UPI
+            {t("common.appName")}
             <span className="block text-[10px] font-normal text-muted-foreground">
-              -Using RAG systems- α ver.
+              {t("common.subtitle")}
             </span>
           </span>
         </button>
@@ -90,12 +92,12 @@ export function Sidebar() {
               variant="ghost"
               size="icon-sm"
               onClick={() => setSidebar(false)}
-              aria-label="Tutup sidebar"
+              aria-label={t("sidebar.closeSidebar")}
             >
               <PanelLeftClose className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Sembunyikan sidebar</TooltipContent>
+          <TooltipContent>{t("sidebar.closeSidebar")}</TooltipContent>
         </Tooltip>
       </div>
 
@@ -110,7 +112,7 @@ export function Sidebar() {
           }}
         >
           <MessageSquarePlus className="h-4 w-4" />
-          Percakapan baru
+          {t("sidebar.newChat")}
         </Button>
       </div>
 
@@ -120,7 +122,7 @@ export function Sidebar() {
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Cari percakapan…"
+          placeholder={t("sidebar.search")}
           className="pl-8"
         />
       </div>
@@ -129,7 +131,7 @@ export function Sidebar() {
       <div className="flex-1 overflow-y-auto px-2 scrollbar-thin">
         {groups.length === 0 && (
           <p className="px-3 py-6 text-center text-xs text-muted-foreground">
-            {query ? "Tidak ada hasil." : "Belum ada percakapan."}
+            {query ? t("sidebar.noConversations") : t("sidebar.noConversations")}
           </p>
         )}
         {groups.map(([group, items]) => (
@@ -194,7 +196,7 @@ export function Sidebar() {
                             variant="ghost"
                             size="icon-sm"
                             onClick={() => startEdit(c)}
-                            aria-label="Ganti nama"
+                            aria-label={t("sidebar.rename")}
                           >
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
@@ -202,7 +204,7 @@ export function Sidebar() {
                             variant="ghost"
                             size="icon-sm"
                             onClick={() => deleteConversation(c.id)}
-                            aria-label="Hapus"
+                            aria-label={t("sidebar.delete")}
                             className="text-muted-foreground hover:text-destructive"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -226,7 +228,7 @@ export function Sidebar() {
           onClick={() => setSettingsOpen(true)}
         >
           <Settings className="h-4 w-4" />
-          Pengaturan
+          {t("sidebar.settings")}
         </Button>
       </div>
     </div>

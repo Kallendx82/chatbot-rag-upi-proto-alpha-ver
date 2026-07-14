@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useAuthStore } from "@/store/authStore";
 import { useUIStore } from "@/store/settingsStore";
+import { useI18n } from "@/contexts/I18nContext";
 import { ChangePasswordModal } from "@/components/auth/ChangePasswordModal";
 
 /**
@@ -20,6 +21,7 @@ import { ChangePasswordModal } from "@/components/auth/ChangePasswordModal";
  * only) + logout. Styled for the maroon header in light mode.
  */
 export function UserMenu() {
+  const { t } = useI18n();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const setAuthModalOpen = useUIStore((s) => s.setAuthModalOpen);
@@ -47,7 +49,7 @@ export function UserMenu() {
         className="gap-2 border-white/30 bg-transparent text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:border-border dark:bg-surface dark:text-foreground dark:hover:bg-surface-muted"
       >
         <LogIn className="h-4 w-4" />
-        <span className="hidden sm:inline">Masuk</span>
+        <span className="hidden sm:inline">{t("auth.login")}</span>
       </Button>
     );
   }
@@ -72,7 +74,7 @@ export function UserMenu() {
       {open && (
         <div className="absolute right-0 mt-1 w-48 rounded-lg border border-border bg-surface shadow-lg z-50">
           <div className="px-3 py-2 text-center text-xs font-semibold text-muted-foreground border-b border-border">
-            Akun
+            {t("user.account")}
           </div>
 
           {user.is_admin && (
@@ -83,7 +85,7 @@ export function UserMenu() {
                 className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-surface-muted cursor-pointer transition-colors"
               >
                 <BarChart3 className="h-4 w-4" />
-                <span>Statistik penggunaan</span>
+                <span>{t("user.usageStatistics")}</span>
               </Link>
               <div className="border-t border-border" />
             </>
@@ -97,7 +99,7 @@ export function UserMenu() {
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-muted transition-colors text-left"
           >
             <Key className="h-4 w-4" />
-            <span>Ubah password</span>
+            <span>{t("user.changePassword")}</span>
           </button>
 
           <button
@@ -108,7 +110,7 @@ export function UserMenu() {
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-muted transition-colors text-left"
           >
             <UserPlus className="h-4 w-4" />
-            <span>Ganti ke akun lain</span>
+            <span>{t("user.switchAccount")}</span>
           </button>
 
           <div className="border-t border-border" />
@@ -121,7 +123,7 @@ export function UserMenu() {
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors text-left"
           >
             <LogOut className="h-4 w-4" />
-            <span>Keluar</span>
+            <span>{t("user.logout")}</span>
           </button>
         </div>
       )}

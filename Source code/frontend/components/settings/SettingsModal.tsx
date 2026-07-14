@@ -26,6 +26,7 @@ import {
   useSettingsStore,
   useUIStore,
 } from "@/store/settingsStore";
+import { useI18n } from "@/contexts/I18nContext";
 import type { Language, Settings, ThemeMode } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -38,7 +39,9 @@ const SETTING_KEYS: (keyof Settings)[] = [
   "debugMode",
 ];
 
-function snapshot(s: Settings): Settings {
+type DraftSettings = Settings & { uiLanguage: "en" | "id" };
+
+function snapshot(s: Settings, uiLang: "en" | "id"): DraftSettings {
   return {
     topK: s.topK,
     temperature: s.temperature,
@@ -46,6 +49,7 @@ function snapshot(s: Settings): Settings {
     model: s.model,
     theme: s.theme,
     debugMode: s.debugMode,
+    uiLanguage: uiLang,
   };
 }
 
@@ -79,31 +83,40 @@ export function SettingsModal() {
   // Use the *committed* language for the modal's own labels: a draft language
   // change only takes effect after the user presses Save.
   const t = TXT[store.language === "en" ? "en" : "id"];
+  const { language: uiLanguage, setLanguage: setUILanguage } = useI18n();
 
   // Draft = local working copy. Edits stay here until the user presses Save.
-  const [draft, setDraft] = useState<Settings>(() => snapshot(store));
+  const [draft, setDraft] = useState<DraftSettings>(() => snapshot(store, uiLanguage));
   const [confirmLeave, setConfirmLeave] = useState(false);
 
   // Re-seed the draft from committed settings each time the modal opens.
   useEffect(() => {
     if (open) {
-      setDraft(snapshot(useSettingsStore.getState()));
+      setDraft(snapshot(useSettingsStore.getState(), uiLanguage));
       setConfirmLeave(false);
     }
-  }, [open]);
+  }, [open, uiLanguage]);
 
-  const dirty = SETTING_KEYS.some((k) => draft[k] !== store[k]);
+  const dirty = SETTING_KEYS.some((k) => draft[k] !== store[k]) || draft.uiLanguage !== uiLanguage;
 
   const setField = <K extends keyof Settings>(key: K, value: Settings[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
 
   const commit = () => {
+    const languageChanged = draft.uiLanguage !== uiLanguage;
+
     SETTING_KEYS.forEach((k) => {
       if (draft[k] !== store[k]) {
         store.set(k, draft[k] as never);
       }
     });
-    setOpen(false);
+    if (languageChanged) {
+      setUILanguage(draft.uiLanguage);
+      setOpen(false);
+      window.location.reload();
+    } else {
+      setOpen(false);
+    }
   };
 
   // Intercept close attempts (X / Esc / outside click): confirm if dirty.
@@ -135,7 +148,7 @@ export function SettingsModal() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-5 py-1">
+          <div className="space-y-5 py-1 max-h-96 overflow-y-auto">
             {/* Theme */}
             <div className="space-y-2">
               <Label>Tema</Label>
@@ -162,6 +175,23 @@ export function SettingsModal() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* UI Language */}
+            <div className="space-y-2">
+              <Label>{uiLanguage === "en" ? "Interface Language" : "Bahasa Antarmuka"}</Label>
+              <Select
+                value={draft.uiLanguage || "id"}
+                onValueChange={(v) => setField("uiLanguage", v as "en" | "id")}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={draft.uiLanguage === "en" ? "English" : "Bahasa Indonesia"} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="id">Bahasa Indonesia</SelectItem>
+                  <SelectItem value="en">English</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Language */}
@@ -267,7 +297,7 @@ export function SettingsModal() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setDraft(snapshot(DEFAULT_SETTINGS))}
+              onClick={() => setDraft(snapshot(DEFAULT_SETTINGS, "id"))}
             >
               <RotateCcw className="h-3.5 w-3.5" />
               {t.reset}
