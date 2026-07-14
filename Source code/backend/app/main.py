@@ -67,8 +67,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
         status_code=500,
         content={
             "detail": "Maaf, terjadi gangguan internal pada server. "
-                      "Silakan coba lagi sebentar lagi. "
-                      "(Internal server error — see backend/logs/backend.log)",
+                      "Silakan coba lagi sebentar lagi.",
             "error_type": type(exc).__name__,
             "path": request.url.path,
         },
