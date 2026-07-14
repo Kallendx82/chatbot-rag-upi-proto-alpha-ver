@@ -11,7 +11,8 @@ _USERNAME_RE = re.compile(r"^[A-Za-z0-9._-]{3,32}$")
 
 class RegisterRequest(BaseModel):
     username: str = Field(..., min_length=3, max_length=32)
-    password: str = Field(..., min_length=6, max_length=128)
+    email: str = Field(..., max_length=255)
+    password: str = Field(..., min_length=8, max_length=128)
 
     @field_validator("username")
     @classmethod
@@ -28,9 +29,24 @@ class LoginRequest(BaseModel):
     password: str = Field(..., min_length=1, max_length=128)
 
 
+class ChangePasswordRequest(BaseModel):
+    old_password: str = Field(..., min_length=1, max_length=128)
+    new_password: str = Field(..., min_length=8, max_length=128)
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str = Field(..., max_length=255)
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str = Field(..., min_length=1)
+    new_password: str = Field(..., min_length=8, max_length=128)
+
+
 class UserInfo(BaseModel):
     id: int
     username: str
+    email: str
     is_admin: bool
     created_at: str
 

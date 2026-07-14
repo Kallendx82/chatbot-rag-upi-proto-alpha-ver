@@ -17,9 +17,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 from app.schemas.auth import (
     AuthResponse,
+    ChangePasswordRequest,
+    ForgotPasswordRequest,
     LoginRequest,
     MessagesReplaceRequest,
     RegisterRequest,
+    ResetPasswordRequest,
     SessionCreateRequest,
     SessionDetail,
     SessionRenameRequest,
@@ -62,7 +65,7 @@ def get_admin_user(user: dict[str, Any] = Depends(get_current_user)) -> dict[str
 @router.post("/auth/register", response_model=AuthResponse, tags=["auth"])
 def register(body: RegisterRequest) -> AuthResponse:
     try:
-        user = auth_db.create_user(body.username, body.password)
+        user = auth_db.create_user(body.username, body.password, body.email)
     except ValueError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from None
     return AuthResponse(token=auth_db.issue_token(user["id"]), user=UserInfo(**user))
@@ -87,6 +90,40 @@ def logout(request: Request) -> Response:
 @router.get("/auth/me", response_model=UserInfo, tags=["auth"])
 def me(user: dict[str, Any] = Depends(get_current_user)) -> UserInfo:
     return UserInfo(**user)
+
+
+@router.post("/auth/change-password", tags=["auth"])
+def change_password(
+    body: ChangePasswordRequest,
+    user: dict[str, Any] = Depends(get_current_user),
+) -> Response:
+    if not auth_db.change_password(user["id"], body.old_password, body.new_password):
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED, "Password lama tidak sesuai."
+        )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/auth/forgot-password", tags=["auth"])
+def forgot_password(body: ForgotPasswordRequest) -> dict[str, str]:
+    """Request password reset token (to be sent via email)."""
+    token = auth_db.request_password_reset(body.email)
+    if token is None:
+        # Don't reveal if email exists (security best practice)
+        return {"message": "Jika email terdaftar, link reset akan dikirim."}
+    # TODO: Send email dengan link reset: /auth/reset-password?token={token}
+    # For now, return token (frontend should send it to the reset endpoint)
+    return {"token": token, "message": "Token reset password telah dibuat. (Implementasi email belum aktif)"}
+
+
+@router.post("/auth/reset-password", tags=["auth"])
+def reset_password(body: ResetPasswordRequest) -> Response:
+    """Reset password dengan token yang dikirim via email."""
+    if not auth_db.verify_and_reset_password(body.token, body.new_password):
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST, "Token tidak valid atau sudah kedaluwarsa."
+        )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # --- saved chat sessions ------------------------------------------------------
