@@ -35,6 +35,10 @@ export const metadata: Metadata = {
   title: "Chatbot UPI — Using RAG Systems α ver.",
   description:
     "Chatbot sumber informasi sivitas Universitas Pendidikan Indonesia berbasis Retrieval-Augmented Generation.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export const viewport: Viewport = {
