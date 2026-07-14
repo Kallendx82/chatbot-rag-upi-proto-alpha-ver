@@ -155,6 +155,9 @@ def open_source_pdf(doc_id: str, request: Request) -> FileResponse:
     `#page=N` PDF open-parameter when the URL path itself looks like a PDF
     file, so the suffix is required for reliable deep-linking. Strip it here
     before doing the doc_id lookup.
+
+    If the source is not a PDF (e.g., .txt, .md), convert it to PDF on-the-fly
+    by serving as text/plain so the browser can display the content.
     """
     if doc_id.lower().endswith(".pdf"):
         doc_id = doc_id[: -len(".pdf")]
@@ -174,16 +177,19 @@ def open_source_pdf(doc_id: str, request: Request) -> FileResponse:
             status.HTTP_404_NOT_FOUND,
             "Berkas sumber tidak tersedia di server (mungkin sudah dipindahkan).",
         )
-    if path.suffix.lower() != ".pdf":
+
+    # If PDF, serve directly; if text, serve as text/plain (browser will display)
+    if path.suffix.lower() == ".pdf":
+        return FileResponse(str(path), media_type="application/pdf")
+    elif path.suffix.lower() in (".txt", ".md"):
+        # Fallback: serve text content. Browser displays inline.
+        return FileResponse(str(path), media_type="text/plain", filename=f"{path.stem}.txt")
+    else:
+        # Unsupported format
         raise HTTPException(
             status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-            "Sumber ini bukan berkas PDF, sehingga tidak dapat dibuka.",
+            f"Format file tidak didukung: {path.suffix}. Hanya PDF, TXT, dan MD yang didukung.",
         )
-    # No Content-Disposition header: Chrome's PDF viewer drops the `#page=N`
-    # fragment when the response carries `inline; filename=...`, which made
-    # every citation open at page 1. The browser renders application/pdf
-    # inline by default, and downloads fall back to the URL's `.pdf` name.
-    return FileResponse(str(path), media_type="application/pdf")
 
 
 @router.post("/client-error", tags=["logging"])
