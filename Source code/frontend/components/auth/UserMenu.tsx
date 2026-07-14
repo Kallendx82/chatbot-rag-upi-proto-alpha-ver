@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { BarChart3, ChevronDown, LogIn, LogOut, UserPlus } from "lucide-react";
+import { BarChart3, ChevronDown, Key, LogIn, LogOut, UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useAuthStore } from "@/store/authStore";
 import { useUIStore } from "@/store/settingsStore";
+import { ChangePasswordModal } from "@/components/auth/ChangePasswordModal";
 
 /**
  * Compact auth controls for the top bar. Logged out: a "Masuk" button that
@@ -23,6 +24,7 @@ export function UserMenu() {
   const logout = useAuthStore((s) => s.logout);
   const setAuthModalOpen = useUIStore((s) => s.setAuthModalOpen);
   const [open, setOpen] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -90,6 +92,17 @@ export function UserMenu() {
           <button
             onClick={() => {
               setOpen(false);
+              setShowChangePassword(true);
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-muted transition-colors text-left"
+          >
+            <Key className="h-4 w-4" />
+            <span>Ubah password</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setOpen(false);
               setAuthModalOpen(true);
             }}
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-muted transition-colors text-left"
@@ -112,6 +125,11 @@ export function UserMenu() {
           </button>
         </div>
       )}
+
+      <ChangePasswordModal
+        open={showChangePassword}
+        onOpenChange={setShowChangePassword}
+      />
     </div>
   );
 }
