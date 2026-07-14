@@ -160,7 +160,7 @@ export function MessageBubble({
           "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
           isUser
             ? "bg-primary text-primary-foreground"
-            : "bg-accent/15 text-accent-foreground",
+            : "bg-cyan text-primary-foreground",
         )}
       >
         {isUser ? (
