@@ -62,6 +62,12 @@ npm install
 npm run dev
 ```
 
+### One-Click Launcher (Windows)
+
+`UPI-Chatbot-Launcher.exe` di root project menjalankan backend dan frontend
+sekaligus, lalu membuka browser otomatis. Cukup double-click; dependencies
+(`pip install`, `npm install`) tetap harus dijalankan sekali sebelumnya.
+
 Browser: `http://localhost:3000`
 
 ---

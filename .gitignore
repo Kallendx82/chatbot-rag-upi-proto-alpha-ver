@@ -66,6 +66,11 @@ htmlcov/
 *.tar.gz
 *.rar
 
+# PyInstaller build artifacts (keep the built .exe itself)
+launcher/build/
+launcher/dist/
+*.spec
+
 # Keep docs and source code only
 /Dataset/
 /Source code/
