@@ -15,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuthStore } from "@/store/authStore";
 import { useUIStore } from "@/store/settingsStore";
-import { ForgotPasswordModal } from "@/components/auth/ForgotPasswordModal";
 import { ApiError } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -51,7 +50,6 @@ export function AuthModal() {
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const reset = () => {
     setEmail("");
@@ -251,17 +249,7 @@ export function AuthModal() {
               </p>
             )}
 
-            {mode === "login" && (
-              <p className="text-center text-xs text-muted-foreground">
-                <button
-                  type="button"
-                  onClick={() => setShowForgotPassword(true)}
-                  className="text-primary hover:underline"
-                >
-                  Lupa password?
-                </button>
-              </p>
-            )}
+            {/* Forgot password disabled for alpha */}
 
             <Button type="submit" className="w-full gap-2" disabled={busy}>
               {mode === "login" ? (
@@ -279,10 +267,7 @@ export function AuthModal() {
         </DialogContent>
       </Dialog>
 
-      <ForgotPasswordModal
-        open={showForgotPassword}
-        onOpenChange={setShowForgotPassword}
-      />
+      {/* ForgotPasswordModal disabled for alpha */}
     </>
   );
 }

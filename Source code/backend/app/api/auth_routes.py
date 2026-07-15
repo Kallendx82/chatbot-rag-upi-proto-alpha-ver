@@ -106,24 +106,20 @@ def change_password(
 
 @router.post("/auth/forgot-password", tags=["auth"])
 def forgot_password(body: ForgotPasswordRequest) -> dict[str, str]:
-    """Request password reset token (to be sent via email)."""
-    token = auth_db.request_password_reset(body.email)
-    if token is None:
-        # Don't reveal if email exists (security best practice)
-        return {"message": "Jika email terdaftar, link reset akan dikirim."}
-    # TODO: Send email dengan link reset: /auth/reset-password?token={token}
-    # For now, return token (frontend should send it to the reset endpoint)
-    return {"token": token, "message": "Token reset password telah dibuat. (Implementasi email belum aktif)"}
+    """Password reset disabled for alpha testing."""
+    raise HTTPException(
+        status.HTTP_503_SERVICE_UNAVAILABLE,
+        "Fitur lupa password masih dalam development. Hubungi admin jika lupa password.",
+    )
 
 
 @router.post("/auth/reset-password", tags=["auth"])
 def reset_password(body: ResetPasswordRequest) -> Response:
-    """Reset password dengan token yang dikirim via email."""
-    if not auth_db.verify_and_reset_password(body.token, body.new_password):
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST, "Token tidak valid atau sudah kedaluwarsa."
-        )
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    """Reset password disabled for alpha testing."""
+    raise HTTPException(
+        status.HTTP_503_SERVICE_UNAVAILABLE,
+        "Fitur reset password masih dalam development.",
+    )
 
 
 # --- saved chat sessions ------------------------------------------------------
