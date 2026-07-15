@@ -65,8 +65,11 @@ npm run dev
 ### One-Click Launcher (Windows)
 
 `UPI-Chatbot-Launcher.exe` di root project menjalankan backend dan frontend
-sekaligus, lalu membuka browser otomatis. Cukup double-click; dependencies
-(`pip install`, `npm install`) tetap harus dijalankan sekali sebelumnya.
+sekaligus, lalu membuka browser otomatis. Cukup double-click — pada
+menjalankan pertama kali, launcher otomatis mendeteksi dan menginstall
+dependencies yang belum ada (`pip install`, `npm install`), jadi tidak perlu
+setup manual. Prasyarat: Python 3.10+ dan Node.js sudah terpasang dan ada
+di PATH.
 
 Browser: `http://localhost:3000`
 

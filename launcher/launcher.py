@@ -4,13 +4,17 @@ UPI Chatbot Launcher
 Starts the backend (FastAPI/Uvicorn) and frontend (Next.js) servers, waits
 for them to become ready, then opens the app in the default browser.
 
-Designed to run as a standalone .exe (built with PyInstaller) sitting next
-to the project's `backend/` and `frontend/` folders, or from a configured
-PROJECT_ROOT path baked in at build time.
+On first run it also checks for missing Python/Node dependencies and
+installs them automatically, so a fresh checkout only needs Python + Node.js
+installed on PATH - no manual `pip install` / `npm install` step required.
+
+Designed to run as a standalone .exe (built with PyInstaller) sitting in the
+project root, next to `backend/` and `frontend/`.
 """
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -28,9 +32,8 @@ def resolve_project_root() -> Path:
     """Find the project root (folder containing backend/ and frontend/).
 
     When frozen by PyInstaller, sys.executable points at the .exe; we look
-    for the project two levels up (launcher/ -> project root), then fall
-    back to searching alongside the exe itself so the launcher also works
-    when copied directly into the project root.
+    at the exe's own folder and its parents so the launcher works whether
+    it sits at the project root or one level down (e.g. launcher/).
     """
     if getattr(sys, "frozen", False):
         exe_dir = Path(sys.executable).resolve().parent
@@ -42,16 +45,78 @@ def resolve_project_root() -> Path:
         if (cand / "backend").is_dir() and (cand / "frontend").is_dir():
             return cand
 
-    # Last resort: env var override
     env_root = os.environ.get("UPI_CHATBOT_ROOT")
     if env_root:
         return Path(env_root)
 
     raise FileNotFoundError(
         "Tidak dapat menemukan folder 'backend' dan 'frontend'. "
-        "Pastikan launcher.exe berada di dalam folder project atau set "
-        "environment variable UPI_CHATBOT_ROOT."
+        "Pastikan UPI-Chatbot-Launcher.exe berada di dalam folder project."
     )
+
+
+def find_system_python() -> str | None:
+    """Locate a real Python interpreter on PATH (not this frozen exe).
+
+    PyInstaller's bundled interpreter has no pip/site-packages of its own,
+    so dependency installs must go through whatever Python the user has
+    installed on the machine.
+    """
+    for candidate in ("python", "python3", "py"):
+        path = shutil.which(candidate)
+        if path:
+            return path
+    return None
+
+
+def ensure_backend_deps(root: Path, python_exe: str) -> bool:
+    backend_dir = root / "backend"
+    check = subprocess.run(
+        [python_exe, "-c", "import fastapi, uvicorn"],
+        cwd=str(backend_dir),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    if check.returncode == 0:
+        print("[OK] Backend dependencies sudah terpasang.")
+        return True
+
+    req = backend_dir / "requirements.txt"
+    if not req.is_file():
+        print(f"[ERROR] {req} tidak ditemukan.")
+        return False
+
+    print("[*] Menginstall backend dependencies (pip install)... ini bisa memakan beberapa menit.")
+    result = subprocess.run(
+        [python_exe, "-m", "pip", "install", "-r", str(req)],
+        cwd=str(backend_dir),
+    )
+    if result.returncode != 0:
+        print("[ERROR] Gagal menginstall backend dependencies.")
+        return False
+    print("[OK] Backend dependencies terpasang.")
+    return True
+
+
+def ensure_frontend_deps(root: Path) -> bool:
+    frontend_dir = root / "frontend"
+    node_modules = frontend_dir / "node_modules"
+    if node_modules.is_dir():
+        print("[OK] Frontend dependencies sudah terpasang.")
+        return True
+
+    npm_cmd = shutil.which("npm.cmd") or shutil.which("npm")
+    if not npm_cmd:
+        print("[ERROR] npm tidak ditemukan di PATH. Install Node.js terlebih dahulu (nodejs.org).")
+        return False
+
+    print("[*] Menginstall frontend dependencies (npm install)... ini bisa memakan beberapa menit.")
+    result = subprocess.run([npm_cmd, "install"], cwd=str(frontend_dir))
+    if result.returncode != 0:
+        print("[ERROR] Gagal menginstall frontend dependencies.")
+        return False
+    print("[OK] Frontend dependencies terpasang.")
+    return True
 
 
 def wait_for_backend(timeout: int = STARTUP_TIMEOUT) -> bool:
@@ -67,14 +132,8 @@ def wait_for_backend(timeout: int = STARTUP_TIMEOUT) -> bool:
     return False
 
 
-def start_backend(root: Path) -> subprocess.Popen:
+def start_backend(root: Path, python_exe: str) -> subprocess.Popen:
     backend_dir = root / "backend"
-    python_exe = sys.executable if not getattr(sys, "frozen", False) else "python"
-    # Prefer a venv python if present
-    venv_python = backend_dir / ".venv" / "Scripts" / "python.exe"
-    if venv_python.is_file():
-        python_exe = str(venv_python)
-
     print(f"[*] Starting backend from {backend_dir} ...")
     return subprocess.Popen(
         [python_exe, "-m", "uvicorn", "app.main:app", "--port", "8000"],
@@ -85,7 +144,7 @@ def start_backend(root: Path) -> subprocess.Popen:
 
 def start_frontend(root: Path) -> subprocess.Popen:
     frontend_dir = root / "frontend"
-    npm_cmd = "npm.cmd" if os.name == "nt" else "npm"
+    npm_cmd = shutil.which("npm.cmd") or shutil.which("npm") or "npm"
 
     print(f"[*] Starting frontend from {frontend_dir} ...")
     return subprocess.Popen(
@@ -96,7 +155,7 @@ def start_frontend(root: Path) -> subprocess.Popen:
 
 
 def main() -> int:
-    print(f"=== {APP_NAME} Launcher ===")
+    print(f"=== {APP_NAME} Launcher ===\n")
     try:
         root = resolve_project_root()
     except FileNotFoundError as e:
@@ -106,10 +165,24 @@ def main() -> int:
 
     print(f"[*] Project root: {root}")
 
-    backend_proc = start_backend(root)
+    python_exe = find_system_python()
+    if not python_exe:
+        print("[ERROR] Python tidak ditemukan di PATH. Install Python 3.10+ terlebih dahulu (python.org).")
+        input("Tekan Enter untuk keluar...")
+        return 1
+
+    if not ensure_backend_deps(root, python_exe):
+        input("Tekan Enter untuk keluar...")
+        return 1
+
+    if not ensure_frontend_deps(root):
+        input("Tekan Enter untuk keluar...")
+        return 1
+
+    backend_proc = start_backend(root, python_exe)
     frontend_proc = start_frontend(root)
 
-    print("[*] Menunggu backend siap...")
+    print("\n[*] Menunggu backend siap (model + index bisa memakan waktu ~1 menit pertama kali)...")
     if not wait_for_backend():
         print("[WARN] Backend belum merespons setelah timeout, membuka browser tetap dilanjutkan.")
     else:
