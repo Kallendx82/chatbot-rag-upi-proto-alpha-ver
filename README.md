@@ -1,161 +1,288 @@
-# Chatbot RAG UPI
+# UPI Chatbot — RAG-Based Information System (Alpha v0.1)
 
-**Rancang Bangun Chatbot sebagai Sumber Informasi Sivitas Universitas Pendidikan Indonesia Berbasis Retrieval-Augmented Generation (RAG)**
-
-Local-first RAG chatbot for the UPI academic community: ingest UPI PDFs, build a FAISS vector index, retrieve grounded context, and answer with citations using a local LLM via Ollama.
+**Chatbot untuk Universitas Pendidikan Indonesia (UPI)**  
+Sistem informasi berbasis Retrieval-Augmented Generation (RAG) untuk menjawab pertanyaan seputar UPI dengan akurat dan berbasis dokumen resmi.
 
 ---
 
-## Architecture
+## 🎯 Fitur Alpha
+
+✅ **Retrieval-Augmented Generation (RAG)**
+- Pengambilan informasi otomatis dari 56,833+ vectors database
+- Hybrid retrieval (semantic + keyword matching)
+- Akurasi tinggi dengan BM25 + dense vector search
+
+✅ **Chat Interface Responsif**
+- Real-time conversation dengan chatbot
+- Sidebar management untuk riwayat percakapan
+- Split view untuk chat + document viewer
+
+✅ **Internationalization (i18n)**
+- Support Bahasa Indonesia & English
+- Dynamic language switching dengan auto-refresh
+- Persistent language preferences
+
+✅ **Authentication & Security**
+- User registration + login dengan SQLite database
+- Password validation (min 8 chars, uppercase, lowercase, special char)
+- Admin account untuk alpha testing
+- Secure password storage dengan scrypt hashing
+
+✅ **Document Sourcing**
+- View original source documents dalam browser
+- Deep-link ke page tertentu (e.g., page 30)
+- Fallback text display jika PDF tidak tersedia
+
+✅ **Settings & Customization**
+- Theme selector (Light/Dark/System)
+- Model selection (Llama 3.1, Qwen 2.5, Llama 3.2)
+- Retrieval parameters (Top-K, Temperature)
+- Debug mode untuk technical users
+
+✅ **Performance Optimization**
+- Qwen 2.5:3B default model (~5x faster inference)
+- 60-second request timeout
+- Optimized vector indexing dengan FAISS
+- Minimal CSS + optimized bundle
+
+---
+
+## 🚀 Quick Start
+
+### Prasyarat
+- Python 3.10+
+- Node.js 18+
+- Ollama (untuk LLM lokal)
+- SQLite3
+
+### Setup Backend
+
+```bash
+cd "Source code/backend"
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment
+# Edit .env dengan settings model, dll
+
+# Start backend
+python -m uvicorn app.main:app --reload --port 8000
+```
+
+### Setup Frontend
+
+```bash
+cd "Source code/frontend"
+
+# Install dependencies
+npm install
+
+# Start dev server
+npm run dev
+```
+
+Browser: **http://localhost:3000**
+
+---
+
+## 👤 Admin Credentials (Alpha)
 
 ```
-PDFs (UPI documents)
-        |
-        v
-+---------------------+    +-----------------+    +------------------+
-|  01 extraction      | -> |  02 chunking    | -> |  03 vectorstore  |
-|  (PyMuPDF + OCR)    |    |  (recursive +   |    |  (FAISS local)   |
-|  -> JSON / TXT / MD |    |   heading-aware)|    |  multilingual e5 |
-+---------------------+    +-----------------+    +------------------+
-                                                          |
-                                                          v
-                                              +-----------------------+
-                                              |   FastAPI backend     |
-                                              |   (retrieve + chat)   |
-                                              +-----------------------+
-                                                  |             |
-                                                  v             v
-                                          +---------------+ +-----------+
-                                          | Next.js UI    | |  Ollama   |
-                                          | (citations,   | |  (LLama / |
-                                          |  multi-turn)  | |   Qwen)   |
-                                          +---------------+ +-----------+
+Username: admin
+Password: Admin@123456
+Email:    admin@upi.rag
 ```
 
-## Tech stack
+---
 
-- **Vector DB:** FAISS `IndexFlatIP` (exact cosine over normalised vectors), 100% local
-- **Embeddings:** `intfloat/multilingual-e5-base` (768 dim, Indonesian-aware)
-- **LLM:** Ollama (`llama3.1:8b` default, `llama3.2:3b`, `qwen2.5:3b` selectable)
-- **Backend:** FastAPI + Pydantic
-- **Frontend:** Next.js 14 (App Router), TypeScript, Tailwind, Zustand
-- **Pipeline:** Jupyter notebooks for extraction, chunking, indexing, evaluation
-
-## Repository layout
+## 📋 Project Structure
 
 ```
-.
-├── Source code/                     Pipeline notebooks
-│   ├── 01_cleaning_extraction_pipeline.ipynb   PDF/HTML -> cleaned JSON+TXT+MD
-│   ├── 02_chunking_pipeline.ipynb              Cleaned text -> chunks.jsonl
-│   ├── 03_vectorstore_rag_evaluation.ipynb     Chunks -> FAISS + first eval
-│   ├── 04_update_pipeline.ipynb                Incremental update (New_Dataset/)
-│   ├── 05_evaluation_ragas.ipynb               RAGAS-based eval (LLM judge)
-│   ├── 06_evaluation_retrieval.ipynb           Classical IR metrics
-│   ├── check_pipeline_health.py                Detects corruption / orphans
-│   └── find_duplicate_pdfs.py                  Dedup the source corpus
+RAG_UPI/
+├── Source code/
+│   ├── backend/
+│   │   ├── app/
+│   │   │   ├── api/          # API routes
+│   │   │   ├── rag/          # RAG pipeline
+│   │   │   ├── services/     # Auth, logging
+│   │   │   └── data/         # SQLite, FAISS index
+│   │   ├── .env              # Configuration
+│   │   └── manage_users.py    # User management CLI
+│   │
+│   └── frontend/
+│       ├── app/              # Next.js app
+│       ├── components/       # React components
+│       ├── contexts/         # I18n context
+│       ├── locales/          # Translation files
+│       └── public/           # Static assets
 │
-├── Claude/
-│   ├── backend/                     FastAPI (uvicorn) RAG service
-│   │   ├── app/api/                 health + RAG routes
-│   │   ├── app/rag/                 embedder, vectorstore, prompt, LLM dispatch
-│   │   ├── app/services/            orchestration + logging
-│   │   ├── app/schemas/             pydantic contracts
-│   │   └── requirements.txt
-│   ├── frontend/                    Next.js 14 chat UI
-│   │   ├── app/                     routes + layout
-│   │   ├── components/              chat, citations, debug, settings
-│   │   ├── hooks/                   useChat
-│   │   ├── store/                   zustand (settings + conversations)
-│   │   └── package.json
-│   ├── start.bat / start.ps1        One-shot launcher (Ollama + backend + frontend)
-│   ├── stop.bat                     Stop everything
-│   └── diagnose.ps1                 Layer-by-layer health probe
-│
-└── README.md
+└── Dataset/                   # RAG document corpus
+    └── _pipeline/            # FAISS index + metadata
 ```
 
-## Running locally (Windows)
+---
 
-### 1. Pipeline (one-time)
+## 🔌 API Endpoints
 
-```powershell
-cd "Source code"
-# Open each notebook in Jupyter and run top-to-bottom:
-#   01 -> 02 -> 03
-# Outputs land in  ../Dataset/_pipeline/
+### Authentication
+- `POST /api/auth/register` — Register user
+- `POST /api/auth/login` — Login & get token
+- `POST /api/auth/change-password` — Change password
+- `POST /api/auth/logout` — Logout
+
+### Chat & Retrieval
+- `POST /api/chat` — Full RAG turn (retrieve + generate)
+- `POST /api/retrieve` — Retrieve only (no generation)
+- `GET /api/retrieve/debug` — Detailed retrieval debug info
+
+### Sources
+- `GET /api/source/{doc_id}` — Serve source PDF/text
+
+### Sessions
+- `GET /api/sessions` — List user's chat sessions
+- `GET /api/sessions/{id}` — Get session with messages
+- `POST /api/sessions` — Create new session
+- `PUT /api/sessions/{id}` — Rename session
+- `DELETE /api/sessions/{id}` — Delete session
+
+### Health
+- `GET /health` — Health check (components status)
+
+---
+
+## ⚙️ Configuration
+
+### `.env` (Backend)
+
+```env
+# LLM Model
+OLLAMA_MODEL=qwen2.5:3b
+LLM_REQUEST_TIMEOUT=60
+
+# Database
+FAISS_INDEX_PATH=./app/data/faiss.index
+CHUNKS_META_PATH=./app/data/chunks_meta.json
+
+# Retrieval
+DEFAULT_TOP_K=3
+RETRIEVAL_SCORE_THRESHOLD=0.0
+HYBRID_RETRIEVAL=true
 ```
 
-### 2. Pull at least one LLM
+---
 
-```powershell
-ollama pull llama3.1:8b      # default, best quality
-ollama pull llama3.2:3b      # fast alternative
-ollama pull qwen2.5:3b       # alternative
+## 🛠️ Development Tools
+
+### User Management
+```bash
+# List all users
+python manage_users.py list
+
+# Delete user
+python manage_users.py delete <username> --force
 ```
 
-### 3. One-shot launcher
+### Database
+- Location: `app/data/users.db` (SQLite)
+- Schema: users, auth_tokens, password_resets, chat_sessions, chat_messages
 
-```powershell
-cd Claude
-.\start.bat                  # checks venv/env, starts Ollama + backend + frontend
-```
+---
 
-This opens `http://localhost:3000` in your browser. Three PowerShell windows appear (Ollama, backend, frontend).
+## 📊 Performance
 
-Stop everything later:
+| Metric | Value |
+|--------|-------|
+| Vector DB Size | 56,833 vectors (768-dim) |
+| BM25 Index | ~6.2s build time |
+| Avg Chat Response | 15-30s (Qwen 2.5:3B) |
+| Request Timeout | 60s |
+| Theme Load | <100ms |
 
-```powershell
-.\stop.bat
-```
+---
 
-### 4. Health check
+## 🔐 Security Notes
 
-```powershell
-.\diagnose.ps1
-```
+- Passwords hashed dengan scrypt (n=2^14, r=8, p=1)
+- API tokens: opaque strings, SHA-256 di database
+- First registered user = admin (automatic)
+- Input validation pada semua endpoints
+- CORS configured untuk localhost:3000
 
-Pings every layer (Ollama, backend `/health`, end-to-end `/api/chat`) and tells you exactly where any failure happens.
+---
 
-## Evaluation
+## 📝 Known Limitations (Alpha)
 
-Two complementary frameworks:
+⚠️ **Email Service**
+- Forgot password disabled (TODO)
+- Reset password disabled (TODO)
+- Contact admin if password reset needed
 
-| Notebook | Framework | What it measures |
-|---|---|---|
-| `05_evaluation_ragas.ipynb` | RAGAS with Ollama judge | Faithfulness, Answer Relevancy, Context Precision, Context Recall |
-| `06_evaluation_retrieval.ipynb` | Classical IR metrics | Hit Rate@k, Precision@k, Recall@k, MRR, nDCG@k, latency |
+⚠️ **PDF Linking**
+- Some documents fallback to text/plain display
+- Deep-linking by page number supported
 
-Queries are loaded from `Dataset/evaluation.csv` (columns: `query`, `context`). Results land in `Dataset/_pipeline/eval/`.
+⚠️ **Performance**
+- First load (embeddings + FAISS): ~1 minute
+- Vector store lazy-loaded at startup
 
-## Key design notes
+---
 
-- **All-local, all-offline:** FAISS on disk, Ollama for generation, no cloud APIs.
-- **Numbered-citation prompt:** every factual sentence in the answer must carry `[1] [2]` references to the numbered sources.
-- **Auto-language detection:** Indonesian queries get Indonesian answers, English queries get English answers — no setting required.
-- **Content-fingerprint dedup at retrieval:** the corpus has ~50% duplicate boilerplate (Surat Rekomendasi PMBP templates). The backend oversamples by 3x and drops near-duplicate chunks before they reach the LLM, so top-5 always shows 5 *different* perspectives.
-- **Low-content chunk filter:** chunks that are >65% digits/punctuation (corrupted tuition tables) are removed at prompt time. They retrieve well but the LLM can't extract anything from them.
-- **Context window sized for RAG:** Ollama defaults `num_ctx` to 2048 tokens, which silently truncates a grounded prompt (system rules + ~5 source chunks + question can reach ~2k tokens). We set `OLLAMA_NUM_CTX=8192` so every retrieved source is actually seen by the model.
+## 🗓️ Roadmap
 
-## Future work
+### v0.2 (Next)
+- [ ] Email service integration
+- [ ] Forgot password flow
+- [ ] User profile management
+- [ ] Chat export (PDF/JSON)
 
-- **Frontier LLM via API.** The generation backend is the main quality ceiling: an 8B local model cannot match a frontier model. The backend already ships an OpenAI-compatible path (`app/rag/llm.py::_generate_openai`), so a production deployment could point at a hosted model — e.g. **Groq's free Llama 3.3 70B** (`https://api.groq.com/openai/v1`, model `llama-3.3-70b-versatile`) for a large jump in answer quality at zero cost, or OpenAI/Anthropic for the best results. This was kept out of the thesis system on purpose: a fully **local, offline, private** stack is a defensible design choice for a university chatbot that handles student data.
-- **Conversation memory.** Follow-up questions (e.g. "When exactly?") currently retrieve on the bare follow-up text. Sending the previous turn(s) to retrieval would let the system resolve references.
-- **Table-aware extraction.** Tuition / quota tables are extracted by PyMuPDF as digit soup; `pdfplumber` or `camelot` re-extraction of those specific PDFs would recover them.
-- **Cross-encoder reranker.** Reranking the top-N retrieved chunks before generation would lift precision on ambiguous queries (~adds 200 ms).
+### v0.3
+- [ ] Advanced search filters
+- [ ] Feedback mechanism
+- [ ] Admin dashboard
+- [ ] Usage analytics
 
-## Data not in the repo
+### v1.0 (Production)
+- [ ] Performance optimization
+- [ ] Multi-user concurrent load testing
+- [ ] Deployment guide (Docker/K8s)
 
-The `Dataset/` folder contains thousands of PDFs and a 180 MB FAISS index — too big for git. Reproduce by:
+---
 
-1. Drop your UPI source PDFs into `Dataset/<category>/`.
-2. Run notebooks 01 -> 02 -> 03.
-3. Result is `Dataset/_pipeline/index/faiss.index` etc. The backend's `.env` already points at this location.
+## 💡 Tips for Testing
 
-## License / Acknowledgements
+**Best demo questions:**
+- "Berapa jumlah mahasiswa di UPI?"
+- "Apa program studi di FIP?"
+- "Bagaimana prosedur pendaftaran?"
+- "Sebutkan fasilitas olahraga di UPI"
 
-Thesis project at Universitas Pendidikan Indonesia. Built on:
-- FAISS (Meta AI)
-- Sentence-Transformers, `intfloat/multilingual-e5-base` (Microsoft / community)
-- Ollama (with Llama 3 / Qwen 2.5)
-- FastAPI, Next.js, RAGAS
+**Test language switching:**
+- Open Settings → Change "Bahasa Antarmuka" → Save
+- Page auto-refreshes dengan bahasa baru
+- All UI text updates instantly
+
+**Test document viewer:**
+- Ask a question, click citation
+- Document opens in /viewer with page number
+- Close viewer, back to chat
+
+---
+
+## 📧 Support
+
+**For alpha testing issues:**
+- Contact: admin@upi.rag
+- Known issues documented in GitHub Issues
+
+---
+
+## 📄 License
+
+Alpha version untuk testing internal. Distribution restricted.
+
+---
+
+**Version:** Alpha v0.1  
+**Status:** Active Development  
+**Last Updated:** July 15, 2026
