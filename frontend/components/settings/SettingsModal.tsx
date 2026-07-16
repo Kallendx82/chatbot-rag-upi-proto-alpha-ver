@@ -261,10 +261,10 @@ export function SettingsModal() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="llama3.1:8b-instruct-q4_K_M">Llama 3.1 8B-Instruct (default) </SelectItem>
+                  <SelectItem value="llama3.1:8b-instruct-q4_K_M">Llama 3.1 8B-Instruct</SelectItem>
                   <SelectItem value="llama3.1:8b">Llama 3.1 8B </SelectItem>
                   <SelectItem value="llama3.2:3b">Llama 3.2 3B</SelectItem>
-                  <SelectItem value="qwen2.5:3b">Qwen2.5:3b</SelectItem>
+                  <SelectItem value="qwen2.5:3b">Qwen 2.5:3B (default)</SelectItem>
                   <SelectItem value="qwen3.5:4b-q4_K_M">Qwen 3.5 4B-q4</SelectItem>
                   <SelectItem value="gemma4:e2b ">gemma4:e2b </SelectItem>
 
@@ -272,8 +272,9 @@ export function SettingsModal() {
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
-                Model lokal melalui Ollama. Llama 3.1 8B paling akurat; Llama 3.2
-                3B paling cepat.
+                Model lokal melalui Ollama. Qwen 2.5:3B (default) paling cepat
+                dan tidak mudah timeout; Llama 3.1 8B lebih akurat tapi jauh
+                lebih lambat di perangkat ini.
               </p>
             </div>
 
