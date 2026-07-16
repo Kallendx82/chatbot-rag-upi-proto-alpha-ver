@@ -47,6 +47,47 @@ class LLMService:
     def backend(self) -> str:
         return self._settings.llm_backend
 
+    def warm_up(self) -> None:
+        """Force Ollama to load the default model into memory now.
+
+        Ollama loads a model lazily on its first /api/generate call, and a
+        cold load of an 8B model can take ~85s on this hardware - long enough
+        to blow past LLM_REQUEST_TIMEOUT and surface as "server busy" on a
+        user's very first question. Calling this once at backend startup
+        (before any user request arrives) pays that cost up front instead.
+        keep_alive in _generate_ollama then keeps it resident afterwards.
+        Best-effort: failures are logged, never raised (Ollama being down at
+        startup shouldn't stop the API from booting).
+        """
+        if self._settings.llm_backend != "ollama":
+            return
+        import time
+        import httpx
+
+        t0 = time.time()
+        try:
+            httpx.post(
+                f"{self._settings.ollama_base_url}/api/generate",
+                json={
+                    "model": self._settings.ollama_model,
+                    "prompt": "Hi",
+                    "stream": False,
+                    "keep_alive": "30m",
+                    "options": {"num_predict": 1},
+                },
+                timeout=180.0,
+            ).raise_for_status()
+            logger.info(
+                "Ollama model '%s' warmed up in %.1fs.",
+                self._settings.ollama_model, time.time() - t0,
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(
+                "Ollama warm-up for '%s' failed (%s) - first real chat "
+                "request will pay the cold-load cost instead.",
+                self._settings.ollama_model, exc,
+            )
+
     def generate(
         self,
         query: str,

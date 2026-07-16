@@ -23,10 +23,12 @@ export const DEFAULT_SETTINGS: Settings = {
   topK: 5,
   temperature: 0.2,
   language: "id",
-  // qwen2.5:3b is the tuned default (fast, ~10-30s replies); llama3.1:8b
-  // routinely exceeds LLM_REQUEST_TIMEOUT on this hardware and falls back
-  // to a generic "server busy" error instead of answering.
-  model: "qwen2.5:3b",
+  // llama3.1:8b-instruct-q4_K_M is the intended default. It answers in
+  // ~20-30s once Ollama has it resident; only a cold load (first request
+  // after Ollama/backend restart, or >30 min idle) takes ~85s. The backend
+  // warms this model up in the background at startup and LLM_REQUEST_TIMEOUT
+  // has a matching safety margin, so this should stay fast in practice.
+  model: "llama3.1:8b-instruct-q4_K_M",
   theme: "system",
   debugMode: false,
 };
@@ -40,13 +42,15 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: "upi-rag-settings",
-      version: 0.2,
-      // v0.1 persisted llama3.1:8b as the model default; force existing
-      // browsers onto the faster tuned default without touching their
-      // other saved preferences (topK, temperature, theme, language).
+      version: 0.3,
+      // v0.1 -> v0.2 temporarily switched the model default to qwen2.5:3b;
+      // v0.3 reverts to llama3.1:8b-instruct-q4_K_M (the intended default,
+      // now that the backend warms it up + has a longer timeout instead of
+      // needing a faster model). Force this for anyone below v0.3 without
+      // touching their other saved preferences.
       migrate: (persisted, version) => {
         const state = persisted as Settings;
-        if (version < 0.2) {
+        if (version < 0.3) {
           return { ...state, model: DEFAULT_SETTINGS.model };
         }
         return state;

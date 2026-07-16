@@ -47,6 +47,13 @@ class Container:
                 self.rag.readiness_detail(),
             )
 
+        # Warm up Ollama in the background so the first real user question
+        # doesn't pay the ~85s model-load cost itself (see LLMService.warm_up).
+        # Runs on a daemon thread: /health and retrieval already work while
+        # this is in flight, only chat answers are extractive until it's done.
+        import threading
+        threading.Thread(target=self.llm.warm_up, daemon=True).start()
+
 
 def build_container() -> Container:
     """Construct the container from cached settings."""
