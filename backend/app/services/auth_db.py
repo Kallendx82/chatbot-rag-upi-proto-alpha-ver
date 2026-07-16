@@ -49,10 +49,12 @@ def _db() -> sqlite3.Connection:
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+                email TEXT UNIQUE COLLATE NOCASE,
                 pw_salt BLOB NOT NULL,
                 pw_hash BLOB NOT NULL,
                 is_admin INTEGER NOT NULL DEFAULT 0,
-                created_at TEXT NOT NULL
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
             );
             CREATE TABLE IF NOT EXISTS auth_tokens (
                 token_sha256 TEXT PRIMARY KEY,
@@ -60,6 +62,16 @@ def _db() -> sqlite3.Connection:
                 expires_at TEXT NOT NULL,
                 created_at TEXT NOT NULL
             );
+            CREATE TABLE IF NOT EXISTS password_resets (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                token TEXT NOT NULL UNIQUE,
+                expires_at TEXT NOT NULL,
+                used_at TEXT,
+                created_at TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_password_resets_user
+                ON password_resets(user_id);
             CREATE TABLE IF NOT EXISTS chat_sessions (
                 id TEXT PRIMARY KEY,
                 user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -101,13 +113,14 @@ def _user_row_to_dict(row: sqlite3.Row) -> dict[str, Any]:
     return {
         "id": row["id"],
         "username": row["username"],
+        "email": row["email"],
         "is_admin": bool(row["is_admin"]),
         "created_at": row["created_at"],
     }
 
 
 # --- users / tokens ---------------------------------------------------------
-def create_user(username: str, password: str) -> dict[str, Any]:
+def create_user(username: str, password: str, email: str = "") -> dict[str, Any]:
     """Create a user; the very first account becomes admin. Raises ValueError."""
     with _lock:
         db = _db()
@@ -115,13 +128,15 @@ def create_user(username: str, password: str) -> dict[str, Any]:
         is_first = db.execute("SELECT COUNT(*) AS n FROM users").fetchone()["n"] == 0
         try:
             cur = db.execute(
-                "INSERT INTO users (username, pw_salt, pw_hash, is_admin, created_at)"
-                " VALUES (?, ?, ?, ?, ?)",
-                (username, salt, _hash_password(password, salt),
-                 1 if is_first else 0, _now()),
+                "INSERT INTO users (username, email, pw_salt, pw_hash, is_admin, created_at, updated_at)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (username, email, salt, _hash_password(password, salt),
+                 1 if is_first else 0, _now(), _now()),
             )
             db.commit()
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError as e:
+            if "email" in str(e):
+                raise ValueError("Email sudah terdaftar.") from None
             raise ValueError("Username sudah terdaftar.") from None
         row = db.execute("SELECT * FROM users WHERE id = ?", (cur.lastrowid,)).fetchone()
         return _user_row_to_dict(row)
@@ -172,6 +187,68 @@ def user_for_token(token: str) -> dict[str, Any] | None:
             (_token_digest(token), _now()),
         ).fetchone()
     return _user_row_to_dict(row) if row else None
+
+
+# --- password management ---------------------------------------------------
+def change_password(user_id: int, old_password: str, new_password: str) -> bool:
+    """Change password for authenticated user. Returns True if successful."""
+    with _lock:
+        db = _db()
+        row = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        if row is None:
+            return False
+        if not hmac.compare_digest(_hash_password(old_password, row["pw_salt"]), row["pw_hash"]):
+            return False
+        new_salt = secrets.token_bytes(16)
+        db.execute(
+            "UPDATE users SET pw_salt = ?, pw_hash = ?, updated_at = ? WHERE id = ?",
+            (new_salt, _hash_password(new_password, new_salt), _now(), user_id),
+        )
+        db.commit()
+    return True
+
+
+def request_password_reset(email: str) -> str | None:
+    """Create password reset token for email. Returns token if user exists, None otherwise."""
+    token = secrets.token_urlsafe(32)
+    expires = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+    with _lock:
+        db = _db()
+        row = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+        if row is None:
+            return None
+        db.execute(
+            "INSERT INTO password_resets (user_id, token, expires_at, created_at)"
+            " VALUES (?, ?, ?, ?)",
+            (row["id"], token, expires, _now()),
+        )
+        db.execute("DELETE FROM password_resets WHERE expires_at < ?", (_now(),))
+        db.commit()
+    return token
+
+
+def verify_and_reset_password(token: str, new_password: str) -> bool:
+    """Verify reset token and set new password. Returns True if successful."""
+    with _lock:
+        db = _db()
+        row = db.execute(
+            "SELECT user_id FROM password_resets WHERE token = ? AND expires_at >= ? AND used_at IS NULL",
+            (token, _now()),
+        ).fetchone()
+        if row is None:
+            return False
+        user_id = row["user_id"]
+        new_salt = secrets.token_bytes(16)
+        db.execute(
+            "UPDATE users SET pw_salt = ?, pw_hash = ?, updated_at = ? WHERE id = ?",
+            (new_salt, _hash_password(new_password, new_salt), _now(), user_id),
+        )
+        db.execute(
+            "UPDATE password_resets SET used_at = ? WHERE token = ?",
+            (_now(), token),
+        )
+        db.commit()
+    return True
 
 
 # --- chat sessions ----------------------------------------------------------

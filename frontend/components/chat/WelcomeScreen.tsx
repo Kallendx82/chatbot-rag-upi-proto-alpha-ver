@@ -3,10 +3,12 @@
 import { motion } from "framer-motion";
 
 import { BrandLogo } from "@/components/ui/BrandLogo";
+import { useI18n } from "@/contexts/I18nContext";
 
 // Dashboard sengaja dibiarkan bersih (tanpa rekomendasi pertanyaan).
 // `onPick` dipertahankan agar pemanggil (ChatPanel) tetap kompatibel.
 export function WelcomeScreen(_props: { onPick: (prompt: string) => void }) {
+  const { t } = useI18n();
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-4 py-10">
       <motion.div
@@ -19,14 +21,13 @@ export function WelcomeScreen(_props: { onPick: (prompt: string) => void }) {
           <BrandLogo className="h-24 w-24" iconClassName="h-8 w-8" />
         </div>
         <h1 className="font-serif text-3xl font-semibold tracking-tight">
-          Chatbot UPI
+          {t("common.appName")}
         </h1>
         <p className="mt-1 text-xs font-medium text-muted-foreground">
-          -Using RAG systems- α ver.
+          {t("common.subtitle")}
         </p>
         <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
-          Tanyakan informasi seputar Universitas Pendidikan Indonesia. Setiap
-          jawaban didukung sumber dokumen resmi yang dapat Anda telusuri.
+          {t("welcome.description")}
         </p>
       </motion.div>
     </div>

@@ -23,7 +23,10 @@ export const DEFAULT_SETTINGS: Settings = {
   topK: 5,
   temperature: 0.2,
   language: "id",
-  model: "llama3.1:8b-instruct-q4_K_M",
+  // qwen2.5:3b is the tuned default (fast, ~10-30s replies); llama3.1:8b
+  // routinely exceeds LLM_REQUEST_TIMEOUT on this hardware and falls back
+  // to a generic "server busy" error instead of answering.
+  model: "qwen2.5:3b",
   theme: "system",
   debugMode: false,
 };
@@ -35,7 +38,20 @@ export const useSettingsStore = create<SettingsState>()(
       set: (key, value) => set({ [key]: value } as Partial<SettingsState>),
       reset: () => set({ ...DEFAULT_SETTINGS }),
     }),
-    { name: "upi-rag-settings", version: 0.1 },
+    {
+      name: "upi-rag-settings",
+      version: 0.2,
+      // v0.1 persisted llama3.1:8b as the model default; force existing
+      // browsers onto the faster tuned default without touching their
+      // other saved preferences (topK, temperature, theme, language).
+      migrate: (persisted, version) => {
+        const state = persisted as Settings;
+        if (version < 0.2) {
+          return { ...state, model: DEFAULT_SETTINGS.model };
+        }
+        return state;
+      },
+    },
   ),
 );
 

@@ -33,7 +33,8 @@ export function BrandLogo({
     <img
       src="/logo.png"
       alt="Logo chatbot"
-      className={cn("object-contain", className)}
+      draggable={false}
+      className={cn("object-contain select-none", className)}
       onError={() => setMissing(true)}
     />
   );

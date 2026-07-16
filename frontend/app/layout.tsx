@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Spectral, Asap, JetBrains_Mono } from "next/font/google";
 
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { I18nProvider } from "@/contexts/I18nContext";
 import "@/styles/globals.css";
 import "highlight.js/styles/github-dark.css";
 
@@ -34,6 +35,10 @@ export const metadata: Metadata = {
   title: "Chatbot UPI — Using RAG Systems α ver.",
   description:
     "Chatbot sumber informasi sivitas Universitas Pendidikan Indonesia berbasis Retrieval-Augmented Generation.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export const viewport: Viewport = {
@@ -55,7 +60,9 @@ export default function RootLayout({
       <body
         className={`${display.variable} ${body.variable} ${mono.variable}`}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <I18nProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </I18nProvider>
       </body>
     </html>
   );

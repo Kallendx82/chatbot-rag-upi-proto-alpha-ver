@@ -5,6 +5,7 @@ import { ArrowUp, Square } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useI18n } from "@/contexts/I18nContext";
 import { cn } from "@/lib/utils";
 
 /**
@@ -27,6 +28,7 @@ export function ChatInput({
   disabled?: boolean;
   disabledReason?: string;
 }) {
+  const { t } = useI18n();
   const DRAFT_KEY = "upi-rag-draft";
   const [value, setValue] = useState("");
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -84,8 +86,8 @@ export function ChatInput({
           onKeyDown={onKeyDown}
           placeholder={
             disabled
-              ? disabledReason || "Layanan tidak tersedia"
-              : "Tanyakan informasi seputar UPI…"
+              ? disabledReason || t("common.appName")
+              : t("welcome.placeholder")
           }
           className="max-h-[200px] flex-1 border-0 bg-transparent px-2 py-2 shadow-none focus-visible:ring-0"
         />
@@ -94,7 +96,7 @@ export function ChatInput({
             size="icon"
             variant="outline"
             onClick={onStop}
-            aria-label="Hentikan"
+            aria-label="Stop"
             className="shrink-0 rounded-xl"
           >
             <Square className="h-4 w-4" />
@@ -104,7 +106,7 @@ export function ChatInput({
             size="icon"
             onClick={submit}
             disabled={!value.trim() || disabled}
-            aria-label="Kirim"
+            aria-label={t("welcome.send")}
             className="shrink-0 rounded-xl"
           >
             <ArrowUp className="h-4 w-4" />
@@ -112,7 +114,7 @@ export function ChatInput({
         )}
       </div>
       <p className="mt-2 text-center text-xs text-muted-foreground">
-        Jawaban dihasilkan dari dokumen resmi UPI melalui RAG.
+        {t("welcome.footer")}
       </p>
     </div>
   );

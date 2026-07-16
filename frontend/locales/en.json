@@ -1,0 +1,91 @@
+{
+  "common": {
+    "appName": "Chatbot UPI",
+    "subtitle": "-Using RAG systems- α ver."
+  },
+  "sidebar": {
+    "closeSidebar": "Close sidebar",
+    "newChat": "New Chat",
+    "search": "Search conversations…",
+    "today": "Today",
+    "noConversations": "No conversations yet",
+    "rename": "Rename",
+    "delete": "Delete",
+    "settings": "Settings"
+  },
+  "user": {
+    "account": "Account",
+    "usageStatistics": "Usage statistics",
+    "changePassword": "Change password",
+    "switchAccount": "Switch account",
+    "logout": "Logout"
+  },
+  "header": {
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "retrievalDebug": "Retrieval Debug"
+  },
+  "welcome": {
+    "heading": "Chatbot UPI",
+    "subtitle": "-Using RAG systems- α ver.",
+    "description": "Ask questions about Universitas Pendidikan Indonesia. Each answer is supported by official UPI documents that you can explore.",
+    "placeholder": "Ask about UPI…",
+    "footer": "Answers are generated from official UPI documents through RAG.",
+    "send": "Send"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Configure retrieval, model, display, and language.",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "language": "Language",
+    "languageEnglish": "English",
+    "languageIndonesian": "Indonesian",
+    "topK": "Top-K retrieval",
+    "topKDescription": "Number of document chunks retrieved as context.",
+    "temperature": "Temperature",
+    "temperatureHint": "(Recommended ≤ 0.2)",
+    "backendModel": "Backend model",
+    "backendModelHint": "Local model via Ollama. Llama 3.1 8B most accurate; Llama 3.2 3B fastest.",
+    "debugMode": "Debug mode",
+    "debugModeDescription": "Show latency & backend on each answer.",
+    "reset": "Reset",
+    "save": "Save"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "signUp": "Sign Up",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot password?",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "createAccount": "Create account",
+    "loginDescription": "Log in to save and access your conversation history.",
+    "registerDescription": "Sign up to save your conversation history to your account.",
+    "signingIn": "Signing in…",
+    "signingUp": "Signing up…",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "switchAccount": "Switch account",
+    "changePassword": "Change password",
+    "logout": "Logout"
+  },
+  "validation": {
+    "minCharacters": "Minimum 8 characters",
+    "minLowercase": "At least 1 lowercase letter",
+    "minUppercase": "At least 1 uppercase letter",
+    "minSpecialChar": "At least 1 special character (*, #, ^, &, etc)",
+    "passwordMismatch": "Confirm password does not match.",
+    "emailRequired": "Email is required.",
+    "error": "Error"
+  },
+  "messages": {
+    "serverError": "Sorry, there was an internal server error. Please try again in a moment."
+  }
+}

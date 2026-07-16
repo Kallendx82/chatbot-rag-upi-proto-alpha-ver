@@ -17,9 +17,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 from app.schemas.auth import (
     AuthResponse,
+    ChangePasswordRequest,
+    ForgotPasswordRequest,
     LoginRequest,
     MessagesReplaceRequest,
     RegisterRequest,
+    ResetPasswordRequest,
     SessionCreateRequest,
     SessionDetail,
     SessionRenameRequest,
@@ -62,7 +65,7 @@ def get_admin_user(user: dict[str, Any] = Depends(get_current_user)) -> dict[str
 @router.post("/auth/register", response_model=AuthResponse, tags=["auth"])
 def register(body: RegisterRequest) -> AuthResponse:
     try:
-        user = auth_db.create_user(body.username, body.password)
+        user = auth_db.create_user(body.username, body.password, body.email)
     except ValueError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from None
     return AuthResponse(token=auth_db.issue_token(user["id"]), user=UserInfo(**user))
@@ -87,6 +90,36 @@ def logout(request: Request) -> Response:
 @router.get("/auth/me", response_model=UserInfo, tags=["auth"])
 def me(user: dict[str, Any] = Depends(get_current_user)) -> UserInfo:
     return UserInfo(**user)
+
+
+@router.post("/auth/change-password", tags=["auth"])
+def change_password(
+    body: ChangePasswordRequest,
+    user: dict[str, Any] = Depends(get_current_user),
+) -> Response:
+    if not auth_db.change_password(user["id"], body.old_password, body.new_password):
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED, "Password lama tidak sesuai."
+        )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/auth/forgot-password", tags=["auth"])
+def forgot_password(body: ForgotPasswordRequest) -> dict[str, str]:
+    """Password reset disabled for alpha testing."""
+    raise HTTPException(
+        status.HTTP_503_SERVICE_UNAVAILABLE,
+        "Fitur lupa password masih dalam development. Hubungi admin jika lupa password.",
+    )
+
+
+@router.post("/auth/reset-password", tags=["auth"])
+def reset_password(body: ResetPasswordRequest) -> Response:
+    """Reset password disabled for alpha testing."""
+    raise HTTPException(
+        status.HTTP_503_SERVICE_UNAVAILABLE,
+        "Fitur reset password masih dalam development.",
+    )
 
 
 # --- saved chat sessions ------------------------------------------------------

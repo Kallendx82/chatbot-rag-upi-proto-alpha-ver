@@ -59,7 +59,7 @@ def find_system_python() -> str | None:
     """Locate a real Python interpreter on PATH (not this frozen exe).
 
     PyInstaller's bundled interpreter has no pip/site-packages of its own,
-    so dependency installs must go through whatever Python the user has
+    so `python -m venv` must go through whatever Python the user has
     installed on the machine.
     """
     for candidate in ("python", "python3", "py"):
@@ -67,6 +67,33 @@ def find_system_python() -> str | None:
         if path:
             return path
     return None
+
+
+def ensure_backend_venv(root: Path, system_python: str) -> str | None:
+    """Return the path to an isolated backend/.venv Python, creating it if needed.
+
+    The backend MUST run from its own venv, not the system-wide Python: this
+    machine's global site-packages drift out of sync with this project's
+    pinned numpy/torch/faiss/sentence-transformers versions whenever an
+    unrelated project on the same machine upgrades them, and that mismatch
+    causes a native segfault a few seconds into backend startup (while
+    loading the embedding model / FAISS index) - it looks like the backend
+    window "just closes itself" with no Python traceback, because it's an
+    OS-level access violation, not a catchable exception.
+    """
+    backend_dir = root / "backend"
+    venv_python = backend_dir / ".venv" / "Scripts" / "python.exe"
+
+    if venv_python.is_file():
+        return str(venv_python)
+
+    print("[*] backend/.venv belum ada - membuat virtual environment terisolasi...")
+    result = subprocess.run([system_python, "-m", "venv", str(backend_dir / ".venv")])
+    if result.returncode != 0 or not venv_python.is_file():
+        print("[ERROR] Gagal membuat backend/.venv.")
+        return None
+    print("[OK] backend/.venv dibuat.")
+    return str(venv_python)
 
 
 def ensure_backend_deps(root: Path, python_exe: str) -> bool:
@@ -86,7 +113,8 @@ def ensure_backend_deps(root: Path, python_exe: str) -> bool:
         print(f"[ERROR] {req} tidak ditemukan.")
         return False
 
-    print("[*] Menginstall backend dependencies (pip install)... ini bisa memakan beberapa menit.")
+    print("[*] Menginstall backend dependencies (pip install) ke backend/.venv... "
+          "ini bisa memakan beberapa menit.")
     result = subprocess.run(
         [python_exe, "-m", "pip", "install", "-r", str(req)],
         cwd=str(backend_dir),
@@ -165,13 +193,18 @@ def main() -> int:
 
     print(f"[*] Project root: {root}")
 
-    python_exe = find_system_python()
-    if not python_exe:
+    system_python = find_system_python()
+    if not system_python:
         print("[ERROR] Python tidak ditemukan di PATH. Install Python 3.10+ terlebih dahulu (python.org).")
         input("Tekan Enter untuk keluar...")
         return 1
 
-    if not ensure_backend_deps(root, python_exe):
+    backend_python = ensure_backend_venv(root, system_python)
+    if not backend_python:
+        input("Tekan Enter untuk keluar...")
+        return 1
+
+    if not ensure_backend_deps(root, backend_python):
         input("Tekan Enter untuk keluar...")
         return 1
 
@@ -179,7 +212,7 @@ def main() -> int:
         input("Tekan Enter untuk keluar...")
         return 1
 
-    backend_proc = start_backend(root, python_exe)
+    backend_proc = start_backend(root, backend_python)
     frontend_proc = start_frontend(root)
 
     print("\n[*] Menunggu backend siap (model + index bisa memakan waktu ~1 menit pertama kali)...")

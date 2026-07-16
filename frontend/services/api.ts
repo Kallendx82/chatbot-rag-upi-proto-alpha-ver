@@ -168,6 +168,35 @@ export const api = {
     });
   },
 
+  changePassword(
+    token: string,
+    oldPassword: string,
+    newPassword: string
+  ): Promise<void> {
+    return requestVoid("/api/auth/change-password", {
+      method: "POST",
+      headers: authHeader(token),
+      body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
+      timeoutMs: 15_000,
+    });
+  },
+
+  forgotPassword(email: string): Promise<{ token: string; message: string }> {
+    return request<{ token: string; message: string }>("/api/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+      timeoutMs: 15_000,
+    });
+  },
+
+  resetPassword(token: string, newPassword: string): Promise<void> {
+    return requestVoid("/api/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ token, new_password: newPassword }),
+      timeoutMs: 15_000,
+    });
+  },
+
   // --- server-saved chat sessions ------------------------------------------
   listSessions(token: string): Promise<ServerSessionSummary[]> {
     return request<ServerSessionSummary[]>("/api/sessions", {
