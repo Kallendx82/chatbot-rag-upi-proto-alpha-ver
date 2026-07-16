@@ -54,6 +54,8 @@ dist/
 
 # Project specific
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
 *.sqlite3
 logs/
@@ -70,6 +72,10 @@ htmlcov/
 launcher/build/
 launcher/dist/
 *.spec
+
+# Ingestion pipeline: generated/backup artefacts, not source
+backend/app/data/backups/
+backend/scripts/ingestion/_work/
 
 # Keep docs and source code only
 /Dataset/

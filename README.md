@@ -73,6 +73,19 @@ di PATH.
 
 Browser: `http://localhost:3000`
 
+### Add New PDFs (Windows)
+
+`Add-New-PDF.exe` di root project menambahkan dokumen PDF baru ke basis
+pengetahuan chatbot tanpa command line: double-click, isi folder PDF +
+nama kategori, tunggu proses selesai. Di baliknya menjalankan pipeline
+extract → clean (OCR untuk halaman scan) → chunk → embed, lalu menggabungkan
+hasilnya ke index yang sama dipakai backend. Restart backend setelah selesai
+agar dokumen baru bisa ditemukan. Detail teknis tiap tahap ada di
+[`backend/scripts/ingestion/README.md`](backend/scripts/ingestion/README.md).
+
+Membutuhkan `backend/.venv` sudah pernah dibuat (otomatis oleh
+`UPI-Chatbot-Launcher.exe` saat pertama kali dijalankan).
+
 ---
 
 ## ⚙️ Configuration
