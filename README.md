@@ -8,7 +8,7 @@ Sistem chatbot berbasis Retrieval-Augmented Generation (RAG) untuk menjawab pert
 
 ## 🎯 Fitur Utama
 
-- **RAG Pipeline**: Retrieval dari 56,833+ vectors database dengan hybrid search
+- **RAG Pipeline**: Retrieval dari 60,000+ vectors database dengan hybrid search
 - **Multi-language**: Support Bahasa Indonesia & English dengan dynamic switching
 - **Chat Management**: Riwayat percakapan tersimpan per user
 - **Document Viewer**: Akses dokumen sumber dengan deep-linking
@@ -95,7 +95,7 @@ Membutuhkan `backend/.venv` sudah pernah dibuat (otomatis oleh
 ```env
 # LLM
 OLLAMA_MODEL=qwen2.5:3b
-LLM_REQUEST_TIMEOUT=60
+LLM_REQUEST_TIMEOUT=90
 
 # Database
 FAISS_INDEX_PATH=./app/data/faiss.index
@@ -158,6 +158,61 @@ python manage_users.py delete <username> --force
 
 ---
 
+## 🛠️ Troubleshooting
+
+### Ollama not using the GPU
+
+If chat answers are slow or time out, check whether Ollama is actually
+using the GPU:
+
+```powershell
+ollama ps
+```
+
+The `PROCESSOR` column should show `100% GPU` (or close to it). If it shows
+`100% CPU`, Windows hasn't assigned Ollama to the discrete GPU — common on
+laptops with hybrid graphics (NVIDIA Optimus), where the dGPU stays asleep
+until an app is explicitly assigned to it:
+
+1. Open **Settings → System → Display → Graphics**
+2. Find (or add) **`ollama.exe`** and **`ollama app.exe`**
+   (usually in `%LOCALAPPDATA%\Programs\Ollama\`)
+3. Set **GPU preference** to **High performance** (your NVIDIA GPU) for both
+4. Leave **"Optimizations for windowed games"** off — Ollama has no
+   window/game rendering loop, so this setting is a no-op for it
+5. Restart Ollama (see below) for the change to take effect
+
+### Restarting Ollama manually
+
+Windows GPU preference changes only apply to a *new* Ollama process, so
+quitting and relaunching is required after step 3 above (or whenever Ollama
+seems stuck/misbehaving):
+
+**Via the system tray:** right-click the Ollama icon → **Quit**, then
+relaunch it from the Start Menu.
+
+**Via PowerShell:**
+```powershell
+Get-Process -Name "ollama*" | Stop-Process -Force
+Start-Process "$env:LOCALAPPDATA\Programs\Ollama\ollama app.exe"
+```
+
+Verify with `ollama ps` after a chat request — `PROCESSOR` should now show
+GPU usage.
+
+### Why qwen2.5:3b is the default model
+
+On a 6 GB VRAM card, `qwen2.5:3b` runs 100% on GPU (~2.1 GB) and answers in
+~15s. `llama3.1:8b-instruct-q4_K_M` only reaches ~78% GPU (~5.3 GB) and
+takes ~55s — and while resident (30 min `keep_alive` after each use), the
+~0.6 GB left over can visibly corrupt rendering in other GPU-accelerated
+apps running at the same time. `llama3.1:8b-instruct-q4_K_M` is still
+available per-request from the Settings model dropdown when accuracy
+matters more than multitasking safety. See the comments in `backend/.env`
+(`OLLAMA_MODEL`, `LLM_REQUEST_TIMEOUT`) for the full measurements.
+
+---
+
 ## 🗓️ Roadmap
 
 - **v0.1**: Core RAG + auth + i18n ✅
@@ -173,4 +228,4 @@ Private development. Not for public distribution.
 
 ---
 
-**Latest Update**: July 15, 2026
+**Latest Update**: July 17, 2026
