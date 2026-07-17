@@ -3,6 +3,10 @@ __pycache__/
 .venv/
 .env
 app/data/*.index
-app/data/*.json
+# chunks_meta.json / index_info.json are tracked (chunks_meta.json ~80 MB,
+# under GitHub's 100 MB hard limit) so the knowledge base's text content is
+# backed up in git. faiss.index (~190 MB) stays excluded - too large for a
+# normal git push (GitHub hard-rejects files over 100 MB); rebuild it
+# locally from chunks_meta.json + the embedding model if ever needed.
 app/data/logs/
 .pytest_cache/

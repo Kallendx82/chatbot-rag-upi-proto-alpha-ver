@@ -1,0 +1,7 @@
+{
+  "embedding_model": "intfloat/multilingual-e5-base",
+  "embedding_dim": 768,
+  "n_vectors": 63400,
+  "use_e5_prefixes": true,
+  "rebuilt_at": "2026-07-17T18:47:39.652026"
+}
