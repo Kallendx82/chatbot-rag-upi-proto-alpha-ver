@@ -272,10 +272,10 @@ export function SettingsModal() {
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
-                Model lokal melalui Ollama. Qwen 2.5:3B (default) tetap
-                cepat walau tanpa akselerasi GPU; Llama 3.1 8B lebih akurat
-                tapi saat ini berjalan di CPU sehingga bisa sangat lambat
-                (&gt;2 menit per jawaban).
+                Model lokal melalui Ollama. Qwen 2.5:3B (default) paling
+                cepat dan hemat VRAM; Llama 3.1 8B lebih akurat tapi
+                memakai VRAM jauh lebih banyak dan bisa memperlambat
+                aplikasi lain saat dipakai.
               </p>
             </div>
 

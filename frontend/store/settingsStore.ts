@@ -23,14 +23,15 @@ export const DEFAULT_SETTINGS: Settings = {
   topK: 5,
   temperature: 0.2,
   language: "id",
-  // TEMPORARY default until Ollama is confirmed to be using the RTX 4050
-  // instead of CPU (ollama ps showed "100% CPU", 0 B VRAM detected - a
-  // classic Optimus laptop issue where the dGPU stays asleep unless an app
-  // is explicitly assigned to it in the NVIDIA Control Panel). On CPU, a
-  // real RAG request with llama3.1:8b-instruct-q4_K_M took >120s and still
-  // fell back to extractive; qwen2.5:3b stays fast even on CPU. Switch back
-  // to "llama3.1:8b-instruct-q4_K_M" (bump the persist version below too)
-  // once the GPU fix is verified.
+  // Deliberate default, not just a fallback: with Ollama assigned to the
+  // RTX 4050 (NVIDIA Control Panel -> High performance), qwen2.5:3b runs
+  // 100% GPU at 2.1 GB VRAM (~14s per RAG-grounded answer), while
+  // llama3.1:8b-instruct-q4_K_M only reaches 78% GPU at 5.3 GB (~56s) and,
+  // staying resident for its 30 min keep_alive, left just ~0.6 GB of this
+  // 6 GB card free - enough to visibly corrupt rendering in other
+  // GPU-accelerated apps (observed in Claude Code) while it sat loaded.
+  // llama3.1:8b-instruct-q4_K_M is still selectable per-request from
+  // Settings for when accuracy matters more than multitasking safety.
   model: "qwen2.5:3b",
   theme: "system",
   debugMode: false,
@@ -48,11 +49,9 @@ export const useSettingsStore = create<SettingsState>()(
       version: 0.4,
       // v0.1 -> v0.2: default -> qwen2.5:3b. v0.2 -> v0.3: default ->
       // llama3.1:8b-instruct-q4_K_M (assumed fixed by backend warm-up).
-      // v0.3 -> v0.4: back to qwen2.5:3b - real testing showed Ollama was
-      // running the 8B model on CPU (GPU not detected), where even a warm
-      // request took >120s. Revisit once the GPU routing fix is confirmed.
-      // Force the current default for anyone below v0.4 without touching
-      // their other saved preferences.
+      // v0.3 -> v0.4: back to qwen2.5:3b for good - see the comment on
+      // DEFAULT_SETTINGS.model above. Force the current default for anyone
+      // below v0.4 without touching their other saved preferences.
       migrate: (persisted, version) => {
         const state = persisted as Settings;
         if (version < 0.4) {
