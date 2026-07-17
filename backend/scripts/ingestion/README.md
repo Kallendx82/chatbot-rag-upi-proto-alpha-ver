@@ -111,11 +111,27 @@ cp backups/<timestamp>/index_info.json .
 ```
 Restart the backend afterwards.
 
+## Where the original PDF ends up
+
+By default, each PDF you ingest is **copied** into `backend/app/data/sources/`
+as `<doc_id>.pdf`, and `chunks_meta.json`'s `source` field points at that
+copy - not wherever you ingested it from. This means the chatbot's "view
+source" link keeps working even if you later move, rename, or delete the
+folder you dragged into `Add-New-PDF.exe`.
+
+Pass `--sources-dir ""` to `run_pipeline.py` to disable this and keep the
+old reference-only behaviour (chunks_meta.json points straight at the
+original file; nothing gets copied - useful if you're ingesting from a
+huge shared drive and don't want a second copy of everything).
+
 ## Notes / limitations
 
-- `doc_id` is a hash of the PDF's **absolute file path**. Moving/renaming a
-  PDF and re-ingesting it will be treated as a brand-new document (its old
-  chunks under the previous path are *not* auto-removed).
+- `doc_id` is a hash of the PDF's **absolute file path at ingestion time**
+  (not its content), computed before any copying happens. Moving/renaming
+  the PDF and re-ingesting it will be treated as a brand-new document (its
+  old chunks under the previous path are *not* auto-removed) - copying the
+  original into `sources/` only protects against the *source folder*
+  disappearing after ingestion, not against re-ingesting a relocated file.
 - The keyword extractor and section/heading detector are simple heuristics,
   not real NLP - good enough for UI hints, not for anything that needs to be
   precise.

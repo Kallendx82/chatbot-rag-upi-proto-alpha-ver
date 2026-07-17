@@ -35,9 +35,24 @@ def main() -> int:
         default=Path(__file__).resolve().parents[2] / "app" / "data",
         help="Folder holding faiss.index / chunks_meta.json / index_info.json (default: backend/app/data)",
     )
+    parser.add_argument(
+        "--sources-dir",
+        type=Path,
+        default=None,
+        help="Where to copy original PDFs so the viewer keeps working even if "
+             "--pdf-dir is later moved/deleted (default: <data-dir>/sources). "
+             "Pass an empty string to disable copying and keep the old "
+             "reference-only behaviour.",
+    )
     parser.add_argument("--work-dir", type=Path, default=None, help="Where to write intermediate JSON (default: auto-generated under _work/)")
     parser.add_argument("--keep-work", action="store_true", help="Don't delete the intermediate JSON after a successful run")
     args = parser.parse_args()
+
+    sources_dir = args.sources_dir
+    if sources_dir is None:
+        sources_dir = args.data_dir / "sources"
+    elif str(sources_dir) == "":
+        sources_dir = None
 
     if not args.pdf_dir.is_dir():
         print(f"[ERROR] --pdf-dir does not exist: {args.pdf_dir}")
@@ -51,7 +66,7 @@ def main() -> int:
     print(f"=== Ingestion pipeline: {args.pdf_dir} (category: {args.category}) ===\n")
 
     print("--- Step 1/4: Extract (PDF -> text, OCR fallback) ---")
-    extract_step.run(args.pdf_dir, raw_dir)
+    extract_step.run(args.pdf_dir, raw_dir, sources_dir=sources_dir)
 
     print("\n--- Step 2/4: Clean ---")
     clean_step.run(raw_dir, clean_dir)
