@@ -156,6 +156,18 @@ class FaissVectorStore:
         """Build-time metadata (model, dim, n_vectors, built_at)."""
         return dict(self._info)
 
+    def _chunk_row_by_id(self) -> dict[str, int]:
+        """Lazily built chunk_id -> row-index map, for O(1) neighbor lookup."""
+        idx = getattr(self, "_chunk_row_idx", None)
+        if idx is None:
+            idx = {
+                row["chunk_id"]: i
+                for i, row in enumerate(self._meta)
+                if row.get("chunk_id")
+            }
+            self._chunk_row_idx = idx
+        return idx
+
     def doc_source(self, doc_id: str) -> str | None:
         """Original source path for a document id (used to serve the PDF).
 
@@ -273,10 +285,19 @@ class FaissVectorStore:
 
         results: list[dict[str, Any]] = []
         for rank, row in enumerate(ordered, start=1):
-            # Score shown = dense cosine when available (for the UI's % bar),
-            # else 0.0 for a BM25-only hit. score_threshold still applies.
-            score = dense_score.get(row, 0.0)
-            if score < score_threshold and row in dense_score:
+            # Score shown = dense cosine when available (for the UI's % bar).
+            # A row absent from dense_score matched ONLY via BM25 keyword
+            # overlap with zero semantic similarity to the query - RRF's rank
+            # fusion can still rank these highly on lucky keyword coincidence
+            # (e.g. an unrelated article sharing a common word), and because
+            # they carry no dense score they were previously immune to
+            # score_threshold entirely. Drop them outright: BM25 should only
+            # re-rank candidates dense search already considered plausible,
+            # not inject content dense retrieval never found relevant.
+            if row not in dense_score:
+                continue
+            score = dense_score[row]
+            if score < score_threshold:
                 continue
             chunk = dict(self._meta[row])
             chunk["score"] = score
@@ -289,3 +310,40 @@ class FaissVectorStore:
             "total_ms": round((t3 - t0) * 1000, 2),
         }
         return results, timings
+
+    def expand_with_next_neighbor(
+        self, results: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Append each hit's immediate next chunk from the same document.
+
+        Long enumerated lists (e.g. "these are UPI's 8 faculties: ...") often
+        span a chunk boundary: the chunk with the framing sentence scores
+        well against a query like "what faculties does UPI have", but its
+        continuation (items 3 onward) reads as a bare list with no framing
+        and scores too low to be retrieved on its own - so the model only
+        ever sees a truncated list and truthfully reports an incomplete
+        answer. Pulling in chunk_index+1 from the same doc_id (when it
+        exists) gives the model that continuation without needing a bigger
+        top_k or re-chunking the source document.
+        """
+        row_by_id = self._chunk_row_by_id()
+        seen = {c["chunk_id"] for c in results if c.get("chunk_id")}
+        expanded = list(results)
+        for chunk in results:
+            doc_id = chunk.get("doc_id")
+            idx = chunk.get("chunk_index")
+            if doc_id is None or idx is None:
+                continue
+            next_id = f"{doc_id}::{idx + 1}"
+            if next_id in seen:
+                continue
+            row = row_by_id.get(next_id)
+            if row is None:
+                continue
+            neighbor = dict(self._meta[row])
+            neighbor["score"] = chunk.get("score", 0.0)
+            neighbor["rank"] = chunk.get("rank")
+            neighbor["neighbor_of"] = chunk["chunk_id"]
+            expanded.append(neighbor)
+            seen.add(next_id)
+        return expanded
