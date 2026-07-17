@@ -31,6 +31,30 @@ so it picks up the updated index.
 up in citations/debug info) - use whatever grouping makes sense (a faculty
 name, a document type, "BiroSDM", etc).
 
+## Organizing batches - one subfolder per topic, always
+
+`--pdf-dir` is scanned **recursively**. Point it at a folder that already
+holds an earlier batch in its own subfolders (e.g. a shared "New PDF"
+staging folder) and it will re-scan - and re-OCR - every old PDF too,
+overwriting their category with today's `--category` label in the process.
+
+The tool refuses to run when this looks like it's about to happen (any
+direct subfolder of `--pdf-dir` that already contains PDFs), so this fails
+safely rather than silently corrupting old categories. Fix it by creating a
+**new** subfolder named after what this batch is actually about, and
+pointing `--pdf-dir` directly at that subfolder:
+
+```
+New PDF/
+├── Kalender-Akademik/       already ingested - leave alone
+├── Struktur-Organisasi/     already ingested - leave alone
+└── Kalender-Akademik-2027/  new batch -> point --pdf-dir here, not at "New PDF"
+```
+
+If you genuinely want to re-scan everything under a folder in one go (rare -
+e.g. rebuilding categories from scratch), pass `--allow-nested-batches` to
+skip the check.
+
 ## What each step does
 
 ### 1. Extract (`extract.py`)
