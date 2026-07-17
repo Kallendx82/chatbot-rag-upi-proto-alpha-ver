@@ -96,6 +96,7 @@ Membutuhkan `backend/.venv` sudah pernah dibuat (otomatis oleh
 # LLM
 OLLAMA_MODEL=qwen2.5:3b
 LLM_REQUEST_TIMEOUT=90
+OLLAMA_NUM_CTX=4096
 
 # Database
 FAISS_INDEX_PATH=./app/data/faiss.index
@@ -211,6 +212,39 @@ available per-request from the Settings model dropdown when accuracy
 matters more than multitasking safety. See the comments in `backend/.env`
 (`OLLAMA_MODEL`, `LLM_REQUEST_TIMEOUT`) for the full measurements.
 
+### Incomplete or wrong-sounding answers to "list all X" questions
+
+RAG answers are only as complete as the chunks retrieved. Three fixes went
+into `backend/app/rag/vectorstore.py` and `rag_service.py` after "ada
+fakultas apa saja di UPI?" only listed 2 of UPI's 8 faculties:
+
+1. **Noise filtering** — hybrid retrieval (dense + BM25 fused via
+   Reciprocal Rank Fusion) could previously rank a chunk highly on pure
+   keyword coincidence with zero semantic relevance to the query (e.g. an
+   unrelated article surfacing because it happened to share a word).
+   Chunks with no dense/semantic score are now dropped outright: BM25 only
+   re-ranks candidates dense search already found plausible.
+2. **Wider context window** — a real grounded prompt (system rules +
+   retrieved chunks + few-shot examples + question) measured ~2650 tokens,
+   already over the old `OLLAMA_NUM_CTX=2048`, silently truncating context
+   the model never got to see. Raised to 4096.
+3. **Neighbor-chunk expansion** — long enumerated lists in source documents
+   (like UPI's 8-faculty list) are sometimes split across sequential
+   chunks. Only the chunk with the framing sentence ("berikut adalah...")
+   scores well against a generic query; its continuation reads as a bare
+   list and scores too low to be retrieved on its own. `FaissVectorStore.
+   expand_with_next_neighbor()` now pulls in each retrieved chunk's
+   immediate next chunk from the same source document (same `doc_id`,
+   `chunk_index + 1`) when one exists, so continuations aren't silently
+   dropped. This runs *after* the final top-k selection in
+   `RagService.retrieve()`, not inside `vectorstore.search()` - expanding
+   earlier just means the oversampled-pool truncation discards it again.
+
+If you hit another incomplete-list answer, check `GET /api/retrieve/debug`
+first: it returns the actual retrieved chunks and the exact `prompt_preview`
+sent to the model, which tells you whether the gap is retrieval (wrong/
+missing chunks) or generation (right chunks, model didn't use them).
+
 ---
 
 ## 🗓️ Roadmap
@@ -228,4 +262,4 @@ Private development. Not for public distribution.
 
 ---
 
-**Latest Update**: July 17, 2026
+**Latest Update**: July 17, 2026 (retrieval quality fixes: noise filtering, wider context window, neighbor-chunk expansion)
