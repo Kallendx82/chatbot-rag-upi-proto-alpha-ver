@@ -25,6 +25,21 @@ import embed as embed_step        # noqa: E402
 import extract as extract_step    # noqa: E402
 
 
+def _subfolders_with_pdfs(pdf_dir: Path) -> list[Path]:
+    """Direct subfolders of pdf_dir that already contain at least one PDF.
+
+    extract.py scans --pdf-dir recursively (rglob), so pointing the tool at
+    a parent folder that holds earlier batches in subfolders would silently
+    re-ingest them under today's --category too. This is the check that
+    catches that before any work happens.
+    """
+    found = []
+    for child in sorted(pdf_dir.iterdir()):
+        if child.is_dir() and any(child.rglob("*.pdf")):
+            found.append(child)
+    return found
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Full PDF ingestion pipeline (extract -> clean -> chunk -> embed).")
     parser.add_argument("--pdf-dir", required=True, type=Path, help="Folder of new PDFs (searched recursively)")
@@ -46,6 +61,14 @@ def main() -> int:
     )
     parser.add_argument("--work-dir", type=Path, default=None, help="Where to write intermediate JSON (default: auto-generated under _work/)")
     parser.add_argument("--keep-work", action="store_true", help="Don't delete the intermediate JSON after a successful run")
+    parser.add_argument(
+        "--allow-nested-batches",
+        action="store_true",
+        help="Skip the safety check that refuses to run when --pdf-dir contains "
+             "subfolders that already have PDFs in them (see check below). Only "
+             "use this if you really mean to re-scan multiple existing batches "
+             "at once under one category.",
+    )
     args = parser.parse_args()
 
     sources_dir = args.sources_dir
@@ -57,6 +80,26 @@ def main() -> int:
     if not args.pdf_dir.is_dir():
         print(f"[ERROR] --pdf-dir does not exist: {args.pdf_dir}")
         return 1
+
+    if not args.allow_nested_batches:
+        nested = _subfolders_with_pdfs(args.pdf_dir)
+        if nested:
+            print(f"[ERROR] '{args.pdf_dir}' contains {len(nested)} subfolder(s) that already have PDFs in them:")
+            for d in nested:
+                print(f"  - {d}")
+            print(
+                "\nPointing the tool at a folder that already holds a previous batch "
+                "would re-scan (and re-OCR) those old PDFs too, and overwrite their "
+                f"category with '{args.category}' - silently breaking whatever "
+                "organisation is already there.\n\n"
+                "Fix: create a NEW subfolder for this batch, named after what these "
+                "PDFs are actually about (e.g. 'Kalender-Akademik-2027', not "
+                "'Batch-3'), put only the new PDFs in it, and point --pdf-dir "
+                "directly at that subfolder - not at its parent.\n\n"
+                "(If you really do mean to re-scan everything under this folder in "
+                "one go, pass --allow-nested-batches to skip this check.)"
+            )
+            return 1
 
     work_dir = args.work_dir or (
         Path(__file__).resolve().parent / "_work" / dt.datetime.now().strftime("%Y%m%d_%H%M%S")
