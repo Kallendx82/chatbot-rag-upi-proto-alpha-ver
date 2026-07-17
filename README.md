@@ -201,16 +201,27 @@ Start-Process "$env:LOCALAPPDATA\Programs\Ollama\ollama app.exe"
 Verify with `ollama ps` after a chat request — `PROCESSOR` should now show
 GPU usage.
 
-### Why qwen2.5:3b is the default model
+### Why llama3.1:8b-instruct-q4_K_M is the default model
 
-On a 6 GB VRAM card, `qwen2.5:3b` runs 100% on GPU (~2.1 GB) and answers in
-~15s. `llama3.1:8b-instruct-q4_K_M` only reaches ~78% GPU (~5.3 GB) and
-takes ~55s — and while resident (30 min `keep_alive` after each use), the
-~0.6 GB left over can visibly corrupt rendering in other GPU-accelerated
-apps running at the same time. `llama3.1:8b-instruct-q4_K_M` is still
-available per-request from the Settings model dropdown when accuracy
-matters more than multitasking safety. See the comments in `backend/.env`
-(`OLLAMA_MODEL`, `LLM_REQUEST_TIMEOUT`) for the full measurements.
+Accuracy over speed: `llama3.1:8b-instruct-q4_K_M` is the intended default.
+`qwen2.5:3b` was only used as a comparison baseline while testing GPU
+offload and isn't meant to ship as the default, even though it's faster and
+lighter on VRAM.
+
+On this 6 GB VRAM card, `llama3.1:8b-instruct-q4_K_M` reaches ~75% GPU
+(~5.6 GB VRAM, `num_ctx=4096`) and takes ~55s per RAG-grounded answer.
+That leaves only ~0.3 GB of VRAM free while the model is resident (30 min
+`keep_alive` after each use) — tight enough to visibly corrupt rendering in
+other GPU-accelerated apps running at the same time (observed in Claude
+Code itself). `qwen2.5:3b` (100% GPU, ~2.1 GB, ~10-15s) remains selectable
+per-request from the Settings model dropdown when speed or multitasking
+matters more than accuracy. See the comments in `backend/.env`
+(`OLLAMA_MODEL`, `LLM_REQUEST_TIMEOUT`, `OLLAMA_NUM_CTX`) for the full
+measurements.
+
+If you notice rendering glitches in other apps while chatting, free the
+VRAM with `ollama stop llama3.1:8b-instruct-q4_K_M` (see
+[Restarting Ollama manually](#restarting-ollama-manually) above for more).
 
 ### Incomplete or wrong-sounding answers to "list all X" questions
 

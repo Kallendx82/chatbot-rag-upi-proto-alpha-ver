@@ -23,16 +23,16 @@ export const DEFAULT_SETTINGS: Settings = {
   topK: 5,
   temperature: 0.2,
   language: "id",
-  // Deliberate default, not just a fallback: with Ollama assigned to the
-  // RTX 4050 (NVIDIA Control Panel -> High performance), qwen2.5:3b runs
-  // 100% GPU at 2.1 GB VRAM (~14s per RAG-grounded answer), while
-  // llama3.1:8b-instruct-q4_K_M only reaches 78% GPU at 5.3 GB (~56s) and,
-  // staying resident for its 30 min keep_alive, left just ~0.6 GB of this
-  // 6 GB card free - enough to visibly corrupt rendering in other
-  // GPU-accelerated apps (observed in Claude Code) while it sat loaded.
-  // llama3.1:8b-instruct-q4_K_M is still selectable per-request from
-  // Settings for when accuracy matters more than multitasking safety.
-  model: "qwen2.5:3b",
+  // Intended default (product decision): llama3.1:8b-instruct-q4_K_M for
+  // accuracy - qwen2.5:3b was kept only as a speed/VRAM comparison
+  // baseline during GPU-offload testing, not meant to ship as default.
+  // Trade-offs to be aware of on a 6 GB VRAM card (RTX 4050): ~56s per
+  // answer at 75% GPU / 5.6 GB VRAM (num_ctx=4096), leaving only ~0.3 GB
+  // free - tight enough to affect other GPU-accelerated apps while the
+  // model is resident (30 min keep_alive after each use). qwen2.5:3b
+  // remains selectable per-request from Settings when speed/multitasking
+  // matters more than accuracy.
+  model: "llama3.1:8b-instruct-q4_K_M",
   theme: "system",
   debugMode: false,
 };
@@ -46,15 +46,16 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: "upi-rag-settings",
-      version: 0.4,
+      version: 0.5,
       // v0.1 -> v0.2: default -> qwen2.5:3b. v0.2 -> v0.3: default ->
-      // llama3.1:8b-instruct-q4_K_M (assumed fixed by backend warm-up).
-      // v0.3 -> v0.4: back to qwen2.5:3b for good - see the comment on
-      // DEFAULT_SETTINGS.model above. Force the current default for anyone
-      // below v0.4 without touching their other saved preferences.
+      // llama3.1:8b-instruct-q4_K_M. v0.3 -> v0.4: back to qwen2.5:3b
+      // (GPU-offload testing baseline). v0.4 -> v0.5: llama3.1:8b-instruct
+      // for good - see the comment on DEFAULT_SETTINGS.model above. Force
+      // the current default for anyone below v0.5 without touching their
+      // other saved preferences.
       migrate: (persisted, version) => {
         const state = persisted as Settings;
-        if (version < 0.4) {
+        if (version < 0.5) {
           return { ...state, model: DEFAULT_SETTINGS.model };
         }
         return state;
