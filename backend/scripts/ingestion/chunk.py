@@ -26,6 +26,7 @@ from pathlib import Path
 from typing import Any
 
 MAX_CHARS = 900       # soft ceiling per chunk
+MAX_CHARS_TABLE = 350  # tighter ceiling for structured table sentences — keeps each fact retrievable
 MIN_CHARS = 80        # merge trailing fragments smaller than this into the previous chunk
 OVERLAP_SENTENCES = 1  # carry the last sentence of a chunk into the next, for context continuity
 
@@ -65,7 +66,7 @@ def _split_sentences(paragraph: str) -> list[str]:
     return [s.strip() for s in _SENTENCE_SPLIT_RE.split(paragraph) if s.strip()]
 
 
-def split_into_chunks(text: str, max_chars: int = MAX_CHARS) -> list[str]:
+def split_into_chunks(text: str, max_chars: int = MAX_CHARS, overlap_sentences: int | None = None) -> list[str]:
     """Recursively pack paragraphs (falling back to sentences) into <= max_chars windows."""
     paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
     units: list[str] = []
@@ -97,11 +98,12 @@ def split_into_chunks(text: str, max_chars: int = MAX_CHARS) -> list[str]:
     # Light overlap: prefix each chunk (after the first) with the previous
     # chunk's last sentence, so retrieval near a chunk boundary still has
     # context on both sides.
-    if OVERLAP_SENTENCES and len(chunks) > 1:
+    ov = overlap_sentences if overlap_sentences is not None else OVERLAP_SENTENCES
+    if ov and len(chunks) > 1:
         for i in range(1, len(chunks)):
             prev_sentences = _split_sentences(chunks[i - 1])
             if prev_sentences:
-                overlap = " ".join(prev_sentences[-OVERLAP_SENTENCES:])
+                overlap = " ".join(prev_sentences[-ov:])
                 if not chunks[i].startswith(overlap):
                     chunks[i] = f"{overlap} {chunks[i]}".strip()
 
@@ -123,18 +125,30 @@ def extract_keywords(text: str, top_n: int = 8) -> list[str]:
     return [w for w, _ in ranked[:top_n]]
 
 
-def chunk_document(record: dict[str, Any], category: str, source_type: str = "pdf") -> list[dict[str, Any]]:
+def chunk_document(
+    record: dict[str, Any],
+    category: str,
+    source_type: str = "pdf",
+    max_chars_override: int | None = None,
+    overlap_override: int | None = None,
+) -> list[dict[str, Any]]:
     """Turn one cleaned extract.py record into a flat list of chunk dicts."""
     doc_id = record["doc_id"]
     chunks: list[dict[str, Any]] = []
     chunk_index = 0
+    overlap = overlap_override if overlap_override is not None else OVERLAP_SENTENCES
 
     for page in record.get("pages", []):
         page_text = page.get("text", "")
         if not page_text.strip():
             continue
         section = _find_section(page_text)
-        for piece in split_into_chunks(page_text):
+        is_table_page = page.get("method", "") == "text+table"
+        if max_chars_override is not None:
+            limit = max_chars_override
+        else:
+            limit = MAX_CHARS_TABLE if is_table_page else MAX_CHARS
+        for piece in split_into_chunks(page_text, max_chars=limit, overlap_sentences=overlap):
             chunks.append({
                 "doc_id": doc_id,
                 "source": record["source"],
@@ -155,7 +169,13 @@ def chunk_document(record: dict[str, Any], category: str, source_type: str = "pd
     return chunks
 
 
-def run(in_dir: Path, out_dir: Path, category: str) -> int:
+def run(
+    in_dir: Path,
+    out_dir: Path,
+    category: str,
+    max_chars_override: int | None = None,
+    overlap_override: int | None = None,
+) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     files = sorted(in_dir.glob("*.json"))
     if not files:
@@ -165,7 +185,11 @@ def run(in_dir: Path, out_dir: Path, category: str) -> int:
     total_chunks = 0
     for f in files:
         record = json.loads(f.read_text(encoding="utf-8"))
-        chunks = chunk_document(record, category=category)
+        chunks = chunk_document(
+            record, category=category,
+            max_chars_override=max_chars_override,
+            overlap_override=overlap_override,
+        )
         (out_dir / f.name).write_text(
             json.dumps(chunks, ensure_ascii=False, indent=2), encoding="utf-8"
         )

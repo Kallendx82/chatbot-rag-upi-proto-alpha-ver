@@ -259,6 +259,33 @@ export const api = {
     );
   },
 
+  // --- ingest (admin) -------------------------------------------------------
+  async ingestPdf(
+    token: string,
+    file: File,
+    category: string,
+    title?: string,
+    chunkSize?: number,
+    overlap?: number,
+  ): Promise<{ message: string; filename: string; category: string; chunks_added: number | null }> {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("category", category);
+    if (title) formData.append("title", title);
+    if (chunkSize != null) formData.append("chunk_size", String(chunkSize));
+    if (overlap != null) formData.append("overlap", String(overlap));
+    const res = await fetch(`${BASE_URL}/api/ingest`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(typeof err.detail === "string" ? err.detail : JSON.stringify(err.detail));
+    }
+    return res.json();
+  },
+
   // --- stats (admin) --------------------------------------------------------
   stats(token: string): Promise<StatsResponse> {
     return request<StatsResponse>("/api/stats", {

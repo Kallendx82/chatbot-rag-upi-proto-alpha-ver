@@ -54,6 +54,14 @@ class Container:
         import threading
         threading.Thread(target=self.llm.warm_up, daemon=True).start()
 
+    def reload_vectorstore(self) -> int:
+        """Force-reload FAISS index and BM25 from disk."""
+        self.store = FaissVectorStore(self.settings, self.embedder)
+        self.store.load()
+        self.rag._store = self.store
+        logger.info("Vector store reloaded (size: %d).", self.store.size)
+        return self.store.size
+
 
 def build_container() -> Container:
     """Construct the container from cached settings."""

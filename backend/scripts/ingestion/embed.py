@@ -83,7 +83,15 @@ def merge_and_embed(
         kept_vectors = np.empty((0, dim), dtype="float32")
 
     print(f"[*] Embedding {len(new_chunks)} new chunk(s) with {embedder.model_name} ...")
-    new_vectors = embedder.encode([c["text"] for c in new_chunks], kind="passage")
+    texts_to_embed = []
+    for c in new_chunks:
+        title = c.get("title", "")
+        text = c["text"]
+        if title and not text.startswith(title):
+            texts_to_embed.append(f"{title}\n{text}")
+        else:
+            texts_to_embed.append(text)
+    new_vectors = embedder.encode(texts_to_embed, kind="passage")
 
     combined_vectors = (
         np.vstack([kept_vectors, new_vectors]) if kept_vectors.shape[0] else new_vectors

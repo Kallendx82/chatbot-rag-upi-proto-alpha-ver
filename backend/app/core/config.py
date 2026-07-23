@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     embedding_batch_size: int = 32
 
     # --- Retrieval ---
-    default_top_k: int = 5
+    default_top_k: int = 8
     max_top_k: int = 20
     retrieval_score_threshold: float = 0.0  # 0 = keep all hits
 
