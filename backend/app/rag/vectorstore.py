@@ -185,31 +185,30 @@ class FaissVectorStore:
             self._doc_sources = cache
         return cache.get(str(doc_id))
 
+    def _resolve_path(self, src: str) -> Path:
+        """Resolve a source path: relative paths are resolved from the backend root."""
+        p = Path(src)
+        if not p.is_absolute():
+            p = Path(self._settings.faiss_index_path).parent.parent.parent / p
+        return p
+
     def resolve_source(self, doc_id: str) -> str | None:
         """Return an EXISTING file path for a document id, or None.
 
-        Chunk metadata stores absolute source paths recorded at ingestion time.
-        Some files have since moved within the dataset tree, so the stored path
-        no longer resolves. When that happens we fall back to a lazily-built
-        index of the actual files under the dataset root, matched by filename.
-        This recovers documents that were merely relocated (not deleted).
-
-        Web-scraped chunks store a `.md` source under a `text/` subfolder
-        (e.g. `.../UPI Cibiru/text/page.md`); the scraper also saved the
-        rendered page as a sibling PDF one level up (`.../UPI Cibiru/page.pdf`).
-        We prefer that PDF twin when it exists, so these sources can be opened
-        the same way as native PDF documents.
+        Source paths may be relative (to the backend root) or absolute.
+        Web-scraped `.md` sources prefer a sibling PDF twin when it exists.
+        Falls back to a basename index when the stored path doesn't resolve.
         """
         src = self.doc_source(doc_id)
         if not src:
             return None
-        path = Path(src)
+        path = self._resolve_path(src)
         if path.suffix.lower() == ".md" and path.parent.name.lower() == "text":
             pdf_twin = path.parent.parent / f"{path.stem}.pdf"
             if pdf_twin.is_file():
                 return str(pdf_twin)
         if path.is_file():
-            return src
+            return str(path)
         return self._basename_index().get(path.name.lower())
 
     def _basename_index(self) -> dict[str, str]:
@@ -227,16 +226,21 @@ class FaissVectorStore:
         return idx
 
     def _dataset_root(self) -> Path | None:
-        """Derive the dataset root (the 'Dataset' dir) from a stored source path."""
+        """Derive the dataset root from a stored source path.
+
+        For relative paths (bundled sources), the root is the sources directory.
+        For legacy absolute paths, tries to find a 'Dataset' ancestor.
+        """
         for row in self._meta:
             src = row.get("source")
             if not src:
                 continue
-            parts = Path(src).parts
+            path = self._resolve_path(src)
+            parts = path.parts
             for i, part in enumerate(parts):
-                if part.lower() == "dataset":
+                if part.lower() in ("dataset", "sources"):
                     return Path(*parts[: i + 1])
-            return Path(src).parent.parent
+            return path.parent.parent
         return None
 
     # -- retrieval ---------------------------------------------------------

@@ -14,7 +14,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import auth_routes, health_routes, rag_routes
+from app.api import auth_routes, health_routes, ingest_routes, rag_routes
 from app.core.config import get_settings
 from app.core.container import build_container
 from app.core.logging import get_logger, setup_logging
@@ -79,6 +79,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 app.include_router(health_routes.router)
 app.include_router(rag_routes.router, prefix=settings.api_prefix)
 app.include_router(auth_routes.router, prefix=settings.api_prefix)
+app.include_router(ingest_routes.router, prefix=settings.api_prefix)
 
 
 @app.get("/", tags=["health"])

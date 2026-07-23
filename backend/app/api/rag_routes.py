@@ -6,12 +6,14 @@ the result onto response schemas. All orchestration lives in the service layer.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import FileResponse
 
 from app.core.config import Settings, get_settings
 from app.core.container import get_rag_service
+from app.api.auth_routes import get_admin_user
 from app.schemas.rag import (
     ChatRequest,
     ChatResponse,
@@ -86,6 +88,7 @@ def retrieve_debug(
     language: str = "id",
     rag: RagService = Depends(get_rag_service),
     settings: Settings = Depends(get_settings),
+    admin: dict[str, Any] = Depends(get_admin_user),
 ) -> RetrievalDebugResponse:
     """Verbose retrieval inspection for the thesis retrieval-debugging tool.
 

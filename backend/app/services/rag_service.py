@@ -240,14 +240,8 @@ class RagService:
         results, timings = self._store.search(query, oversample, threshold)
 
         # Drop near-duplicate paragraphs (same boilerplate across many docs).
+        # Trim to exactly top_k for reproducibility and scientific rigor.
         deduped = self._dedupe_near_duplicates(results)[:k]
-
-        # Pull in each hit's immediate next chunk from the same document, if
-        # any. Must happen AFTER the [:k] cut, not before: a chunk's neighbor
-        # is appended past the end of the oversampled pool, so expanding
-        # earlier just gets it discarded by this same truncation instead of
-        # ever reaching the model. See FaissVectorStore.expand_with_next_neighbor.
-        deduped = self._store.expand_with_next_neighbor(deduped)
 
         # Normalise each chunk into the SourceChunk shape the API promises.
         normalised = [self._to_source(c) for c in deduped]

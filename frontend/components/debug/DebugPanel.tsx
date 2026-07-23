@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/services/api";
 import { useSettingsStore, useUIStore } from "@/store/settingsStore";
+import { useAuthStore } from "@/store/authStore";
 import { ApiError, type RetrievalDebugResponse } from "@/types";
 import { scorePercent } from "@/lib/utils";
 
@@ -34,12 +35,16 @@ export function DebugPanel() {
   const setOpen = useUIStore((s) => s.setDebugPanelOpen);
   const topK = useSettingsStore((s) => s.topK);
   const language = useSettingsStore((s) => s.language);
-
+  const user = useAuthStore((s) => s.user);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<RetrievalDebugResponse | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
+
+  if (!user || !user.is_admin) {
+    return null;
+  }
 
   const run = async () => {
     const q = query.trim();

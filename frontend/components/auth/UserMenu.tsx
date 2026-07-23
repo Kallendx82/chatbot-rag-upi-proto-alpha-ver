@@ -87,6 +87,14 @@ export function UserMenu() {
                 <BarChart3 className="h-4 w-4" />
                 <span>{t("user.usageStatistics")}</span>
               </Link>
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-surface-muted cursor-pointer transition-colors"
+              >
+                <img src="/add-pdf-icon.png" alt="Tambah Dokumen" className="h-4 w-4 object-contain" />
+                <span>Tambah Dokumen</span>
+              </Link>
               <div className="border-t border-border" />
             </>
           )}

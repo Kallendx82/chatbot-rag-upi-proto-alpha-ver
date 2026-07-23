@@ -147,7 +147,7 @@ export function SettingsModal() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-5 py-1 max-h-96 overflow-y-auto">
+          <div className="space-y-5 py-1 max-h-96 overflow-y-auto pr-4">
             {/* Theme */}
             <div className="space-y-2">
               <Label>Tema</Label>

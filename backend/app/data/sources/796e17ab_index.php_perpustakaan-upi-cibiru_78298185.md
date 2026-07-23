@@ -1,0 +1,51 @@
+# Perpustakaan UPI Cibiru
+
+> Source: https://kd-cibiru.upi.edu/index.php/perpustakaan-upi-cibiru
+
+Perpustakaan UPI Cibiru
+BERITA TENTANG PERPUSTAKAAN
+Selamat Memperingati Jumat Agung 03 April 2026
+03 April 2026Berita PerpustakaanAdmin Perpustakaan
+Selamat memperingati Jumat Agung. Layaknya sebuah ...
+Read More
+PENYESUAIAN LAYANAN PERPUSTAKAAN KAMPUS UPI CIBIRU
+24 Maret 2026Berita PerpustakaanAdmin Perpustakaan
+PENGUMUMAN - Perpustakaan UPI Kampus UPI Cibiru me...
+Read More
+SELAMAT HARI RAYA IDUL FITRI 1447 H
+21 Maret 2026Berita PerpustakaanAdmin Perpustakaan
+Ramadan adalah bab persiapan, dan hari ini kita me...
+Read More
+SELAMAT HARI RAYA NYEPI 1948 SAKA
+19 Maret 2026Berita PerpustakaanAdmin Perpustakaan
+Hari ini, dunia menjadi ruang baca yang sunyi. Tan...
+Read More
+Layanan Perpustakaan Tutup dalam Rangka Libur Nasional & Cuti Bersama Hari Raya Nyepi & Idul Fitri 2026
+17 Maret 2026Berita PerpustakaanAdmin Perpustakaan
+Halo teman-teman Perpustakaan UPI Cibiru 👋
+
+Informas...
+Read More
+HAPPY NEW YEAR 2026
+01 Januari 2026Berita PerpustakaanAdmin Perpustakaan
+This is a year bring  new hope, joy, and meaningfu...
+Read More
+Selamat Hari Natal 2025
+25 Desember 2025Berita PerpustakaanAdmin Perpustakaan
+Hari Raya Natal 2025 yang jatuh pada Kamis, 25 Des...
+Read More
+MAHASISWA UIN BANDUNG BERKUNJUNG KE PERPUSTAKAN UPI KAMPUS CIBIRU
+23 Desember 2025Berita PerpustakaanAdmin Perpustakaan
+Cibiru, Perpustakaan Kampus UPI Cibiru menerima Ku...
+Read More
+Surel
+
+perpustakaan_cibiru@upi.edu
+
+Alamat
+
+Gd. Administrasi Lt. 4
+
+Jl. Pendidikan No.15, Cibiru Wetan, Kec. Cileunyi, Kabupaten Bandung, Jawa Barat 40625
+
+FaLang translation system by Faboba

@@ -1,0 +1,21 @@
+# Kampus UPI di Serang | Official Website
+
+> Source: https://kdserang.upi.edu/
+
+Informasi Akademi UPI Kampus Serang
+Home
+Akademi
+INFORMASI PENDAFTARAN BEASISWA KUNJUNGAN STUDI DI HUNGARIA
+2026-01-02 04:19:22
+
+INFORMASI PENDAFTARAN BEASISWA KUNJUNGAN STUDI DI HUNGARIA...
+
+Baca Lebih
+KALENDER AKADEMIK TAHUN 2025/2026
+2025-09-30 05:34:41
+
+KALENDER AKADEMIK TAHUN 2025/2026....
+
+Baca Lebih
+Link Web Terkait
+‹›

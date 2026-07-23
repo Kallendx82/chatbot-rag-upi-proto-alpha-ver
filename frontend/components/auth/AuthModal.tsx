@@ -22,6 +22,40 @@ type Mode = "login" | "register";
 
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/;
 
+function triggerBrowserPasswordSave(username: string, password: string) {
+  const iframe = document.createElement("iframe");
+  iframe.name = "pw-save-frame";
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "about:blank";
+  form.target = "pw-save-frame";
+
+  const uInput = document.createElement("input");
+  uInput.type = "text";
+  uInput.name = "username";
+  uInput.autocomplete = "username";
+  uInput.value = username;
+  form.appendChild(uInput);
+
+  const pInput = document.createElement("input");
+  pInput.type = "password";
+  pInput.name = "password";
+  pInput.autocomplete = "current-password";
+  pInput.value = password;
+  form.appendChild(pInput);
+
+  document.body.appendChild(form);
+  form.submit();
+
+  setTimeout(() => {
+    form.remove();
+    iframe.remove();
+  }, 2000);
+}
+
 function validatePassword(pwd: string): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   if (pwd.length < 8) errors.push("Minimal 8 karakter");
@@ -88,6 +122,7 @@ export function AuthModal() {
     try {
       if (mode === "login") await login(username.trim(), password);
       else await register(username.trim(), password, email.trim());
+      triggerBrowserPasswordSave(username.trim(), password);
       close(false);
     } catch (err) {
       setError(
