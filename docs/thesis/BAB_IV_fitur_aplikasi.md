@@ -494,3 +494,72 @@ mengakhiri sesi pengguna melalui titik akhir keluar (*logout*) pada
 backend. Rancangan menu terpadu ini memastikan seluruh fungsi terkait
 identitas pengguna dapat diakses dari satu titik yang konsisten di seluruh
 halaman aplikasi.
+
+## 4.x.8 Pengujian Responsivitas Antarmuka (Desktop, Tablet, Mobile)
+
+Selain diuji pada resolusi layar desktop standar, antarmuka aplikasi juga
+diuji pada dua ukuran viewport tambahan untuk memverifikasi klaim
+responsivitas rancangan: tablet (768×1024 piksel) dan mobile (375×812
+piksel, setara lebar layar ponsel umum seperti iPhone SE). Pengujian
+dilakukan menggunakan fitur emulasi viewport pada peramban, yang mengubah
+lebar efektif tampilan tanpa memerlukan perangkat fisik tablet maupun
+ponsel selama tahap pengembangan. Pendekatan ini dipilih karena seluruh
+tata letak aplikasi dibangun dengan kelas responsif berbasis breakpoint
+(mengikuti konvensi Tailwind CSS) yang secara teori seharusnya menyesuaikan
+diri terhadap lebar viewport, sehingga pengujian lintas ukuran layar
+menjadi langkah verifikasi yang penting sebelum klaim tersebut dicantumkan
+sebagai kapabilitas sistem. Pengujian mencakup empat elemen antarmuka
+utama: layar sambutan, sidebar riwayat percakapan, panel Pengaturan, dan
+modal autentikasi.
+
+Pada viewport mobile, sidebar riwayat percakapan yang pada tampilan
+desktop selalu terlihat di sisi kiri secara otomatis menciut menjadi
+sebuah ikon tunggal di pojok kiri atas, dan baru ditampilkan penuh sebagai
+panel tumpang tindih (*overlay drawer*) ketika ikon tersebut diketuk —
+pola desain yang lazim disebut *off-canvas navigation* pada pengembangan
+aplikasi web responsif. Panel Pengaturan, yang pada tampilan desktop
+berupa jendela dialog di tengah layar, tetap tampil sebagai kartu terpusat
+yang lebar dan tata letak kontrolnya menyesuaikan diri sepenuhnya dengan
+lebar layar sempit, lengkap dengan bilah gulir internal (*internal
+scrollbar*) agar seluruh kontrol pengaturan tetap dapat dijangkau meski
+tidak muat dalam satu layar penuh. Modal autentikasi (masuk/daftar) juga
+terbukti menyesuaikan diri dengan baik, dengan seluruh kolom input dan
+tombol tetap proporsional dan mudah dijangkau jari pada lebar layar
+ponsel. Tidak ditemukan elemen yang terpotong, tumpang tindih secara tidak
+disengaja, atau teks yang meluber keluar batas layar pada seluruh
+viewport yang diuji.
+
+Selama proses pengujian, ditemukan satu catatan metodologis terkait alat
+bantu emulasi viewport yang digunakan: kanvas tangkapan layar yang
+dihasilkan alat tersebut berukuran sedikit lebih besar dari dimensi
+viewport yang diminta (mis. meminta 768×1024 piksel namun kanvas yang
+dikembalikan berukuran 800×1066 piksel), menyisakan area kosong berwarna
+polos di tepi kanan dan bawah tangkapan layar. Area kosong ini bukan
+merupakan sisa tampilan versi desktop yang masih ter-*render* di baliknya,
+melainkan sekadar latar belakang bawaan kanvas alat pengujian di luar
+batas viewport yang sedang diemulasi — sebuah karakteristik dari
+mekanisme *device emulation* yang mengubah lebar CSS di dalam kanvas
+peramban berukuran tetap, bukan cacat pada CSS responsif aplikasi itu
+sendiri. Temuan ini penting dicatat sebagai keterbatasan metodologi
+pengujian, bukan sebagai kekurangan pada implementasi antarmuka aplikasi
+yang sedang diuji.
+
+Sebagai catatan bagi pengembangan lanjutan, disarankan agar pengujian
+responsivitas pada tahap berikutnya dilakukan langsung melalui mode
+emulasi perangkat bawaan peramban (*device toolbar*) yang tersedia pada
+peramban modern seperti Google Chrome maupun Mozilla Firefox, karena mode
+tersebut mengubah ukuran bingkai jendela peramban secara utuh mengikuti
+dimensi perangkat yang dipilih, tanpa menyisakan area kanvas tambahan di
+luar viewport seperti yang ditemukan pada alat pengujian otomatis yang
+dipakai dalam penelitian ini. Pendekatan tersebut juga tidak memerlukan
+kepemilikan perangkat Android maupun iOS secara fisik, sehingga pengujian
+lintas perangkat tetap dapat dilakukan sepenuhnya di lingkungan
+pengembangan desktop. Secara keseluruhan, hasil pengujian pada ketiga
+kelas ukuran layar ini memberikan bukti pendukung bahwa antarmuka
+aplikasi telah memenuhi prinsip *responsive web design*, sehingga dapat
+diakses dengan pengalaman yang layak baik oleh pengguna desktop, tablet,
+maupun ponsel tanpa memerlukan aplikasi native terpisah untuk setiap
+platform. Temuan ini relevan khususnya bagi mahasiswa yang mengakses
+chatbot ini melalui ponsel pribadi mereka, mengingat pola akses layanan
+informasi kampus di kalangan mahasiswa Indonesia saat ini didominasi oleh
+perangkat mobile dibandingkan komputer desktop.
