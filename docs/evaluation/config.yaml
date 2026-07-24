@@ -1,12 +1,22 @@
 backend_url: "http://localhost:8000"
 
 retrieval:
-  top_k: 8
+  # top_k=5 (not the backend's production default of 8) to match the
+  # methodology of the previous evaluation (D:\Project\RAG_UPI, RAGAS runs
+  # used top_k=5) AND to keep judge context size - and therefore judge
+  # cost - predictable against the actual Claude API balance available for
+  # this run (see judge.budget_usd below). This top_k is used consistently
+  # for retrieval evaluation, generation, AND the context shown to the
+  # judge, so the judge always scores exactly what the generation model saw
+  # - never a mismatched/trimmed context.
+  top_k: 5
   score_threshold: 0.0
 
 evaluation:
-  # How many top results to check for hit rate / recall
-  hit_rate_k: [1, 3, 5, 8]
+  # How many top results to check for hit rate / recall. Capped at top_k=5
+  # above - k=8 was dropped since retrieval never returns more than top_k
+  # results, so recall@8 would just duplicate recall@5.
+  hit_rate_k: [1, 3, 5]
 
 # Models to compare in a single run. Each is passed as the `model` override
 # to POST /api/chat (routes through Ollama regardless of the backend's
@@ -28,7 +38,16 @@ judge:
   # Hard budget ceiling in USD. The script stops issuing further judge calls
   # once projected spend would exceed this and reports how many
   # question/model pairs were judged vs. skipped.
-  budget_usd: 8.0
+  #
+  # Set to $4.50 because the actual Claude API balance available for this
+  # evaluation is $4.90 (platform.claude.com/dashboard, checked 2026-07-24)
+  # - NOT the earlier $8.00 assumption. $4.50 leaves ~$0.40 headroom below
+  # the real balance for other API usage safety, on top of the ~$1.08
+  # headroom already built into ragas_sample_size below (estimated actual
+  # spend ~$3.42 at n=400/model, top_k=5). If you re-run this after your
+  # balance changes, update this value to match - don't leave it higher
+  # than your real balance.
+  budget_usd: 4.50
   # Pricing per 1M tokens - used only for local budget bookkeeping, update
   # if Anthropic pricing changes. See shared/models.md in the claude-api skill.
   price_input_per_mtok: 1.00
@@ -38,23 +57,24 @@ judge:
   # question IDs ONCE, then judges the answer from EVERY model in `models:`
   # for that SAME set of questions (this is what keeps the comparison
   # controlled: both models are graded on identical questions). So
-  # ragas_sample_size: 500 with 2 models means 500 answer-quality judgments
-  # for Llama AND 500 for Qwen (1,000 total answer judgments), plus 500
+  # ragas_sample_size: 400 with 2 models means 400 answer-quality judgments
+  # for Llama AND 400 for Qwen (800 total answer judgments), plus 400
   # shared context-quality judgments (context is identical across models,
-  # so it's judged once, not once per model) = 1,500 judge calls total.
+  # so it's judged once, not once per model) = 1,200 judge calls total.
   # null = no cap, rely on the budget tracker alone (not recommended for a
   # dataset this large - retrieval metrics still run on the full dataset
   # for free either way).
   #
   # dataset.json has 1,816 questions (imported from the prior evaluation
-  # project - see docs/evaluation/import_legacy_dataset.py). 500 per model
-  # was chosen because it's 2.5x the 200-sample runs from the previous
-  # evaluation (more statistical confidence), and the resulting 1,500 judge
-  # calls cost roughly $3-5 with Claude Haiku 4.5 pricing - comfortably
-  # inside the $8 ceiling with headroom for the hard budget stop to never
-  # trigger mid-run. See THESIS_NOTES.md Sec. 1 for the write-up of this
-  # sampling decision for BAB III.
-  ragas_sample_size: 500
+  # project - see docs/evaluation/import_legacy_dataset.py). n=500/model was
+  # the original target, but at top_k=8 that estimated ~$5.08 - more than
+  # the real $4.90 balance. Dropped to n=400/model AND top_k=5 (both
+  # changed together, per explicit decision - see THESIS_NOTES.md Sec. 1.1)
+  # which estimates ~$3.42 for the 1,200 judge calls with Claude Haiku 4.5
+  # pricing - comfortably inside the $4.50 ceiling with real margin for the
+  # estimate to be wrong. Still 2x the 200-sample runs from the previous
+  # evaluation (more statistical confidence).
+  ragas_sample_size: 400
   # Random seed for sampling, so repeated runs with the same sample_size
   # judge the same subset of questions (reproducibility).
   sample_seed: 42

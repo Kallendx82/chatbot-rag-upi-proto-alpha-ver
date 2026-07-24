@@ -13,7 +13,7 @@ overspends.
 Usage:
     python run_eval.py
     python run_eval.py --models llama3.1:8b-instruct-q4_K_M qwen3.5:4b-q4_K_M
-    python run_eval.py --budget 8.0 --ragas-sample 50
+    python run_eval.py --budget 4.50 --ragas-sample 50
     python run_eval.py --retrieval-only          # skip LLM judge entirely (free)
     python run_eval.py --skip-judge --top-k 5    # generation only, no judge
 

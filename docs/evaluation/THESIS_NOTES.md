@@ -32,11 +32,18 @@ menelusuri ulang seluruh riwayat percakapan ini.
 5. **Jangan jalankan generation+judge untuk 1.816 pertanyaan mentah-mentah.**
    Retrieval (gratis, deterministik) dihitung untuk **seluruh 1.816**
    pertanyaan secara default. Untuk LLM-as-a-Judge, `config.yaml` sudah
-   diset `ragas_sample_size: 500` — script otomatis mengambil sampel acak
-   500 pertanyaan (seed tetap = 42, jadi hasil sampel sama tiap re-run) agar
-   biaya tetap di bawah budget $8. Jangan ubah ini ke `null` kecuali paham
-   konsekuensi biayanya (lihat § 1.1).
-6. (Opsional) Perbesar dataset lebih lanjut dengan `generate_qa_candidates.py`
+   diset `ragas_sample_size: 400` dan `retrieval.top_k: 5` — script otomatis
+   mengambil sampel acak 400 pertanyaan (seed tetap = 42, jadi hasil sampel
+   sama tiap re-run) agar biaya tetap di bawah `budget_usd: 4.50`. Jangan
+   ubah `ragas_sample_size` ke `null` kecuali paham konsekuensi biayanya
+   (lihat § 1.1).
+6. **Cek saldo Claude API Anda sebelum menjalankan** di
+   platform.claude.com/dashboard, lalu pastikan `judge.budget_usd` di
+   `config.yaml` ≤ saldo tersebut. Nilai `$4.50` di config saat ini dihitung
+   untuk saldo `$4.90` (dicek 2026-07-24) — **update nilai ini kalau saldo
+   Anda sudah berubah**, script tidak bisa mengecek saldo Anda secara
+   otomatis.
+7. (Opsional) Perbesar dataset lebih lanjut dengan `generate_qa_candidates.py`
    (lihat § 4) untuk kategori dokumen yang belum tercakup 1.816 pertanyaan
    ini — **wajib verifikasi manual** sebelum ground truth-nya dipakai.
 
@@ -60,7 +67,7 @@ yang sudah dipakai pada evaluasi sebelumnya.
 > saat evaluasi dilakukan, untuk memastikan validitasnya tidak basi akibat
 > perubahan korpus dokumen dari waktu ke waktu.
 
-### 1.1 Justifikasi Ukuran Sampel LLM-as-a-Judge (n = 500 PER MODEL, dari N = 1.816)
+### 1.1 Justifikasi Ukuran Sampel LLM-as-a-Judge (n = 400 PER MODEL, dari N = 1.816)
 
 > **Evaluasi retrieval dilakukan terhadap seluruh populasi dataset (N = 1.816
 > pertanyaan)**, karena metrik retrieval (Hit Rate, Recall@K, MRR, keyword
@@ -68,43 +75,66 @@ yang sudah dipakai pada evaluasi sebelumnya.
 > praktis untuk mengevaluasi seluruh dataset.
 >
 > **Evaluasi kualitas jawaban (LLM-as-a-Judge) dilakukan terhadap sampel
-> acak sebanyak n = 500 pertanyaan, dan ke-500 pertanyaan yang SAMA ini
-> dinilai untuk KEDUA model generasi** (bukan dibagi 250/250) — sehingga
-> setiap model menerima **500 penilaian kualitas jawaban** yang dapat
+> acak sebanyak n = 400 pertanyaan, dan ke-400 pertanyaan yang SAMA ini
+> dinilai untuk KEDUA model generasi** (bukan dibagi 200/200) — sehingga
+> setiap model menerima **400 penilaian kualitas jawaban** yang dapat
 > diperbandingkan langsung satu-lawan-satu, karena keduanya dinilai atas
-> pertanyaan dan konteks retrieval yang identik (variabel terkontrol).
-> Sampel dipilih menggunakan *simple random sampling* dengan *seed* tetap
-> (42) agar hasil sampel dapat direproduksi persis pada evaluasi ulang.
-> Pembatasan ini **diperlukan karena setiap penilaian melalui
+> pertanyaan dan konteks retrieval yang identik (variabel terkontrol; jumlah
+> konteks yang diambil per pertanyaan, `top_k = 5`, juga sama untuk kedua
+> model). Sampel dipilih menggunakan *simple random sampling* dengan *seed*
+> tetap (42) agar hasil sampel dapat direproduksi persis pada evaluasi
+> ulang. Pembatasan ini **diperlukan karena setiap penilaian melalui
 > LLM-as-a-Judge menggunakan Claude API berbayar**, sehingga mengevaluasi
 > seluruh populasi untuk dua model generasi sekaligus (± 1.816 × 2 × 2 =
-> 7.264 panggilan API) berada jauh di luar anggaran penelitian yang
-> ditetapkan sebesar USD 8,00.
+> 7.264 panggilan API) berada jauh di luar saldo API riil yang tersedia
+> untuk penelitian ini.
 >
-> Ukuran sampel n = 500 dipilih dengan pertimbangan sebagai berikut:
-> 1. **Jauh lebih besar dibanding evaluasi RAGAS sebelumnya** pada proyek
->    yang sama, yang menggunakan n = 200 sampel dari populasi yang lebih
->    kecil — sehingga tingkat kepercayaan statistik hasil kali ini lebih
->    tinggi (proporsi sampel terhadap populasi naik dari ~10,6% menjadi
->    ~27,5%).
-> 2. **Berada nyaman di dalam batas anggaran**: total panggilan judge untuk
->    n = 500 adalah 500 (penilaian konteks, dibagi bersama kedua model) +
->    500 × 2 (penilaian jawaban per model) = 1.500 panggilan. Dengan model
->    penilai Claude Haiku 4.5 (USD 1,00/1M token input, USD 5,00/1M token
->    output), estimasi biaya berada pada kisaran USD 3–5, menyisakan ruang
->    aman terhadap batas USD 8,00 sehingga mekanisme *hard budget stop* pada
->    script tidak diperkirakan akan terpicu di tengah proses.
-> 3. **Menggunakan *seed* acak tetap**, bukan pemilihan manual, untuk
+> **Ukuran sampel dan anggaran ditentukan berdasarkan saldo Claude API riil
+> peneliti** (USD 4,90, dicek pada platform.claude.com/dashboard tanggal
+> 24 Juli 2026) — bukan angka bulat yang ditetapkan sewenang-wenang di
+> awal. Rencana awal n = 500 dengan `top_k = 8` (top-K yang dipakai sistem
+> produksi) diestimasi menelan biaya ± USD 5,08, melebihi saldo yang
+> tersedia. Setelah dihitung ulang, dipilih kombinasi **n = 400** dan
+> **`top_k = 5`** (nilai `top_k` yang sama dipakai untuk retrieval,
+> generasi, *dan* konteks yang dilihat model penilai — bukan hanya
+> memotong konteks penilai secara terpisah, supaya penilai selalu menilai
+> persis apa yang dilihat model generasi), yang mana:
+>
+> 1. **Berada nyaman di dalam saldo yang tersedia**: total panggilan judge
+>    untuk n = 400 adalah 400 (penilaian konteks, dibagi bersama kedua
+>    model) + 400 × 2 (penilaian jawaban per model) = 1.200 panggilan.
+>    Dengan model penilai Claude Haiku 4.5 (USD 1,00/1M token input,
+>    USD 5,00/1M token output) dan `top_k = 5`, estimasi biaya adalah
+>    ± USD 3,42 — menyisakan margin ± USD 1,48 dari batas anggaran keras
+>    yang ditetapkan (`budget_usd = USD 4,50`), dan ± USD 0,40 lagi dari
+>    batas anggaran ke saldo riil USD 4,90, sehingga mekanisme *hard budget
+>    stop* pada script tidak diperkirakan akan terpicu di tengah proses.
+> 2. **Tetap jauh lebih besar dibanding evaluasi RAGAS sebelumnya** pada
+>    proyek yang sama, yang menggunakan n = 200 sampel — proporsi sampel
+>    terhadap populasi naik dari ~10,6% menjadi ~22,0%.
+> 3. **`top_k = 5` konsisten dengan metodologi evaluasi RAGAS sebelumnya**
+>    pada proyek yang sama, yang juga memakai `top_k = 5` — sehingga hasil
+>    evaluasi kali ini tetap dapat dibandingkan secara wajar dengan hasil
+>    sebelumnya, meski `top_k` produksi backend saat ini adalah 8.
+> 4. **Menggunakan *seed* acak tetap**, bukan pemilihan manual, untuk
 >    menghindari bias seleksi peneliti terhadap pertanyaan yang
 >    "menguntungkan" salah satu model.
 >
-> **Keterbatasan yang perlu diakui secara eksplisit:** sampling yang
-> digunakan adalah *simple random sampling* atas keseluruhan populasi, bukan
-> *stratified sampling* per kategori — sehingga proporsi kategori pada
-> sampel n = 500 dapat sedikit berbeda dari proporsi populasi N = 1.816.
-> Nilai `n_judged` per kategori pada hasil JSON (`results/eval_*.json`)
-> perlu dilaporkan di BAB IV untuk transparansi mengenai representativitas
-> sampel per kategori.
+> **Keterbatasan yang perlu diakui secara eksplisit:**
+> - Sampling yang digunakan adalah *simple random sampling* atas
+>   keseluruhan populasi, bukan *stratified sampling* per kategori —
+>   sehingga proporsi kategori pada sampel n = 400 dapat sedikit berbeda
+>   dari proporsi populasi N = 1.816. Nilai `n_judged` per kategori pada
+>   hasil JSON (`results/eval_*.json`) perlu dilaporkan di BAB IV untuk
+>   transparansi mengenai representativitas sampel per kategori.
+> - Evaluasi ini memakai `top_k = 5`, **berbeda dari `top_k = 8` yang
+>   dipakai sistem produksi** (lihat `backend/app/core/config.py`). Hasil
+>   evaluasi kualitas jawaban dan retrieval pada laporan ini mencerminkan
+>   performa sistem pada konfigurasi `top_k = 5`, bukan konfigurasi
+>   produksi — perbedaan ini harus dinyatakan eksplisit sebagai
+>   keterbatasan penelitian di BAB V, bukan disamarkan seolah-olah mewakili
+>   performa produksi. Dipilih karena keterbatasan anggaran evaluasi, bukan
+>   karena `top_k = 5` dianggap lebih baik dari `top_k = 8`.
 
 > **Evaluasi retrieval** bersifat deterministik dan dihitung sekali untuk
 > seluruh 1.816 pertanyaan, karena hasil retrieval tidak bergantung pada
@@ -113,7 +143,8 @@ yang sudah dipakai pada evaluasi sebelumnya.
 > ke kecocokan judul dokumen untuk sebagian kecil pertanyaan yang hanya
 > memiliki ground truth di level dokumen), *Recall@K* dan *Mean Reciprocal
 > Rank* (MRR), serta cakupan kata kunci (*keyword coverage*) pada
-> K = {1, 3, 5, 8}.
+> K = {1, 3, 5} (dibatasi oleh `top_k = 5` — lihat § 1.1 untuk alasan
+> pemilihan nilai ini).
 >
 > **Evaluasi kualitas jawaban** membandingkan dua model generasi yang
 > dijalankan secara lokal melalui Ollama: **Llama 3.1 8B Instruct (Q4_K_M)**
@@ -136,9 +167,11 @@ yang sudah dipakai pada evaluasi sebelumnya.
 > JSON) untuk menjamin keluaran yang dapat diproses secara konsisten.
 >
 > Karena evaluasi LLM-as-a-Judge menggunakan API berbayar, proses evaluasi
-> dibatasi oleh anggaran biaya sebesar USD 8,00 yang dilacak secara *real-time*
-> selama proses berjalan; apabila proyeksi biaya panggilan berikutnya akan
-> melampaui batas tersebut, proses penilaian dihentikan untuk sisa pertanyaan
+> dibatasi oleh anggaran biaya sebesar USD 4,50 (batas keras yang ditetapkan
+> di bawah saldo API riil sebesar USD 4,90 sebagai margin pengaman) yang
+> dilacak secara *real-time* selama proses berjalan; apabila proyeksi biaya
+> panggilan berikutnya akan melampaui batas tersebut, proses penilaian
+> dihentikan untuk sisa pertanyaan
 > sementara proses pembangkitan jawaban tetap dilanjutkan, sehingga hasil
 > parsial tetap dapat dianalisis dan dilaporkan secara transparan.
 
@@ -155,11 +188,11 @@ Isi setelah menjalankan `python run_eval.py` dan membaca
 | — dari itu, ground truth chunk-level | `retrieval_aggregate.n_with_chunk_level_ground_truth` |
 | Hit Rate | `retrieval_aggregate.hit_rate` |
 | MRR | `retrieval_aggregate.mrr` |
-| Recall@1 / @3 / @5 / @8 | `retrieval_aggregate.recall_at_k` |
+| Recall@1 / @3 / @5 | `retrieval_aggregate.recall_at_k` |
 | Avg Keyword Coverage | `retrieval_aggregate.avg_keyword_coverage` |
 | Avg Score (embedding) | `retrieval_aggregate.avg_score_mean` |
 
-### Tabel 4.y — Perbandingan Kualitas Jawaban: Llama 3.1 8B vs Qwen 3.5 4B (n = 500 per model, pertanyaan sama)
+### Tabel 4.y — Perbandingan Kualitas Jawaban: Llama 3.1 8B vs Qwen 3.5 4B (n = 400 per model, pertanyaan sama, top_k = 5)
 
 | Metrik | Llama 3.1 8B Instruct (Q4_K_M) | Qwen 3.5 4B (Q4_K_M) |
 |---|---|---|
@@ -175,8 +208,9 @@ Isi setelah menjalankan `python run_eval.py` dan membaca
 | Item | Nilai |
 |---|---|
 | Model judge | `config.judge_model` |
-| Populasi (N) / Sampel RAGAS (n) | 1.816 / `config.judge` sample size terpakai |
-| Batas anggaran | `budget.limit_usd` |
+| Populasi (N) / Sampel RAGAS (n, per model) | 1.816 / `config.judge` sample size terpakai (target: 400) |
+| Saldo API riil saat evaluasi | USD 4,90 (platform.claude.com/dashboard, dicek 2026-07-24) |
+| Batas anggaran (hard stop) | `budget.limit_usd` (target: 4,50) |
 | Biaya terpakai | `budget.spent_usd` |
 | Panggilan judge selesai | `budget.judge_calls_made` |
 | Panggilan judge dilewati (anggaran habis) | `budget.judge_calls_skipped_over_budget` |

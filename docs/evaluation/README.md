@@ -81,14 +81,18 @@ jawaban**, dan **refusal rate** (deteksi kata kunci "maaf/tidak
 tersedia/tidak ditemukan").
 
 **Karena LLM-as-a-Judge berbayar dan populasi dataset besar (1.816),**
-evaluasi jawaban dijalankan pada **sampel acak sebanyak 500 pertanyaan PER
-MODEL** (default `judge.ragas_sample_size: 500` di `config.yaml`) — bukan
-seluruh populasi, dan bukan dibagi antar model. Ke-500 pertanyaan yang sama
-dinilai untuk setiap model di `models:`, jadi dengan 2 model itu berarti
-500 penilaian jawaban untuk Llama + 500 untuk Qwen (1.000 total), plus 500
-penilaian konteks yang dipakai bersama (kontekstnya identik untuk kedua
-model). Justifikasi lengkap ukuran sampel ini ada di `THESIS_NOTES.md` §
-1.1. Retrieval tetap dihitung untuk seluruh 1.816 pertanyaan karena gratis.
+evaluasi jawaban dijalankan pada **sampel acak sebanyak 400 pertanyaan PER
+MODEL** (default `judge.ragas_sample_size: 400` di `config.yaml`, dengan
+`retrieval.top_k: 5`) — bukan seluruh populasi, dan bukan dibagi antar
+model. Ke-400 pertanyaan yang sama dinilai untuk setiap model di `models:`,
+jadi dengan 2 model itu berarti 400 penilaian jawaban untuk Llama + 400
+untuk Qwen (800 total), plus 400 penilaian konteks yang dipakai bersama
+(kontekstnya identik untuk kedua model) = 1.200 panggilan judge, estimasi
+biaya ~$3,42 dengan batas keras `budget_usd: 4.50` — disesuaikan dengan
+saldo Claude API sebenarnya ($4,90, dicek 2026-07-24 di
+platform.claude.com/dashboard). Justifikasi lengkap ukuran sampel dan
+perhitungan biaya ini ada di `THESIS_NOTES.md` § 1.1. Retrieval tetap
+dihitung untuk seluruh 1.816 pertanyaan karena gratis.
 
 ## Cara Pakai
 
@@ -139,9 +143,15 @@ models:
 
 judge:
   model: "claude-haiku-4-5"   # judge murah — cocok untuk budget kecil
-  budget_usd: 8.0              # batas keras, script berhenti judge saat tercapai
-  ragas_sample_size: 500       # PER MODEL (500 sama untuk tiap model, bukan dibagi) - lihat THESIS_NOTES.md § 1.1
+  budget_usd: 4.50             # batas keras — sesuaikan dgn saldo Claude API asli Anda!
+  ragas_sample_size: 400       # PER MODEL (400 sama untuk tiap model, bukan dibagi) - lihat THESIS_NOTES.md § 1.1
 ```
+
+> ⚠️ **`budget_usd` harus selalu ≤ saldo asli Anda** di
+> platform.claude.com/dashboard — script ini tidak bisa membaca saldo Anda
+> secara otomatis. Nilai default $4,50 di atas dihitung untuk saldo $4,90
+> (per 2026-07-24); kalau saldo Anda berbeda, cek dulu dashboard-nya dan
+> update nilai ini sebelum menjalankan evaluasi sungguhan.
 
 Kedua model harus sudah ter-`pull` di Ollama server yang dipakai backend
 (`ollama pull llama3.1:8b-instruct-q4_K_M`, dst).
@@ -149,11 +159,11 @@ Kedua model harus sudah ter-`pull` di Ollama server yang dipakai backend
 ### 3. Jalankan Evaluasi
 
 ```bash
-# Full run: retrieval (1.816 soal) + generation (2 model) + judge Claude (sampel 500)
+# Full run: retrieval (1.816 soal) + generation (2 model) + judge Claude (sampel 400/model)
 python run_eval.py
 
 # Override model/budget dari command line, tanpa ubah config.yaml
-python run_eval.py --models llama3.1:8b-instruct-q4_K_M qwen3.5:4b-q4_K_M --budget 8.0
+python run_eval.py --models llama3.1:8b-instruct-q4_K_M qwen3.5:4b-q4_K_M --budget 4.50
 
 # Override ukuran sampel RAGAS (mengunci biaya sebelum jalan)
 python run_eval.py --ragas-sample 200
