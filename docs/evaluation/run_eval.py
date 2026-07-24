@@ -587,14 +587,30 @@ def main() -> int:
             print(f"  [{i}/{len(dataset)}] {qid}: precision={j.get('context_precision_score') if j else 'skipped'} "
                   f"(spent=${budget.spent_usd:.3f}/${budget_usd:.2f})")
 
-    # --- Generation + answer judging (per model) ----------------------------
-    print(f"\n[3/3] Generating & judging answers for {len(model_names)} model(s)...")
+    # --- Generation + answer judging ----------------------------------------
+    # Scope: when judging is on, only generate for the sampled judge_qids -
+    # generating answers for the full dataset when only `ragas_sample` of
+    # them will ever be scored wastes hours of local Ollama generation for
+    # nothing. --skip-judge (answers-only, no cost) still covers the full
+    # dataset since there's no judged subset to scope to.
+    if do_judge:
+        eval_items = [item for i, item in enumerate(dataset, 1)
+                      if item.get("id", f"Q{i:02d}") in judge_qids]
+    else:
+        eval_items = dataset
+
+    # Question-outer / model-inner order (not model-outer / question-inner):
+    # if the budget runs out mid-run, every model gets judged on the SAME
+    # prefix of questions before the cutoff, so a truncated run is still a
+    # fair, comparable subset across models instead of leaving the last
+    # model(s) in `models:` with zero judged answers.
+    print(f"\n[3/3] Generating & judging answers "
+          f"({len(eval_items)} question(s) x {len(model_names)} model(s))...")
     per_model_entries: dict[str, list[dict]] = {m: [] for m in model_names}
-    for mi, model in enumerate(model_names, 1):
-        print(f"\n  --- Model {mi}/{len(model_names)}: {model} ---")
-        for i, item in enumerate(dataset, 1):
-            qid = item.get("id", f"Q{i:02d}")
-            print(f"    [{i}/{len(dataset)}] {qid}", end=" ", flush=True)
+    for i, item in enumerate(eval_items, 1):
+        qid = item.get("id", f"Q{i:02d}")
+        print(f"  [{i}/{len(eval_items)}] {qid}", end="", flush=True)
+        for model in model_names:
             gen = generate_answer(item["question"], base_url, model, top_k)
 
             judge_result = None
@@ -614,8 +630,10 @@ def main() -> int:
                 "judge": judge_result,
             })
             status = f"faith={judge_result['faithfulness_score']:.2f}" if judge_result else (
-                "judged-skip" if do_judge else "")
-            print(f"({gen['latency_ms']:.0f}ms{', ' + status if status else ''})")
+                "skip" if do_judge else "")
+            print(f" | {model.split(':')[0]}: {gen['latency_ms']:.0f}ms{', ' + status if status else ''}",
+                  end="", flush=True)
+        print()
 
     per_model_agg = {m: compute_answer_aggregate(entries) for m, entries in per_model_entries.items()}
 
