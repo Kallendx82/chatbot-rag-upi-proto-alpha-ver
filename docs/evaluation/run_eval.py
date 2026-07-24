@@ -114,8 +114,15 @@ def evaluate_retrieval(
     base_url: str,
     top_k: int,
     score_threshold: float,
+    expected_chunk_ids: list[str] | None = None,
 ) -> dict[str, Any]:
-    """Call /api/retrieve/debug and compute retrieval metrics for one question."""
+    """Call /api/retrieve/debug and compute retrieval metrics for one question.
+
+    If `expected_chunk_ids` is provided (chunk-level ground truth), the hit
+    rank is computed by exact chunk_id match - far more precise than the
+    doc-title substring fallback, since a document can be retrieved for the
+    wrong section/page and still count as a "hit" under title matching.
+    """
     params = {"query": question, "top_k": top_k, "score_threshold": score_threshold}
     resp = requests.get(f"{base_url}/api/retrieve/debug", params=params, timeout=30)
     resp.raise_for_status()
@@ -124,12 +131,22 @@ def evaluate_retrieval(
     chunks = data.get("results", [])
     scores = [c.get("score", 0) for c in chunks]
     titles = [c.get("title", "") for c in chunks]
+    chunk_ids = [c.get("chunk_id", "") for c in chunks]
 
     hit_rank = None
-    if expected_doc_title:
+    match_level = "none"
+    if expected_chunk_ids:
+        expected_set = set(expected_chunk_ids)
+        for i, cid in enumerate(chunk_ids):
+            if cid in expected_set:
+                hit_rank = i + 1
+                match_level = "chunk"
+                break
+    if hit_rank is None and expected_doc_title:
         for i, t in enumerate(titles):
             if expected_doc_title.lower() in t.lower():
                 hit_rank = i + 1
+                match_level = "doc_title"
                 break
 
     keyword_hits = 0
@@ -139,6 +156,9 @@ def evaluate_retrieval(
             if kw.lower() in all_text:
                 keyword_hits += 1
 
+    has_ground_truth = bool(expected_chunk_ids) or bool(expected_doc_title)
+    ground_truth_level = "chunk" if expected_chunk_ids else ("doc_title" if expected_doc_title else "none")
+
     return {
         "num_results": len(chunks),
         "scores": scores,
@@ -147,6 +167,9 @@ def evaluate_retrieval(
         "min_score": min(scores) if scores else 0,
         "hit_rank": hit_rank,
         "hit_found": hit_rank is not None,
+        "match_level": match_level,
+        "has_ground_truth": has_ground_truth,
+        "ground_truth_level": ground_truth_level,
         "keyword_coverage": keyword_hits / len(expected_keywords) if expected_keywords else 1.0,
         "top_titles": titles[:5],
         "chunks": chunks,  # kept for the judge; stripped before final JSON write
@@ -155,15 +178,21 @@ def evaluate_retrieval(
 
 
 def compute_retrieval_aggregate(retrieval_results: list[dict], hit_rate_ks: list[int]) -> dict:
-    with_expected = [r for r in retrieval_results if r["hit_rank"] is not None or r["hit_found"] is False]
+    # Only questions that actually carry ground truth (chunk or doc-title)
+    # count toward recall/precision/MRR - a question with no ground truth
+    # can't be scored as a "miss".
+    with_expected = [r for r in retrieval_results if r.get("has_ground_truth")]
     n = len(with_expected) or 1
+    n_chunk_level_gt = sum(1 for r in with_expected if r.get("ground_truth_level") == "chunk")
 
     agg: dict[str, Any] = {
         "n_questions": len(retrieval_results),
+        "n_with_ground_truth": len(with_expected),
+        "n_with_chunk_level_ground_truth": n_chunk_level_gt,
         "avg_score_mean": sum(r["avg_score"] for r in retrieval_results) / (len(retrieval_results) or 1),
         "avg_max_score": sum(r["max_score"] for r in retrieval_results) / (len(retrieval_results) or 1),
-        "hit_rate": sum(1 for r in retrieval_results if r["hit_found"]) / (len(retrieval_results) or 1),
-        "mrr": sum((1.0 / r["hit_rank"]) for r in retrieval_results if r["hit_rank"]) / (len(retrieval_results) or 1),
+        "hit_rate": sum(1 for r in with_expected if r["hit_found"]) / n,
+        "mrr": sum((1.0 / r["hit_rank"]) for r in with_expected if r["hit_rank"]) / n,
         "avg_keyword_coverage": sum(r["keyword_coverage"] for r in retrieval_results) / (len(retrieval_results) or 1),
         "recall_at_k": {},
         "precision_at_k": {},
@@ -172,9 +201,9 @@ def compute_retrieval_aggregate(retrieval_results: list[dict], hit_rate_ks: list
         agg["recall_at_k"][str(k)] = sum(
             1 for r in with_expected if r["hit_rank"] is not None and r["hit_rank"] <= k
         ) / n
-        # Doc-level ground truth only tags a single relevant document, so
-        # precision@k here is 1/k on a hit (upper bound) rather than a count
-        # of relevant-among-top-k. Documented caveat - see README.
+        # Precision@k here is an upper-bound estimate (1/k on a hit) unless
+        # the ground truth is chunk-level, in which case it's still a single
+        # relevant-chunk assumption per question - documented caveat, see README.
         agg["precision_at_k"][str(k)] = sum(
             (1.0 / k) for r in with_expected if r["hit_rank"] is not None and r["hit_rank"] <= k
         ) / n
@@ -390,6 +419,8 @@ def print_comparison_table(model_labels: dict[str, str], per_model_agg: dict[str
     print("=" * 78)
 
     print("\n[Retrieval - identik untuk semua model, dihitung sekali]")
+    print(f"  Questions w/ ground truth: {retrieval_agg['n_with_ground_truth']}/{retrieval_agg['n_questions']} "
+          f"({retrieval_agg['n_with_chunk_level_ground_truth']} chunk-level)")
     print(f"  Hit Rate:          {retrieval_agg['hit_rate']:.1%}")
     print(f"  MRR:               {retrieval_agg['mrr']:.3f}")
     for k, v in retrieval_agg["recall_at_k"].items():
@@ -493,6 +524,7 @@ def main() -> int:
         ret = evaluate_retrieval(
             item["question"], item.get("expected_doc_title", ""),
             item.get("expected_keywords", []), base_url, top_k, score_threshold,
+            expected_chunk_ids=item.get("expected_chunk_ids"),
         )
         retrieval_by_qid[qid] = ret
         print(f"({(time.time() - t0) * 1000:.0f}ms, hit={ret['hit_found']})")
