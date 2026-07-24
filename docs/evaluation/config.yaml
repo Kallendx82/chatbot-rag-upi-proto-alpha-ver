@@ -1,0 +1,48 @@
+backend_url: "http://localhost:8000"
+
+retrieval:
+  top_k: 8
+  score_threshold: 0.0
+
+evaluation:
+  # How many top results to check for hit rate / recall
+  hit_rate_k: [1, 3, 5, 8]
+
+# Models to compare in a single run. Each is passed as the `model` override
+# to POST /api/chat (routes through Ollama regardless of the backend's
+# configured default). Add/remove entries here to compare different models
+# without touching the script.
+models:
+  - name: "llama3.1:8b-instruct-q4_K_M"
+    label: "Llama 3.1 8B Instruct (Q4_K_M)"
+  - name: "qwen3.5:4b-q4_K_M"
+    label: "Qwen 3.5 4B (Q4_K_M)"
+
+# LLM-as-a-Judge configuration for RAGAS-style answer-quality metrics
+# (faithfulness, answer relevancy, context precision, context recall).
+# The judge is a cloud model (Claude) so it is independent from the models
+# being evaluated - this is Claude API money, not Ollama, hence the budget.
+judge:
+  provider: "anthropic"
+  model: "claude-haiku-4-5"
+  # Hard budget ceiling in USD. The script stops issuing further judge calls
+  # once projected spend would exceed this and reports how many
+  # question/model pairs were judged vs. skipped.
+  budget_usd: 8.0
+  # Pricing per 1M tokens - used only for local budget bookkeeping, update
+  # if Anthropic pricing changes. See shared/models.md in the claude-api skill.
+  price_input_per_mtok: 1.00
+  price_output_per_mtok: 5.00
+  # Optional cap on how many dataset questions get LLM-judged (retrieval
+  # metrics still run on the full dataset - they're free). null = no cap,
+  # rely on the budget tracker alone. Set this to size a run predictably
+  # before spending anything, e.g. for a quick smoke test.
+  ragas_sample_size: null
+  # Random seed for sampling, so repeated runs with the same sample_size
+  # judge the same subset of questions (reproducibility).
+  sample_seed: 42
+
+output:
+  dir: "results"
+  # auto-generated filename with timestamp if not specified
+  filename: null

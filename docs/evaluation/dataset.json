@@ -1,0 +1,92 @@
+[
+  {
+    "id": "KA-01",
+    "question": "Kapan pembayaran UKT/Biaya Pendidikan Mahasiswa Baru Jalur SNBP?",
+    "expected_doc_title": "Kalender Akademik UPI 2026/2027",
+    "expected_keywords": ["UKT", "SNBP", "pembayaran", "biaya pendidikan"],
+    "ground_truth": "",
+    "category": "kalender_akademik",
+    "difficulty": "easy"
+  },
+  {
+    "id": "KA-02",
+    "question": "Kapan awal perkuliahan semester ganjil 2026/2027?",
+    "expected_doc_title": "Kalender Akademik UPI 2026/2027",
+    "expected_keywords": ["awal perkuliahan", "semester ganjil"],
+    "ground_truth": "",
+    "category": "kalender_akademik",
+    "difficulty": "easy"
+  },
+  {
+    "id": "KA-03",
+    "question": "Kapan pengisian IRS dan perwalian?",
+    "expected_doc_title": "Kalender Akademik UPI 2026/2027",
+    "expected_keywords": ["IRS", "perwalian", "pengisian"],
+    "ground_truth": "",
+    "category": "kalender_akademik",
+    "difficulty": "medium"
+  },
+  {
+    "id": "KA-04",
+    "question": "Kapan verifikasi data mahasiswa baru jalur SNBT?",
+    "expected_doc_title": "Kalender Akademik UPI 2026/2027",
+    "expected_keywords": ["verifikasi", "SNBT", "mahasiswa baru"],
+    "ground_truth": "",
+    "category": "kalender_akademik",
+    "difficulty": "easy"
+  },
+  {
+    "id": "KA-05",
+    "question": "Pengajuan cuti akademik maksimalnya kapan?",
+    "expected_doc_title": "Kalender Akademik UPI 2026/2027",
+    "expected_keywords": ["cuti akademik", "pengajuan"],
+    "ground_truth": "",
+    "category": "kalender_akademik",
+    "difficulty": "medium"
+  },
+  {
+    "id": "PMB-01",
+    "question": "Bagaimana cara mendaftar di UPI?",
+    "expected_doc_title": "",
+    "expected_keywords": ["pendaftaran", "PMB", "cara daftar"],
+    "ground_truth": "",
+    "category": "pmb",
+    "difficulty": "easy"
+  },
+  {
+    "id": "PMB-02",
+    "question": "Apa saja jalur masuk UPI?",
+    "expected_doc_title": "",
+    "expected_keywords": ["jalur masuk", "SNBP", "SNBT", "mandiri"],
+    "ground_truth": "",
+    "category": "pmb",
+    "difficulty": "easy"
+  },
+  {
+    "id": "PPID-01",
+    "question": "Berapa biaya kuliah di UPI?",
+    "expected_doc_title": "",
+    "expected_keywords": ["biaya", "UKT", "kuliah"],
+    "ground_truth": "",
+    "category": "ppid",
+    "difficulty": "easy"
+  },
+  {
+    "id": "AKD-01",
+    "question": "Apa syarat pengajuan cuti akademik?",
+    "expected_doc_title": "",
+    "expected_keywords": ["syarat", "cuti akademik"],
+    "ground_truth": "",
+    "category": "akademik",
+    "difficulty": "medium"
+  },
+  {
+    "id": "AKD-02",
+    "question": "Bagaimana prosedur pengisian IRS?",
+    "expected_doc_title": "",
+    "expected_keywords": ["IRS", "prosedur", "pengisian"],
+    "ground_truth": "",
+    "category": "akademik",
+    "difficulty": "medium"
+  }
+]
