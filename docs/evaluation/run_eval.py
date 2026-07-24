@@ -457,7 +457,10 @@ def main() -> int:
     parser.add_argument("--models", nargs="+", default=None, help="Model names to compare (overrides config.yaml)")
     parser.add_argument("--budget", type=float, default=None, help="Judge budget in USD (overrides config.yaml)")
     parser.add_argument("--judge-model", type=str, default=None, help="Anthropic judge model (overrides config.yaml)")
-    parser.add_argument("--ragas-sample", type=int, default=None, help="Number of questions to LLM-judge (default: all)")
+    parser.add_argument("--ragas-sample", type=int, default=None,
+                         help="Number of questions to LLM-judge PER MODEL - same sampled "
+                              "question set is judged for every model in --models/config.yaml "
+                              "(default: config.yaml judge.ragas_sample_size)")
     parser.add_argument("--retrieval-only", action="store_true", help="Skip generation and judging entirely")
     parser.add_argument("--skip-judge", action="store_true", help="Run generation but skip the LLM judge (free)")
     parser.add_argument("--top-k", type=int, default=None, help="Override retrieval top_k")
@@ -552,7 +555,9 @@ def main() -> int:
             rng = random.Random(sample_seed)
             judge_qids = set(rng.sample(all_qids, ragas_sample))
             print(f"[budget] Sampling {ragas_sample}/{len(all_qids)} questions for LLM judging "
-                  f"(seed={sample_seed}).")
+                  f"(seed={sample_seed}) - judged for EACH of the {len(model_names)} model(s), "
+                  f"i.e. {ragas_sample} answer-quality judgments per model "
+                  f"({ragas_sample * len(model_names)} total).")
         else:
             judge_qids = set(all_qids)
 

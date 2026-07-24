@@ -81,10 +81,14 @@ jawaban**, dan **refusal rate** (deteksi kata kunci "maaf/tidak
 tersedia/tidak ditemukan").
 
 **Karena LLM-as-a-Judge berbayar dan populasi dataset besar (1.816),**
-evaluasi jawaban dijalankan pada **sampel acak** (default n=500, lihat
-`config.yaml` → `judge.ragas_sample_size`, dan justifikasi lengkapnya di
-`THESIS_NOTES.md` § 1.1) — bukan seluruh populasi. Retrieval tetap dihitung
-untuk seluruh 1.816 pertanyaan karena gratis.
+evaluasi jawaban dijalankan pada **sampel acak sebanyak 500 pertanyaan PER
+MODEL** (default `judge.ragas_sample_size: 500` di `config.yaml`) — bukan
+seluruh populasi, dan bukan dibagi antar model. Ke-500 pertanyaan yang sama
+dinilai untuk setiap model di `models:`, jadi dengan 2 model itu berarti
+500 penilaian jawaban untuk Llama + 500 untuk Qwen (1.000 total), plus 500
+penilaian konteks yang dipakai bersama (kontekstnya identik untuk kedua
+model). Justifikasi lengkap ukuran sampel ini ada di `THESIS_NOTES.md` §
+1.1. Retrieval tetap dihitung untuk seluruh 1.816 pertanyaan karena gratis.
 
 ## Cara Pakai
 
@@ -136,7 +140,7 @@ models:
 judge:
   model: "claude-haiku-4-5"   # judge murah — cocok untuk budget kecil
   budget_usd: 8.0              # batas keras, script berhenti judge saat tercapai
-  ragas_sample_size: 500       # sampel RAGAS dari populasi 1.816 (lihat THESIS_NOTES.md § 1.1)
+  ragas_sample_size: 500       # PER MODEL (500 sama untuk tiap model, bukan dibagi) - lihat THESIS_NOTES.md § 1.1
 ```
 
 Kedua model harus sudah ter-`pull` di Ollama server yang dipakai backend

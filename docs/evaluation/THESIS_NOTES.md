@@ -60,7 +60,7 @@ yang sudah dipakai pada evaluasi sebelumnya.
 > saat evaluasi dilakukan, untuk memastikan validitasnya tidak basi akibat
 > perubahan korpus dokumen dari waktu ke waktu.
 
-### 1.1 Justifikasi Ukuran Sampel LLM-as-a-Judge (n = 500 dari N = 1.816)
+### 1.1 Justifikasi Ukuran Sampel LLM-as-a-Judge (n = 500 PER MODEL, dari N = 1.816)
 
 > **Evaluasi retrieval dilakukan terhadap seluruh populasi dataset (N = 1.816
 > pertanyaan)**, karena metrik retrieval (Hit Rate, Recall@K, MRR, keyword
@@ -68,13 +68,18 @@ yang sudah dipakai pada evaluasi sebelumnya.
 > praktis untuk mengevaluasi seluruh dataset.
 >
 > **Evaluasi kualitas jawaban (LLM-as-a-Judge) dilakukan terhadap sampel
-> acak sebanyak n = 500 pertanyaan** dari populasi N = 1.816, dipilih
-> menggunakan *simple random sampling* dengan *seed* tetap (42) agar hasil
-> sampel dapat direproduksi persis pada evaluasi ulang. Pembatasan ini
-> **diperlukan karena setiap penilaian melalui LLM-as-a-Judge menggunakan
-> Claude API berbayar**, sehingga mengevaluasi seluruh populasi untuk dua
-> model generasi sekaligus (± 1.816 × 2 × 2 = 7.264 panggilan API) berada
-> jauh di luar anggaran penelitian yang ditetapkan sebesar USD 8,00.
+> acak sebanyak n = 500 pertanyaan, dan ke-500 pertanyaan yang SAMA ini
+> dinilai untuk KEDUA model generasi** (bukan dibagi 250/250) — sehingga
+> setiap model menerima **500 penilaian kualitas jawaban** yang dapat
+> diperbandingkan langsung satu-lawan-satu, karena keduanya dinilai atas
+> pertanyaan dan konteks retrieval yang identik (variabel terkontrol).
+> Sampel dipilih menggunakan *simple random sampling* dengan *seed* tetap
+> (42) agar hasil sampel dapat direproduksi persis pada evaluasi ulang.
+> Pembatasan ini **diperlukan karena setiap penilaian melalui
+> LLM-as-a-Judge menggunakan Claude API berbayar**, sehingga mengevaluasi
+> seluruh populasi untuk dua model generasi sekaligus (± 1.816 × 2 × 2 =
+> 7.264 panggilan API) berada jauh di luar anggaran penelitian yang
+> ditetapkan sebesar USD 8,00.
 >
 > Ukuran sampel n = 500 dipilih dengan pertimbangan sebagai berikut:
 > 1. **Jauh lebih besar dibanding evaluasi RAGAS sebelumnya** pada proyek
@@ -154,7 +159,7 @@ Isi setelah menjalankan `python run_eval.py` dan membaca
 | Avg Keyword Coverage | `retrieval_aggregate.avg_keyword_coverage` |
 | Avg Score (embedding) | `retrieval_aggregate.avg_score_mean` |
 
-### Tabel 4.y — Perbandingan Kualitas Jawaban: Llama 3.1 8B vs Qwen 3.5 4B (n = 500 sampel)
+### Tabel 4.y — Perbandingan Kualitas Jawaban: Llama 3.1 8B vs Qwen 3.5 4B (n = 500 per model, pertanyaan sama)
 
 | Metrik | Llama 3.1 8B Instruct (Q4_K_M) | Qwen 3.5 4B (Q4_K_M) |
 |---|---|---|

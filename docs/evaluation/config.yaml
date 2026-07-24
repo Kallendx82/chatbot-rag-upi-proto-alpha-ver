@@ -33,17 +33,24 @@ judge:
   # if Anthropic pricing changes. See shared/models.md in the claude-api skill.
   price_input_per_mtok: 1.00
   price_output_per_mtok: 5.00
-  # Optional cap on how many dataset questions get LLM-judged (retrieval
-  # metrics still run on the full dataset - they're free). null = no cap,
-  # rely on the budget tracker alone.
+  # How many dataset questions get LLM-judged. IMPORTANT: this number is
+  # PER MODEL, not split across models - the script samples this many
+  # question IDs ONCE, then judges the answer from EVERY model in `models:`
+  # for that SAME set of questions (this is what keeps the comparison
+  # controlled: both models are graded on identical questions). So
+  # ragas_sample_size: 500 with 2 models means 500 answer-quality judgments
+  # for Llama AND 500 for Qwen (1,000 total answer judgments), plus 500
+  # shared context-quality judgments (context is identical across models,
+  # so it's judged once, not once per model) = 1,500 judge calls total.
+  # null = no cap, rely on the budget tracker alone (not recommended for a
+  # dataset this large - retrieval metrics still run on the full dataset
+  # for free either way).
   #
-  # dataset.json now has 1,816 questions (imported from the prior evaluation
-  # project - see docs/evaluation/import_legacy_dataset.py), so judging all
-  # of them for 2 models would badly blow the $8 budget. 500 was chosen as
-  # the RAGAS sample size: it's 2.5x the 200-sample runs from the previous
-  # evaluation (more statistical confidence), and at ~1,500 total judge
-  # calls (500 shared context-quality calls + 500 x 2 models answer-quality
-  # calls) with Claude Haiku 4.5 pricing it costs roughly $3-5 - comfortably
+  # dataset.json has 1,816 questions (imported from the prior evaluation
+  # project - see docs/evaluation/import_legacy_dataset.py). 500 per model
+  # was chosen because it's 2.5x the 200-sample runs from the previous
+  # evaluation (more statistical confidence), and the resulting 1,500 judge
+  # calls cost roughly $3-5 with Claude Haiku 4.5 pricing - comfortably
   # inside the $8 ceiling with headroom for the hard budget stop to never
   # trigger mid-run. See THESIS_NOTES.md Sec. 1 for the write-up of this
   # sampling decision for BAB III.
