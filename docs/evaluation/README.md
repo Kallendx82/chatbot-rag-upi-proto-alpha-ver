@@ -11,6 +11,7 @@ antar model generasi** (mis. Llama 3.1 8B vs Qwen 3.5 4B) dengan LLM-as-a-Judge
 docs/evaluation/
 ├── README.md                    # Dokumentasi ini
 ├── THESIS_NOTES.md              # Draf metodologi BAB III + template tabel BAB IV
+├── LAMPIRAN_PROSEDUR_EVALUASI.md # Prosedur eksekusi step-by-step, siap tempel ke Lampiran
 ├── dataset.json                 # Dataset utama: 1.816 pertanyaan, ground truth chunk-level
 ├── dataset.smoke10.json         # Dataset kecil (10 soal) untuk smoke-test cepat/gratis
 ├── run_eval.py                  # Script evaluasi & perbandingan model (reusable)
