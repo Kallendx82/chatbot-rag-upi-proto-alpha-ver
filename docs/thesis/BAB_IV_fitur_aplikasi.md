@@ -9,6 +9,9 @@
 
 ## 4.x.1 Fitur Percakapan dan Retrieval-Augmented Generation (RAG)
 
+![Layar chat dengan jawaban RAG dan badge terverifikasi sumber](screenshots/4x1_chat_jawaban_sitasi.png)
+*Gambar 4.1 — Percakapan dengan jawaban yang dihasilkan sistem RAG beserta badge "Terverifikasi sumber".*
+
 Fitur inti aplikasi adalah antarmuka percakapan yang memungkinkan pengguna
 mengajukan pertanyaan seputar informasi akademik UPI dan menerima jawaban
 yang dihasilkan berdasarkan dokumen resmi yang telah diindeks ke dalam
@@ -89,6 +92,9 @@ mengarahkan pengguna secara berlebihan.
 
 ## 4.x.2 Fitur Sitasi Sumber (Source Citations)
 
+![Panel inspeksi sumber dengan metadata lengkap potongan dokumen](screenshots/4x2_source_inspector.png)
+*Gambar 4.2 — Panel `SourceInspector` menampilkan skor kemiripan, chunk ID, document ID, dan tombol "Buka PDF".*
+
 Untuk mendukung transparansi dan akuntabilitas jawaban yang dihasilkan
 sistem RAG, setiap jawaban asisten yang berhasil menemukan dokumen relevan
 disertai daftar kartu sumber (`SourceCard`) yang ditampilkan sebagai grid
@@ -155,6 +161,9 @@ model bahasa generatif, dengan menjadikan proses pengambilan dokumen
 sebagai bagian yang transparan dan dapat diperiksa oleh pengguna akhir.
 
 ## 4.x.3 Fitur Pengaturan Aplikasi (Settings)
+
+![Panel Pengaturan pada tampilan desktop](screenshots/4x3_settings_desktop.png)
+*Gambar 4.3 — Panel `SettingsModal`: tema, bahasa, Top-K, Temperature, pemilihan model, dan mode debug.*
 
 Aplikasi menyediakan panel pengaturan (`SettingsModal`) yang memungkinkan
 pengguna menyesuaikan berbagai parameter operasional sistem tanpa perlu
@@ -232,6 +241,9 @@ aplikasi, termasuk pada fitur tambah dokumen yang dibahas berikutnya.
 
 ## 4.x.4 Fitur Panel Debug Retrieval (Debug Panel)
 
+![Panel Retrieval Debug dengan metrik latensi dan pratinjau prompt](screenshots/4x4_debug_panel.png)
+*Gambar 4.4 — Panel `DebugPanel`: metrik latensi, parameter retrieval, pratinjau prompt, dan daftar chunk.*
+
 Panel debug (`DebugPanel`) merupakan fitur yang secara eksplisit
 diperuntukkan sebagai sarana pembuktian (*explainability surface*) bagi
 klaim pengurangan halusinasi yang menjadi tujuan utama sistem RAG dalam
@@ -299,6 +311,9 @@ bantu pengembangan yang terintegrasi langsung ke dalam antarmuka produksi
 aplikasi, alih-alih memerlukan perangkat terpisah di luar aplikasi.
 
 ## 4.x.5 Fitur Tambah Dokumen PDF (Admin Ingest)
+
+![Halaman admin Tambah Dokumen PDF dengan Pengaturan Chunk terbuka](screenshots/4x5_admin_tambah_dokumen.png)
+*Gambar 4.5 — Halaman `/admin`: formulir unggah PDF, kategori, dan Pengaturan Chunk (Lanjutan).*
 
 Fitur tambah dokumen memungkinkan administrator memperluas basis
 pengetahuan sistem RAG dengan mengunggah berkas PDF baru langsung melalui
@@ -373,6 +388,12 @@ sekaligus menghindari kendala hak cipta atas gambar tekstur pihak ketiga.
 
 ## 4.x.6 Fitur Statistik Penggunaan (Usage Statistics)
 
+![Halaman Statistik: kartu ringkasan dan grafik pertanyaan per hari](screenshots/4x6_statistik_ringkasan.png)
+*Gambar 4.6a — Halaman `/stats`: kartu Total Pertanyaan/Akun Terdaftar/Sesi Tersimpan dan grafik harian.*
+
+![Halaman Statistik: daftar pertanyaan terpopuler](screenshots/4x6_statistik_terpopuler.png)
+*Gambar 4.6b — Daftar "Pertanyaan terpopuler" berperingkat dengan jumlah kemunculan.*
+
 Fitur statistik menyediakan ringkasan penggunaan aplikasi secara agregat
 bagi administrator, diakses melalui rute `/stats` dengan mekanisme
 pembatasan akses yang identik dengan halaman tambah dokumen — hanya
@@ -430,6 +451,9 @@ administrator memantau tren pemakaian sistem secara real-time setelah
 aplikasi berjalan di lingkungan produksi.
 
 ## 4.x.7 Fitur Akun: Autentikasi, Ubah Kata Sandi, dan Ganti Akun
+
+![Modal Masuk/Daftar pada tampilan desktop](screenshots/4x7_auth_modal_desktop.png)
+*Gambar 4.7 — Dialog `AuthModal`: tab Masuk/Daftar dengan validasi kompleksitas kata sandi.*
 
 Aplikasi menerapkan sistem autentikasi berbasis akun untuk membedakan
 akses pengguna umum dari administrator, dengan kontrol terpusat pada
@@ -496,6 +520,21 @@ identitas pengguna dapat diakses dari satu titik yang konsisten di seluruh
 halaman aplikasi.
 
 ## 4.x.8 Pengujian Responsivitas Antarmuka (Desktop, Tablet, Mobile)
+
+![Layar sambutan pada viewport mobile 375x812](screenshots/mobile_welcome.png)
+*Gambar 4.8a — Layar sambutan pada viewport mobile (375×812 piksel).*
+
+![Sidebar sebagai overlay drawer pada viewport mobile](screenshots/mobile_sidebar_drawer.png)
+*Gambar 4.8b — Sidebar riwayat percakapan tampil sebagai panel tumpang tindih (off-canvas drawer) di mobile.*
+
+![Panel Pengaturan pada viewport mobile](screenshots/mobile_settings.png)
+*Gambar 4.8c — Panel Pengaturan tetap legible dengan scroll internal di lebar layar sempit.*
+
+![Modal autentikasi pada viewport mobile](screenshots/mobile_auth.png)
+*Gambar 4.8d — Dialog Masuk/Daftar menyesuaikan diri pada lebar layar ponsel.*
+
+![Panel tablet 768x1024 menampilkan padding kanvas alat emulasi](screenshots/tablet_padding_artifact.png)
+*Gambar 4.8e — Contoh area kanvas kosong (padding alat emulasi, bukan sisa tampilan desktop) pada viewport tablet.*
 
 Selain diuji pada resolusi layar desktop standar, antarmuka aplikasi juga
 diuji pada dua ukuran viewport tambahan untuk memverifikasi klaim
