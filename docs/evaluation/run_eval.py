@@ -409,6 +409,41 @@ def compute_answer_aggregate(entries: list[dict]) -> dict:
     return agg
 
 
+def compute_category_breakdown(entries: list[dict]) -> dict[str, dict]:
+    """Per-category RAGAS averages (faithfulness, answer_relevancy,
+    context_precision, context_recall) - the shape needed for a thesis
+    appendix table like 'Tabel Skor RAGAS per kategori'. Only judged
+    entries count; a category with zero successfully-judged entries is
+    reported with all scores null (e.g. every sample failed judging) so
+    the table shows the gap explicitly (mirrors the "NaN*" convention
+    used in the prior evaluation's appendix) instead of silently omitting
+    the row.
+    """
+    by_cat: dict[str, list[dict]] = {}
+    for e in entries:
+        by_cat.setdefault(e.get("category") or "(tanpa kategori)", []).append(e)
+
+    def avg(vals: list[float]) -> float | None:
+        vals = [v for v in vals if v is not None]
+        return sum(vals) / len(vals) if vals else None
+
+    breakdown: dict[str, dict] = {}
+    for cat, cat_entries in by_cat.items():
+        judged = [e for e in cat_entries if e.get("judge")]
+        breakdown[cat] = {
+            "n_questions": len(cat_entries),
+            "n_judged": len(judged),
+            "faithfulness": avg([e["judge"]["faithfulness_score"] for e in judged]),
+            "answer_relevancy": avg([e["judge"]["answer_relevancy_score"] for e in judged]),
+            "context_precision": avg([e.get("context_precision") for e in cat_entries]),
+            "context_recall": avg([
+                e.get("context_recall") for e in cat_entries
+                if e.get("context_recall") is not None and e.get("context_recall") >= 0
+            ]),
+        }
+    return breakdown
+
+
 # ---------------------------------------------------------------------------
 # Display
 # ---------------------------------------------------------------------------
@@ -445,6 +480,51 @@ def print_comparison_table(model_labels: dict[str, str], per_model_agg: dict[str
     row("Avg Latency (ms)", "avg_latency_ms", "{:.0f}")
     row("Avg Answer Len (chars)", "avg_answer_length_chars", "{:.0f}")
     row("Questions Judged", "n_judged", "{:.0f}")
+    print()
+
+
+def print_category_tables(model_labels: dict[str, str], per_model_category: dict[str, dict[str, dict]]) -> None:
+    """One table per model: Kategori | Faithfulness | Ans. Relevancy | Ctx.
+    Precision | Ctx. Recall | OVERALL row - the exact shape used for the
+    'Lampiran Hasil Evaluasi RAGAS per Kategori' appendix table in prior
+    evaluations of this project. A category where every sample failed
+    judging prints 'NaN*' (matching that prior report's convention) rather
+    than being silently dropped from the table.
+    """
+    for model, cat_breakdown in per_model_category.items():
+        label = model_labels.get(model, model)
+        print(f"\nTabel Skor RAGAS per kategori - {label}")
+        header = f"{'Kategori':<40}{'Faithfulness':<14}{'Ans. Relevancy':<16}{'Ctx. Precision':<16}{'Ctx. Recall':<12}"
+        print(header)
+        print("-" * len(header))
+
+        cats = sorted(k for k in cat_breakdown if k != "OVERALL")
+        overall_n_judged = 0
+        overall_n_questions = 0
+        for cat in cats:
+            row = cat_breakdown[cat]
+            overall_n_judged += row["n_judged"]
+            overall_n_questions += row["n_questions"]
+
+            def fmt(v: float | None) -> str:
+                return f"{v:.3f}" if v is not None else "NaN*"
+
+            print(f"{cat:<40}{fmt(row['faithfulness']):<14}{fmt(row['answer_relevancy']):<16}"
+                  f"{fmt(row['context_precision']):<16}{fmt(row['context_recall']):<12}")
+
+        # OVERALL row: recompute across all judged entries in this model, not
+        # a naive average-of-category-averages (categories can have uneven n).
+        all_faith = [cat_breakdown[c]["faithfulness"] for c in cats if cat_breakdown[c]["faithfulness"] is not None]
+        all_rel = [cat_breakdown[c]["answer_relevancy"] for c in cats if cat_breakdown[c]["answer_relevancy"] is not None]
+        all_prec = [cat_breakdown[c]["context_precision"] for c in cats if cat_breakdown[c]["context_precision"] is not None]
+        all_rec = [cat_breakdown[c]["context_recall"] for c in cats if cat_breakdown[c]["context_recall"] is not None]
+        avg = lambda xs: sum(xs) / len(xs) if xs else None
+        print("-" * len(header))
+        print(f"{'OVERALL':<40}{avg(all_faith) or 0:.3f}         {avg(all_rel) or 0:.3f}           "
+              f"{avg(all_prec) or 0:.3f}           {avg(all_rec) or 0:.3f}")
+        if any(cat_breakdown[c]['n_judged'] == 0 and cat_breakdown[c]['n_questions'] > 0 for c in cats):
+            print("*Kategori dengan skor NaN gagal dinilai untuk seluruh sampelnya - "
+                  "lihat log run untuk penyebab (mis. kegagalan generasi jawaban).")
     print()
 
 
@@ -621,13 +701,17 @@ def main() -> int:
             elif do_judge and budget.exhausted:
                 budget.skip()
 
+            ctx_judged = context_judgments.get(qid)
             per_model_entries[model].append({
                 "id": qid,
                 "question": item["question"],
+                "category": item.get("category", ""),
                 "answer": gen["answer"],
                 "backend_used": gen["backend_used"],
                 "latency_ms": gen["latency_ms"],
                 "judge": judge_result,
+                "context_precision": ctx_judged.get("context_precision_score") if ctx_judged else None,
+                "context_recall": ctx_judged.get("context_recall_score") if ctx_judged else None,
             })
             status = f"faith={judge_result['faithfulness_score']:.2f}" if judge_result else (
                 "skip" if do_judge else "")
@@ -636,9 +720,11 @@ def main() -> int:
         print()
 
     per_model_agg = {m: compute_answer_aggregate(entries) for m, entries in per_model_entries.items()}
+    per_model_category = {m: compute_category_breakdown(entries) for m, entries in per_model_entries.items()}
 
     print_comparison_table(model_labels, per_model_agg, retrieval_agg)
     if do_judge:
+        print_category_tables(model_labels, per_model_category)
         print("[Judge Budget]")
         for k, v in budget.summary().items():
             print(f"  {k}: {v}")
@@ -656,6 +742,7 @@ def main() -> int:
         "budget": budget.summary() if do_judge else None,
         "retrieval_aggregate": retrieval_agg,
         "per_model_aggregate": per_model_agg,
+        "per_model_category_breakdown": per_model_category,
         "context_judgments": context_judgments,
         "retrieval_by_question": {
             qid: {k: v for k, v in r.items() if k != "chunks"} for qid, r in retrieval_by_qid.items()
