@@ -28,7 +28,7 @@ chatbot-rag-upi-alpha/
 │   │   ├── api/              # API routes (chat, ingest, documents, auth, debug, statistics)
 │   │   ├── rag/              # RAG pipeline (vectorstore, embedder, llm, prompt)
 │   │   ├── services/         # Business logic & authentication
-│   │   └── data/             # SQLite, FAISS index, metadata, sources
+│   │   └── data/             # SQLite, FAISS index (63k+ vectors), metadata, sources
 │   ├── scripts/ingestion/    # Offline ingestion pipeline (extract, clean, chunk, embed)
 │   ├── requirements.txt
 │   └── .env                  # Configuration
@@ -39,9 +39,11 @@ chatbot-rag-upi-alpha/
 │   ├── locales/              # Translations (id, en)
 │   └── public/               # Static assets & dynamic background images
 │
-└── docs/
-    ├── evaluation/           # RAGAS evaluation scripts & benchmark datasets
-    └── thesis/               # Dokumentasi Bab IV & panduan skripsi
+├── docs/
+│   ├── evaluation/           # RAGAS evaluation scripts, dataset.400.json, & results
+│   └── thesis/               # Dokumentasi Bab IV & panduan skripsi
+│
+└── UPI-Chatbot-Launcher.exe  # One-click Windows launcher
 ```
 
 ---
