@@ -123,7 +123,9 @@ export function SourceInspector() {
                   onClick={openPdf}
                 >
                   <ExternalLink className="h-4 w-4" />
-                  {language === "en" ? "Open PDF" : "Buka PDF"}
+                  {inspected.source_type === "md" || inspected.source_type === "html"
+                    ? (language === "en" ? "Open Document" : "Buka Dokumen")
+                    : (language === "en" ? "Open PDF" : "Buka PDF")}
                 </Button>
               )}
 

@@ -121,8 +121,9 @@ class LLMService:
 
         try:
             if effective_backend == "ollama":
+                effective_model = model if (model and model != "extractive") else self._settings.ollama_model
                 return self._generate_ollama(query, chunks, language, temp, model,
-                                             examples, reasoning), "ollama"
+                                             examples, reasoning), effective_model
             if effective_backend == "openai":
                 return self._generate_openai(query, chunks, language, temp), "openai"
         except Exception as exc:  # noqa: BLE001

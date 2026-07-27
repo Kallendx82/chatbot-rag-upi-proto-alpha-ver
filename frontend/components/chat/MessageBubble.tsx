@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import {
   AlertTriangle,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Copy,
   Pencil,
   RefreshCw,
@@ -100,23 +102,44 @@ export function MessageBubble({
   const submitEdit = () => {
     const text = draft.trim();
     setEditing(false);
-    if (text && text !== message.content) {
-      onEditRetry?.(message, text);
+    if (text) {
+      if (isUser) {
+        onEditRetry?.(message, text);
+      } else if (activeId) {
+        useConversationStore.setState((s) => ({
+          conversations: s.conversations.map((c) =>
+            c.id === activeId
+              ? {
+                  ...c,
+                  updatedAt: Date.now(),
+                  messages: c.messages.map((m) =>
+                    m.id === message.id ? { ...m, content: text } : m
+                  ),
+                }
+              : c
+          ),
+        }));
+      }
     }
   };
 
-  if (isUser && editing) {
+  if (editing) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
-        className="flex flex-row-reverse gap-3"
+        className={cn("flex gap-3", isUser ? "flex-row-reverse" : "flex-row")}
       >
-        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <User className="h-4 w-4" />
+        <div
+          className={cn(
+            "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-primary-foreground",
+            isUser ? "bg-primary" : "bg-cyan"
+          )}
+        >
+          {isUser ? <User className="h-4 w-4" /> : <BrandLogo className="h-7 w-7" iconClassName="h-3.5 w-3.5" />}
         </div>
-        <div className="flex min-w-0 max-w-[min(46rem,85%)] flex-1 flex-col items-end gap-2">
+        <div className={cn("flex min-w-0 max-w-[min(46rem,85%)] flex-1 flex-col gap-2", isUser && "items-end")}>
           <Textarea
             ref={editRef}
             value={draft}
@@ -138,8 +161,8 @@ export function MessageBubble({
               {language === "en" ? "Cancel" : "Batal"}
             </Button>
             <Button size="sm" onClick={submitEdit} disabled={!draft.trim()}>
-              <RefreshCw className="h-3.5 w-3.5" />
-              {language === "en" ? "Save & resend" : "Simpan & kirim ulang"}
+              <Check className="h-3.5 w-3.5" />
+              {language === "en" ? "Save" : "Simpan"}
             </Button>
           </div>
         </div>
@@ -202,7 +225,7 @@ export function MessageBubble({
         </div>
 
         {/* Assistant: grounding badge + metrics + actions + sources */}
-        {!isUser && message.status === "complete" && (
+        {!isUser && (message.status === "complete" || message.status === "error") && (
           <div className="mt-2 w-full">
             <div className="flex flex-wrap items-center gap-2">
               {message.metrics && (
@@ -221,7 +244,7 @@ export function MessageBubble({
                   {debugMode && (
                     <Badge variant="outline" className="gap-1 font-mono">
                       <Timer className="h-3 w-3" />
-                      {Math.round(message.metrics.totalMs)}ms
+                      {Math.round(message.metrics.totalMs || 0)}ms
                     </Badge>
                   )}
                   {debugMode && (
@@ -233,6 +256,84 @@ export function MessageBubble({
               )}
 
               <div className="ml-auto flex items-center gap-1">
+                {/* Multi-response navigation: < 1/N > */}
+                {(message.responseHistory?.length || message.responses?.length || 0) > 1 && (
+                  <div className="mr-1 flex items-center gap-0.5 text-xs text-muted-foreground font-mono">
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      disabled={(message.responseIndex ?? 0) <= 0}
+                      onClick={() => {
+                        const newIdx = (message.responseIndex ?? 0) - 1;
+                        if (newIdx >= 0 && activeId) {
+                          useConversationStore.setState((s) => ({
+                            conversations: s.conversations.map((c) =>
+                              c.id === activeId
+                                ? {
+                                    ...c,
+                                    messages: c.messages.map((m) => {
+                                      if (m.id !== message.id) return m;
+                                      const item = m.responseHistory?.[newIdx];
+                                      const fallbackContent = m.responses?.[newIdx] || m.content;
+                                      return {
+                                        ...m,
+                                        content: item?.content ?? fallbackContent,
+                                        sources: item?.sources ?? (newIdx === (m.responses?.length || 1) - 1 ? m.sources : []),
+                                        metrics: item?.metrics ?? (newIdx === (m.responses?.length || 1) - 1 ? m.metrics : undefined),
+                                        responseIndex: newIdx,
+                                      };
+                                    }),
+                                  }
+                                : c
+                            ),
+                          }));
+                        }
+                      }}
+                      className="h-6 w-6 p-0"
+                    >
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                    </Button>
+                    <span>
+                      {(message.responseIndex ?? 0) + 1}/{message.responseHistory?.length || message.responses?.length || 1}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      disabled={(message.responseIndex ?? 0) >= (message.responseHistory?.length || message.responses?.length || 1) - 1}
+                      onClick={() => {
+                        const total = message.responseHistory?.length || message.responses?.length || 1;
+                        const newIdx = (message.responseIndex ?? 0) + 1;
+                        if (newIdx < total && activeId) {
+                          useConversationStore.setState((s) => ({
+                            conversations: s.conversations.map((c) =>
+                              c.id === activeId
+                                ? {
+                                    ...c,
+                                    messages: c.messages.map((m) => {
+                                      if (m.id !== message.id) return m;
+                                      const item = m.responseHistory?.[newIdx];
+                                      const fallbackContent = m.responses?.[newIdx] || m.content;
+                                      return {
+                                        ...m,
+                                        content: item?.content ?? fallbackContent,
+                                        sources: item?.sources ?? (newIdx === (m.responses?.length || 1) - 1 ? m.sources : []),
+                                        metrics: item?.metrics ?? (newIdx === (m.responses?.length || 1) - 1 ? m.metrics : undefined),
+                                        responseIndex: newIdx,
+                                      };
+                                    }),
+                                  }
+                                : c
+                            ),
+                          }));
+                        }
+                      }}
+                      className="h-6 w-6 p-0"
+                    >
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                )}
+
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -270,11 +371,8 @@ export function MessageBubble({
           </div>
         )}
 
-        {/* User bubble: edit / retry / copy for a turn whose answer failed,
-            was stopped, or was orphaned by an abrupt session end. Placed
-            under the QUESTION rather than the broken answer, since the
-            question is what the user acts on next. */}
-        {isUser && brokenAnswer && (
+        {/* User bubble action buttons */}
+        {isUser && (
           <div className="mt-1.5 flex items-center gap-1">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -284,20 +382,6 @@ export function MessageBubble({
               </TooltipTrigger>
               <TooltipContent>
                 {language === "en" ? "Edit question" : "Edit pertanyaan"}
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={() => onRetry?.(nextMessage!)}
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                {language === "en" ? "Resend" : "Kirim ulang"}
               </TooltipContent>
             </Tooltip>
             <Tooltip>
@@ -325,12 +409,13 @@ export function MessageBubble({
                     variant="ghost"
                     size="icon-sm"
                     onClick={() => onDelete(message)}
+                    className="text-muted-foreground hover:text-destructive"
                   >
-                    <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                    <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {language === "en" ? "Delete message" : "Hapus pesan"}
+                  {language === "en" ? "Delete turn" : "Hapus pesan ini"}
                 </TooltipContent>
               </Tooltip>
             )}

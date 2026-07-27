@@ -1,0 +1,2702 @@
+[
+  {
+    "id": "DITPEND_0001",
+    "question": "Siapa nama Direktur Pendidikan di Direktorat Pendidikan UPI?",
+    "expected_doc_title": "Struktur-Organisasi-2025-scaled.jpg (2560×1439)",
+    "expected_chunk_ids": [
+      "376afb68e033e2e4::64277"
+    ],
+    "expected_keywords": [
+      "kepala divisi",
+      "divisi",
+      "kepala",
+      "kepala seksi"
+    ],
+    "ground_truth": "Direktur Pendidikan di Direktorat Pendidikan Universitas Pendidikan Indonesia adalah Dr. Asep Suryana, M.Pd.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0002",
+    "question": "Pengisian IRS dan perwalian daring dimulai pada tanggal berapa?",
+    "expected_doc_title": "SE-Pembayaran-UKT-Pengisian-IRS-dan-Perwalian-Daring-Semester-Genap-TA-2025-2026",
+    "expected_chunk_ids": [
+      "e9b5c4696ed70d57::61023"
+    ],
+    "expected_keywords": [
+      "perwalian daring",
+      "perwalian",
+      "irs perwalian",
+      "pengisian irs"
+    ],
+    "ground_truth": "Pengisian IRS dan perwalian daring dilakukan mulai tanggal 3 - 26 Januari 2026.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0003",
+    "question": "Kompetensi lulusan UPI dirumuskan dalam bentuk apa?",
+    "expected_doc_title": "Pedoman-Penyelenggaraan-Pendidikan-Tahun-2024-2",
+    "expected_chunk_ids": [
+      "f2b0e1bbb62122ec::60453"
+    ],
+    "expected_keywords": [
+      "cpl",
+      "kompetensi lulusan",
+      "dirumuskan",
+      "dibutuhkan"
+    ],
+    "ground_truth": "Kompetensi lulusan Universitas Pendidikan Indonesia dirumuskan dalam bentuk Capaian Pembelajaran Lulusan (CPL).",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0004",
+    "question": "Berapa tanggal akhir perkuliahan?",
+    "expected_doc_title": "Edaran-No.-38-Tahun-2026-Pelaksanaan-Semester-Padat-2025-2026",
+    "expected_chunk_ids": [
+      "087de49809626f23::60134"
+    ],
+    "expected_keywords": [
+      "semester padat",
+      "padat",
+      "semester",
+      "berstatus"
+    ],
+    "ground_truth": "Tanggal akhir perkuliahan adalah pada 14 Agustus 2026.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0008",
+    "question": "Divisi Pendidikan Profesi dan Jasa Ke-profesian Direktorat Pendidikan memiliki tugas apa dalam hal koordinasi?",
+    "expected_doc_title": "Fungsi dan Wewenang Divisi Pendidikan Profesi Guru dan Jasa Keprofesian Direktorat Pendidikan",
+    "expected_chunk_ids": [
+      "80b3ef8761fec619::64192"
+    ],
+    "expected_keywords": [
+      "divisi",
+      "profesi jasa",
+      "divisi pendidikan",
+      "jasa keprofesian"
+    ],
+    "ground_truth": "Divisi Pendidikan Profesi dan Jasa Ke-profesian Direktorat Pendidikan bertanggung jawab untuk berkoordinasi dengan kepala divisi lain dan/atau pimpinan unit lain terkait dengan fungsi dan tugasnya.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0009",
+    "question": "Untuk mahasiswa program fasttrack yang hasil tes bahasa Inggrisnya memenuhi persyaratan pada jenjang studi sebelumnya, apa yang dapat mereka lakukan?",
+    "expected_doc_title": "Edaran-No.-47-Tahun-2026-Penggunaan-Hasil-Tes-Kemampuan-Bahasa-Inggris-Mahasiswa-Fasttrack",
+    "expected_chunk_ids": [
+      "2ad662420d235dd6::60154"
+    ],
+    "expected_keywords": [
+      "pemenuhan persyaratan",
+      "tes kemampuan",
+      "kemampuan bahasa",
+      "surat edaran"
+    ],
+    "ground_truth": "Mahasiswa program fasttrack yang pada jenjang studi sebelumnya telah memiliki hasil tes kemampuan bahasa Inggris dengan skor yang memenuhi persyaratan pada jenjang tersebut dapat menggunakan hasil tes tersebut sebagai pemenuhan persyaratan validasi kemampuan bahasa Inggris untuk ujian sidang pada jenjang studi lanjutan.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0011",
+    "question": "Dimana kegiatan Unjuk Bakat dan Bazar diselenggarakan?",
+    "expected_doc_title": "Kesan Pesan Mahasiswa PMM 4 Inbound UPI – Bertukar Sementara, Bermakna Selamanya – Direktorat Pendidikan",
+    "expected_chunk_ids": [
+      "2abeaf1a1f32f9ba::64216"
+    ],
+    "expected_keywords": [
+      "setiap kegiatan",
+      "pmm",
+      "setiap",
+      "mendaftar"
+    ],
+    "ground_truth": "Kegiatan Unjuk Bakat dan Bazar diselenggarakan di Gedung Direktorat Pendidikan Universitas Pendidikan Indonesia.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0012",
+    "question": "Periode PRS untuk mahasiswa yang tidak melakukan pengisian IRS daring adalah kapan?",
+    "expected_doc_title": "SE-No-35-Tahun-2025-Pembayaran-UKT-IRS-Perwalian-DAring",
+    "expected_chunk_ids": [
+      "dfdcb71e9d2bcb4c::61019"
+    ],
+    "expected_keywords": [
+      "prs",
+      "waktu ditetapkan",
+      "irs",
+      "meng"
+    ],
+    "ground_truth": "Mahasiswa yang tidak melakukan pengisian IRS daring sampai dengan batas waktu yang telah ditetapkan wajib melakukan perbaikan kontrak kuliah dalam masa Perubahan Rencana Studi (PRS) pada tanggal 15 - 22 September 2025.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0013",
+    "question": "Masa Perubahan Rencana Studi (PRS) dimulai pada tanggal berapa?",
+    "expected_doc_title": "Poster-Website-Pembayaran-UKT-Pengisian-IRS-dan-Perwalian-Daring-1-scaled.jpg (1810×2560)",
+    "expected_chunk_ids": [
+      "474d5d03c3ae3953::64230"
+    ],
+    "expected_keywords": [
+      "prs",
+      "irs",
+      "waktu ditetapkan",
+      "meng"
+    ],
+    "ground_truth": "Masa Perubahan Rencana Studi (PRS) dimulai pada tanggal 15-21 Februari 2025, sesuai dengan informasi yang terdapat dalam teks.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0014",
+    "question": "Berapa hari kerja yang ditetapkan untuk universitas setiap minggunya?",
+    "expected_doc_title": "Visi dan Misi – Direktorat Pendidikan",
+    "expected_chunk_ids": [
+      "a956117f0187ca8c::64283"
+    ],
+    "expected_keywords": [
+      "fungsi wewenang",
+      "wewenang",
+      "divisi",
+      "profesi bidang"
+    ],
+    "ground_truth": "Hari kerja di Universitas Pendidikan Indonesia adalah Senin sampai Kamis dengan jam operasional 07.00 - 15.30.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0016",
+    "question": "Berapa minimal jumlah point yang harus tercantum dalam naskah rencana Proyek Teknologi Tepat Guna?",
+    "expected_doc_title": "Pedoman-Tugas-Akhir-Mahasiswa-Tahun-2024",
+    "expected_chunk_ids": [
+      "a418a194ae0a9762::60818"
+    ],
+    "expected_keywords": [
+      "proyek teknologi",
+      "proyek",
+      "teknologi tepat",
+      "tepat guna"
+    ],
+    "ground_truth": "Minimal ada 7 point yang harus tercantum dalam naskah rencana Proyek Teknologi Tepat Guna, yaitu Identifikasi Masalah atau Kebutuhan, Tujuan dan Sasaran Proyek, Konsep Desain Teknologi, Studi Kelayakan, Target Pengguna, Bahan dan Alat, Anggaran Proyek.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0017",
+    "question": "Peraturan Menteri Pendidikan dan Kebudayaan Republik Indonesia Nomor berapa yang ditetapkan pada tahun 2020 tentang Standar Nasional Pendidikan Tinggi?",
+    "expected_doc_title": "8_Surat-Edaran-045_2022_Tentang-Konversi-Karya-Tulis-Ilmiah-Program-Sarjana-di-UPI",
+    "expected_chunk_ids": [
+      "2362a1a5475ffc59::60089"
+    ],
+    "expected_keywords": [
+      "kebudayaan republik",
+      "menteri pendidikan",
+      "pendidikan kebudayaan",
+      "kebudayaan"
+    ],
+    "ground_truth": "Peraturan Menteri Pendidikan dan Kebudayaan Republik Indonesia Nomor 3 Tahun 2020 tentang Standar Nasional Pendidikan Tinggi.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0019",
+    "question": "Nomor telepon kantor Wakil Rektur Bidang Pendidikan dan Kemahasiswaan Didi Sukyadi adalah apa?",
+    "expected_doc_title": "Surat_Edaran_Pengajuan-Permohonan-Cuti-Kuliah-Semester-Genap-2023.2024",
+    "expected_chunk_ids": [
+      "cd353aed991d1c7d::64281"
+    ],
+    "expected_keywords": [
+      "elektronik",
+      "kemahasiswaan didi",
+      "undang",
+      "laman surel"
+    ],
+    "ground_truth": "Nomor telepon kantor Wakil Rektur Bidang Pendidikan dan Kemahasiswaan Didi Sukyadi adalah (022) 2013163 dan 2013164.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0020",
+    "question": "Biaya pemrosesan surat keterangan Ijazah adalah berapa?",
+    "expected_doc_title": "Informasi Pelayanan – Direktorat Pendidikan",
+    "expected_chunk_ids": [
+      "3a52e985497584e2::64200"
+    ],
+    "expected_keywords": [
+      "berbayar",
+      "pemrosesan",
+      "hari kerja",
+      "transkrip akademik"
+    ],
+    "ground_truth": "Biaya untuk pemrosesan surat keterangan Ijazah adalah Rp150.000,00 dan memerlukan waktu 10 hari kerja.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "DITPEND_0022",
+    "question": "Dokumen ini telah ditandatangani oleh siapa?",
+    "expected_doc_title": "Surat_Edaran_Nomor-92-Tahun-2025-Tentang-Bebas-Pustaka-dan-Unggah-Mandiri-Karya-Akhir-Mahasiswa-Melalui-SIAS",
+    "expected_chunk_ids": [
+      "ac9e1a97f3e03295::61052"
+    ],
+    "expected_keywords": [
+      "elektronik",
+      "penuh tanggung",
+      "mutu vanessa",
+      "undang"
+    ],
+    "ground_truth": "Dokumen tersebut ditandatangani oleh Vanessa Gaffar pada tanggal 15 Desember 2025.",
+    "category": "Direktorat Pendidikan",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0003",
+    "question": "Tanggal pengisian Isian Rencana Studi (IRS) daring dimulai dari tanggal berapa?",
+    "expected_doc_title": "upi_surat_pernyataan_umum_2023_185",
+    "expected_chunk_ids": [
+      "090a5283d687ac55::2837"
+    ],
+    "expected_keywords": [
+      "irs",
+      "coklat",
+      "abu",
+      "pascasarjana abu"
+    ],
+    "ground_truth": "Pengisian Isian Rencana Studi (IRS) daring dilaksanakan mulai tanggal 28 Agustus 2023.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0004",
+    "question": "Dokumen ini ditandatangani pada tanggal berapa?",
+    "expected_doc_title": "9DnwxFoxtBZnLUyVOKO2pBvEqwLXCFHjj9adGOFp",
+    "expected_chunk_ids": [
+      "416521677d7f6293::61594"
+    ],
+    "expected_keywords": [
+      "elektronik",
+      "sukyadi dokumen",
+      "rektor didi",
+      "januari rektor"
+    ],
+    "ground_truth": "Dokumen ini ditandatangani pada tanggal 5 Januari 2026.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0005",
+    "question": "Bagaimana cara peserta memilih jalur seleksi saat mendaftar?",
+    "expected_doc_title": "Hf0abZB6deEoOM3B5Z43c98pP47MVA7FMs1Z0BTl",
+    "expected_chunk_ids": [
+      "c00909261300cf0c::45675"
+    ],
+    "expected_keywords": [
+      "anda",
+      "akun anda",
+      "login",
+      "login akun"
+    ],
+    "ground_truth": "Peserta perlu memilih jalur seleksi dari daftar opsi yang tersedia dan mengikuti jalur tersebut sesuai dengan preferensinya.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "hard",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0007",
+    "question": "Tanggal pengumuman hasil seleksi adalah?",
+    "expected_doc_title": "upi_surat_pernyataan_umum_2025_309",
+    "expected_chunk_ids": [
+      "dcc4b48dac0ade8a::53445"
+    ],
+    "expected_keywords": [
+      "registrasi",
+      "dinyatakan lulus",
+      "registrasi administrasi",
+      "hasil seleksi"
+    ],
+    "ground_truth": "Hasil seleksi akan diumumkan pada tanggal 14 Januari 2026 melalui akun pendaftaran masing-masing peserta.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0008",
+    "question": "Semester ujian pascasarjana UPI yang disebutkan dalam formulir permohonan penjadwalan ulang adalah?",
+    "expected_doc_title": "upi_jadwal_2022_322",
+    "expected_chunk_ids": [
+      "4ca2d7ddb9374280::17225"
+    ],
+    "expected_keywords": [
+      "seleksi pascasarjana",
+      "ujian seleksi",
+      "penjadwalan",
+      "upi semester"
+    ],
+    "ground_truth": "Semester ujian pascasarjana UPI yang disebutkan dalam formulir permohonan penjadwalan ulang adalah Semester Genap 2022/2023.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0009",
+    "question": "Warna Map untuk Fakultas Ilmu Pendidikan (FIP) adalah apa?",
+    "expected_doc_title": "upi_surat_pernyataan_umum_2023_287",
+    "expected_chunk_ids": [
+      "372eebb30c271502::12356"
+    ],
+    "expected_keywords": [
+      "map",
+      "irs",
+      "warna",
+      "warna map"
+    ],
+    "ground_truth": "Warna Map untuk Fakultas Ilmu Pendidikan (FIP) adalah hijau, sesuai dengan informasi yang terdapat pada teks di atas.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0010",
+    "question": "Apakah penyetoran ke Bank BNI untuk UPI dapat dilakukan di cabang lain?",
+    "expected_doc_title": "upi_surat_rekomendasi_umum_2025_116",
+    "expected_chunk_ids": [
+      "3272e3e353d69e75::10136"
+    ],
+    "expected_keywords": [
+      "bank",
+      "finalisasi",
+      "bni",
+      "mandiri bank"
+    ],
+    "ground_truth": "Penyetoran ke Bank BNI hanya dapat dilakukan melalui Bank BNI, tidak di cabang lain atau melalui metode lain seperti e-Banking dan ATM.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0011",
+    "question": "Apakah syarat umum bagi peserta SM FPEB UPI?",
+    "expected_doc_title": "DGDu97xESRF3yNOyZn8Swy0jHcJp7aZtoF2IpA8n",
+    "expected_chunk_ids": [
+      "d308cfebe147bf42::52116"
+    ],
+    "expected_keywords": [
+      "requirements",
+      "general requirements",
+      "must meet",
+      "must"
+    ],
+    "ground_truth": "Peserta SM FPEB Universitas Pendidikan Indonesia harus berwarga negara Indonesia (WNI), lulusan SMA/MA/SMK/Pack C tahun 2021, 2022, atau 2023, serta dalam keadaan fisik dan mental yang sehat tidak mengganggu proses pembelajaran di program studi yang dipilih.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0012",
+    "question": "Bagaimana cara mendapatkan akun untuk mengakses IRS dan informasi akademik lainnya?",
+    "expected_doc_title": "UdoBryzshyz2lK4P4r4LR2NDKbG5ggcj8xi7y4p3",
+    "expected_chunk_ids": [
+      "30e18d0d0b21d11d::9992"
+    ],
+    "expected_keywords": [
+      "laman unit",
+      "lengkap menyampaikan",
+      "mail pmb",
+      "pertanyaan melalui"
+    ],
+    "ground_truth": "Akun dapat diperoleh melalui laman yang disediakan oleh Universitas Pendidikan Indonesia.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "hard",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0018",
+    "question": "Pada tanggal berapakah calon mahasiswa diwajibkan untuk mengisi form data riwayat kesehatan?",
+    "expected_doc_title": "upi_surat_pernyataan_pilihan_prodi_2025_022",
+    "expected_chunk_ids": [
+      "408d220a4dacae3d::15099"
+    ],
+    "expected_keywords": [
+      "irs",
+      "mengakses informasi",
+      "mahasiswa perlu",
+      "pengisian"
+    ],
+    "ground_truth": "Calon Mahasiswa diwajibkan untuk mengisi form data riwayat kesehatan pada tanggal 24-26 Februari 2026.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0021",
+    "question": "Bank mana yang hanya dapat digunakan untuk melakukan penyetoran uang ke rekeningnya melalui cabang?",
+    "expected_doc_title": "upi_surat_rekomendasi_umum_2025_036",
+    "expected_chunk_ids": [
+      "130c02bf64004451::5218"
+    ],
+    "expected_keywords": [
+      "bank",
+      "finalisasi",
+      "bni",
+      "mandiri bank"
+    ],
+    "ground_truth": "BNI adalah bank yang hanya dapat dilayani melalui cabang BNI, sedangkan Bank Mandiri dan Bank BRI dapat dilayani melalui cabang lain atau metode lain seperti e-Banking dan ATM.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0022",
+    "question": "Jurusan apa yang berhubungan dengan desain dan konstruksi bangunan?",
+    "expected_doc_title": "upi_pengumuman_hasil_seleksi_2022_325",
+    "expected_chunk_ids": [
+      "f5667fdcaaea07ce::57920"
+    ],
+    "expected_keywords": [
+      "pendidikan teknik",
+      "teknik",
+      "elektro pendidikan",
+      "pendidikan tata"
+    ],
+    "ground_truth": "Pendidikan Teknik Arsitektur adalah jurusan yang berfokus pada desain dan konstruksi bangunan.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0024",
+    "question": "Nomor WhatsApp yang dapat dihubungi untuk mendapatkan informasi registrasi akademik adalah berapa?",
+    "expected_doc_title": "upi_surat_pernyataan_umum_2025_058",
+    "expected_chunk_ids": [
+      "e906017dfa02d391::54347"
+    ],
+    "expected_keywords": [
+      "umum menghubungi",
+      "registrasi umum",
+      "ditentukan calon",
+      "layanan"
+    ],
+    "ground_truth": "Calon Mahasiswa Baru dapat menghubungi Hot Line/Call Centre Unit Layanan Terpadu UPI pada Nomor WA 08112096229 untuk mendapatkan informasi registrasi akademik.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0025",
+    "question": "Siapa yang dapat mendaftar pada seleksi Prestasi Istimewa (PI) di Universitas Pendidikan Indonesia?",
+    "expected_doc_title": "upi_surat_keterangan_umum_2024_241",
+    "expected_chunk_ids": [
+      "024bddf01a001191::391"
+    ],
+    "expected_keywords": [
+      "sepadan dengannya",
+      "bidang keagamaan",
+      "pengakuan masyarakat",
+      "keagamaan seperti"
+    ],
+    "ground_truth": "Siswa yang dapat mendaftar pada seleksi PI adalah siswa yang memiliki prestasi karya seni atau teknologi monumental yang mendapatkan pengakuan masyarakat, memiliki prestasi bidang keagamaan (seperti hafidz Al-Qur an minimal 15 Juz atau yang sepadan dengannya), atau siswa yang memperoleh medali dalam bidang akademik maupun non-akademik pada kompetisi tingkat kabupaten/kota, provinsi, nasional dan internasional seperti peraih medali Olimpiade, Kejuaran Bidang Keagamaan (seperti MTQ dan yang sepadan dengannya) dan pertandingan olahraga.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PMB_0027",
+    "question": "Peraturan Pemerintah Nomor berapakah yang mengubah Peraturan Pemerintah Nomor 26 Tahun 2015 tentang Bentuk dan Mekanisme Pendanaan Perguruan Tinggi Negeri Badan Hukum?",
+    "expected_doc_title": "upi_rincian_biaya_pendidikan_2023_277",
+    "expected_chunk_ids": [
+      "5118aac62250d9ea::18326"
+    ],
+    "expected_keywords": [
+      "lembaran negara",
+      "lembaran",
+      "negara republik",
+      "tambahan lembaran"
+    ],
+    "ground_truth": "Peraturan Pemerintah Nomor 8 Tahun 2020 tentang Perubahan Atas Peraturan Pemerintah Nomor 26 Tahun 2015 tentang Bentuk dan Mekanisme Pendanaan Perguruan Tinggi Negeri Badan Hukum telah mengubahnya.",
+    "category": "Penerimaan Mahasiswa Baru (PMB)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0001",
+    "question": "Unit organisasi dari Satuan Kerja 677547 Ditjen Dikti (PTN BH - Universitas Pendidikan Indonesia) adalah?",
+    "expected_doc_title": "neraca_sap_upi_2020",
+    "expected_chunk_ids": [
+      "06b7b1cc2dbf249d::2531"
+    ],
+    "expected_keywords": [
+      "satuan kerja",
+      "ditjen",
+      "propinsi jawa",
+      "kade"
+    ],
+    "ground_truth": "Unit organisasi dari Satuan Kerja 677547 Ditjen Dikti (PTN BH - Universitas Pendidikan Indonesia) adalah Ditjen Pendidikan Tinggi.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0002",
+    "question": "Berapa persen tenaga kependidikan yang memperoleh sertifikat kompetensi?",
+    "expected_doc_title": "Laporan-Tahunan-UPI-2019",
+    "expected_chunk_ids": [
+      "993ba6780344714c::39725"
+    ],
+    "expected_keywords": [
+      "universitas orang",
+      "jumlah tenaga",
+      "tetap universitas",
+      "tenaga kependidikan"
+    ],
+    "ground_truth": "Menurut data yang tersedia, 92,52% dari tenaga kependidikan yang memperoleh sertifikat kompetensi.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0005",
+    "question": "Pendekatan apa yang digunakan UPI - PTNBH untuk mengukur kerugian kredit ekspektasian pada piutang usaha dan piutang lain-lain?",
+    "expected_doc_title": "upi_audited_2021",
+    "expected_chunk_ids": [
+      "fdfe7bc91e2331bd::59375"
+    ],
+    "expected_keywords": [
+      "ekspektasian",
+      "kerugian kredit",
+      "kredit ekspektasian",
+      "piutang"
+    ],
+    "ground_truth": "UPI - PTNBH menggunakan pendekatan yang memanfaatkan cadangan kerugian kredit ekspektasian seumur hidup untuk mengukur kerugian kredit ekspektasian pada piutang usaha dan piutang lain-lain.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0006",
+    "question": "Berapa anggaran yang dialokasikan untuk program dukungan manajemen T.A 2021?",
+    "expected_doc_title": "rkakl_upi_2021",
+    "expected_chunk_ids": [
+      "382067f28204ac9d::12715"
+    ],
+    "expected_keywords": [
+      "satker",
+      "rata",
+      "rata predikat",
+      "sakip satker"
+    ],
+    "ground_truth": "Anggaran yang dialokasikan untuk program dukungan manajemen T.A 2021 adalah 214,929,989,000.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0008",
+    "question": "Pada tanggal berapakah pemasukan nilai hasil Ujian Ulang dilakukan?",
+    "expected_doc_title": "Kalender-Akademik-2021-2022",
+    "expected_chunk_ids": [
+      "1bdd9cf7f4f3cf89::6510"
+    ],
+    "expected_keywords": [
+      "juni pemasukan",
+      "pemasukan nilai",
+      "pemasukan",
+      "ulang juni"
+    ],
+    "ground_truth": "Pemasukan nilai hasil Ujian Ulang dilakukan pada tanggal 13 - 25 Juni 2022.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0010",
+    "question": "Peraturan yang mengubah Peraturan Pemerintah Nomor 57 Tahun 2021 tentang Standar Nasional Pendidikan adalah nomor berapa?",
+    "expected_doc_title": "Peraturan-Majelis-Wali-Amanat-Nomor-03-Tahun-2024",
+    "expected_chunk_ids": [
+      "25a142d82d9b2db7::9212"
+    ],
+    "expected_keywords": [
+      "negara republik",
+      "republik indonesia",
+      "republik",
+      "lembaran negara"
+    ],
+    "ground_truth": "Peraturan yang mengubah Peraturan Pemerintah Nomor 57 Tahun 2021 tentang Standar Nasional Pendidikan adalah Peraturan Pemerintah Nomor 04 Tahun 2022.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0011",
+    "question": "Berapa target persentase mahasiswa yang meraih prestasi minimal tingkat nasional pada tahun 2024 untuk program P4.1?",
+    "expected_doc_title": "Laporan-Tahunan-UPI-2024",
+    "expected_chunk_ids": [
+      "b834051290cb1c6d::44598"
+    ],
+    "expected_keywords": [
+      "lulusan upaya",
+      "kesejahteraan bimbingan",
+      "peran lulusan",
+      "mahasiswa peran"
+    ],
+    "ground_truth": "Target persentase mahasiswa yang meraih prestasi minimal tingkat nasional pada tahun 2024 untuk program P4.1 adalah 0,30%.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0012",
+    "question": "Di mana posisi UPI dalam peringkat QS World University Ranking by Subject?",
+    "expected_doc_title": "RKA-UPI-PTN-BH-Tahun-2022",
+    "expected_chunk_ids": [
+      "37666e4616f7bc69::12379"
+    ],
+    "expected_keywords": [
+      "university ranking",
+      "ranking",
+      "world university",
+      "peringkat"
+    ],
+    "ground_truth": "UPI berada pada peringkat 251-300 dalam peringkat QS World University Ranking by Subject.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0013",
+    "question": "Laporan keuangan yang disusun berdasarkan prinsip akuntansi apa?",
+    "expected_doc_title": "Peraturan-Majelis-Wali-Amanat-Nomor-01-Tahun-2023",
+    "expected_chunk_ids": [
+      "e59574493c809f5c::54115"
+    ],
+    "expected_keywords": [
+      "laporan keuangan",
+      "diaudit",
+      "laporan",
+      "atas laporan"
+    ],
+    "ground_truth": "Laporan keuangan disusun berdasarkan prinsip akuntansi yang berlaku sesuai standar akuntasi keuangan yang ditetapkan oleh Ikatan Akuntan Indonesia.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0018",
+    "question": "Berapa klasifikasi rincian output untuk layanan dukungan manajemen internal yang merupakan layanan perkantoran?",
+    "expected_doc_title": "dipa_upi_2023",
+    "expected_chunk_ids": [
+      "d86b352847318158::53107"
+    ],
+    "expected_keywords": [
+      "dukungan manajemen",
+      "dukungan",
+      "output",
+      "rincian"
+    ],
+    "ground_truth": "Klasifikasi rincian output untuk layanan dukungan manajemen internal yang merupakan layanan perkantoran adalah EBA.994.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0019",
+    "question": "Berapa jumlah anggaran yang direalisasikan oleh Direktorat Jenderal Pendidikan Tinggi pada periode yang berakhir 30 Juni 2025?",
+    "expected_doc_title": "lra_sap_upi_2025",
+    "expected_chunk_ids": [
+      "8d64e78da8f8bf92::31809"
+    ],
+    "expected_keywords": [
+      "tgl",
+      "realisasi",
+      "dana",
+      "satuan kerja"
+    ],
+    "ground_truth": "Realisasi anggaran Direktorat Jenderal Pendidikan Tinggi pada periode yang berakhir 30 Juni 2025 adalah sebesar 131,091,380,189 rupiah.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0020",
+    "question": "Anggaran program Dukungan Manajemen untuk Universitas Pendidikan Indonesia pada Tahun Anggaran 2025 berapa?",
+    "expected_doc_title": "rkakl_upi_bagian_b_2025",
+    "expected_chunk_ids": [
+      "32d75b3d3539e1b7::10205"
+    ],
+    "expected_keywords": [
+      "program dukungan",
+      "dukungan manajemen",
+      "sasaran program",
+      "satuan kerja"
+    ],
+    "ground_truth": "Anggaran program Dukungan Manajemen untuk Universitas Pendidikan Indonesia pada Tahun Anggaran 2025 sebesar 233,993,726,000.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0022",
+    "question": "Peraturan mana yang mengatur tentang penjaringan, pemilihan dan penetapan anggota Majelis Wali Amanat UPI dari unsur masyarakat?",
+    "expected_doc_title": "Keputusan-SA-No-3-Tahun-2021",
+    "expected_chunk_ids": [
+      "7a0be54a1a9d44b4::26658"
+    ],
+    "expected_keywords": [
+      "amanat universitas",
+      "senat akademik",
+      "senat",
+      "unsur masyarakat"
+    ],
+    "ground_truth": "Peraturan Senat Akademik Universitas Pendidikan Indonesia Nomor 02/PER/SA UPI/2019 tentang Tata Cara Penjaringan, Pemilihan dan Penetapan Anggota Majelis Wali Amanat Universitas Pendidikan Indonesia dari Unsur Masyarakat.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0023",
+    "question": "Jumlah saldo tw. III yang dicairkan untuk biaya operasional adalah berapa?",
+    "expected_doc_title": "bpptnbh_upi_2021",
+    "expected_chunk_ids": [
+      "24a4440423539efe::9157"
+    ],
+    "expected_keywords": [
+      "tunjangan",
+      "saldo",
+      "pencairan",
+      "gaji tunjangan"
+    ],
+    "ground_truth": "Saldo TW. III yang dicairkan untuk biaya operasional sebesar 1.508.880.071.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PPID_0024",
+    "question": "Undang-Undang nomor berapakah yang mengatur tentang pendidikan tinggi di Republik Indonesia tahun 2012?",
+    "expected_doc_title": "Peraturan-SA-Nomor-1-Tahun-2022",
+    "expected_chunk_ids": [
+      "07a9bab17372e910::2598"
+    ],
+    "expected_keywords": [
+      "lembaran negara",
+      "lembaran",
+      "negara republik",
+      "republik indonesia"
+    ],
+    "ground_truth": "Undang-Undang Nomor 12 Tahun 2012 mengatur tentang pendidikan tinggi di Republik Indonesia.",
+    "category": "Informasi Publik (PPID)",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0002",
+    "question": "Bagaimana cara merename akun Zoom untuk akses room?",
+    "expected_doc_title": "1956_Jadwal_Pelaksanaan_Monev_Kemajuan_Internal_Penelitian_DRTPM_TA_2023",
+    "expected_chunk_ids": [
+      "1b3e1d2053573a31::6452"
+    ],
+    "expected_keywords": [
+      "room",
+      "urut",
+      "nama peserta",
+      "sunendar tembusan"
+    ],
+    "ground_truth": "Akun Zoom harus direname menjadi 'Room nomor_nomur urut peserta_nama peserta' seperti contoh 'Room 2_10_ Nama lengkap tanpa gelar'.",
+    "category": "LPPM",
+    "difficulty": "hard",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0004",
+    "question": "Siapakah nama peneliti yang berada di STIKES Guna Bangsa Yogyakarta?",
+    "expected_doc_title": "Lampiran_I_Peserta_Monev_Eksternal_PkM_Mono_Tahun",
+    "expected_chunk_ids": [
+      "1c541108904e63fd::6614"
+    ],
+    "expected_keywords": [
+      "tulungagung",
+      "stikes",
+      "garut",
+      "komunitas pemuliaan"
+    ],
+    "ground_truth": "Nama peneliti yang berada di STIKES Guna Bangsa Yogyakarta adalah Selasih Putri Isnawati Hadi.",
+    "category": "LPPM",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0005",
+    "question": "Berapa lama lamanya kegiatan yang disusun dalam usulan ini?",
+    "expected_doc_title": "Revisi_Panduan_Teknis_Pengusulan_Proposal_Baru_Approval_Pimpinan_Lembaga_dan_Sinkronisasi_Data",
+    "expected_chunk_ids": [
+      "d5e307b9f59fe9ab::52410"
+    ],
+    "expected_keywords": [
+      "usulan",
+      "usulan baru",
+      "pemberdayaan kemitraan",
+      "kemitraan masyarakat"
+    ],
+    "ground_truth": "Lama kegiatan yang disusun dalam usulan ini adalah 1 tahun.",
+    "category": "LPPM",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0006",
+    "question": "Siapakah nama-nama penulis dari artikel yang diterbitkan di Informatics Department Universitas Islam Sultan Agung, Semarang?",
+    "expected_doc_title": "6__Panduan_Garuda_ID",
+    "expected_chunk_ids": [
+      "8e7060da715f19ec::32155"
+    ],
+    "expected_keywords": [
+      "document",
+      "claim",
+      "assegaf",
+      "bustanul"
+    ],
+    "ground_truth": "Penulis dari artikel tersebut adalah Imam Muchlub Subroto, Abdar Moloud Abdullah, Kharos Aburawis, Abdelhadi Husein, dan Achmad Chardin.",
+    "category": "LPPM",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0007",
+    "question": "Waktu terakhir untuk melakukan konfirmasi kehadiran adalah kapan?",
+    "expected_doc_title": "Undangan_Sosialisasi_Kegiatan_Penelitian_Kerja_Sama_Luar_Negeri",
+    "expected_chunk_ids": [
+      "a08d2716764d352f::40851"
+    ],
+    "expected_keywords": [
+      "akademik pendidikan",
+      "tinggi vokasi",
+      "vokasi",
+      "tautan berikut"
+    ],
+    "ground_truth": "Peserta wajib melakukan konfirmasi kehadiran dengan mengisi formulir pendaftaran melalui tautan yang disediakan paling lambat hari Jum’at tanggal 27 Juli 2023 jam 12.00 WIB.",
+    "category": "LPPM",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0008",
+    "question": "Berapa bobot minimal untuk kategori cukup sesuai dalam penilaian?",
+    "expected_doc_title": "Batas_Waktu_Unggah_Kemajuan_dan_Hasil_Monev_Internal_Bantuan_Biaya_Luaran_Prototipe_TA_2024",
+    "expected_chunk_ids": [
+      "c5cb7195deb8a692::46564"
+    ],
+    "expected_keywords": [
+      "nidk",
+      "item",
+      "bobot",
+      "ttd"
+    ],
+    "ground_truth": "Bobot minimal untuk kategori cukup sesuai adalah 50%.",
+    "category": "LPPM",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0009",
+    "question": "Siapa yang wajib melaksanakan pemantauan/monitoring secara internal pada program pelaksanaan hilirisasi?",
+    "expected_doc_title": "inovasi",
+    "expected_chunk_ids": [
+      "53ec3533deff1124::19395"
+    ],
+    "expected_keywords": [
+      "dipuu",
+      "monev",
+      "pemantauan monitoring",
+      "tahap pemantauan"
+    ],
+    "ground_truth": "DIPUU wajib melaksanakan pemantauan/monitoring secara internal pada program pelaksanaan hilirisasi.",
+    "category": "LPPM",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0010",
+    "question": "Minimal berapa jam kegiatan yang memerlukan pelaksanaan kudapan?",
+    "expected_doc_title": "PPT_Sosialisasi_PDTI",
+    "expected_chunk_ids": [
+      "d30ef16c2845f38c::52151"
+    ],
+    "expected_keywords": [
+      "biaya konsumsi",
+      "rapat pertemuan",
+      "pmk",
+      "pertemuan luar"
+    ],
+    "ground_truth": "Menurut PMK Nomor 83/PMK.02/2022, minimal pelaksanaan kegiatan yang memerlukan kudapan adalah 2 jam.",
+    "category": "LPPM",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0011",
+    "question": "Reviewer pengabdian kepada masyarakat harus mempunyai jabatan fungsional minimal apa untuk bidang sains dan teknologi?",
+    "expected_doc_title": "Surat_Rekrutmen_Reviewer_Dikti_dan_Diksi",
+    "expected_chunk_ids": [
+      "2bacc373d3245b38::9573"
+    ],
+    "expected_keywords": [
+      "lebih bidang",
+      "humaniora seni",
+      "bidang sosial",
+      "bidang sains"
+    ],
+    "ground_truth": "Jabatan fungsional minimal yang dimiliki reviewer untuk bidang sains dan teknologi adalah lektor kepala.",
+    "category": "LPPM",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0013",
+    "question": "Kapan pelaksanaan kontrak Riset Kolaborasi Indonesia akan dilakukan?",
+    "expected_doc_title": "763_Pengumuman_Penerima_Hibah_Riset_Kolaborasi_Indonesia_Tahun_2024",
+    "expected_chunk_ids": [
+      "c5a8e1d6fb145dac::46550"
+    ],
+    "expected_keywords": [
+      "riset kolaborasi",
+      "kolaborasi indonesia",
+      "bapak ibu",
+      "seleksi proposal"
+    ],
+    "ground_truth": "Pelaksanaan kontrak Riset Kolaborasi Indonesia akan dilakukan pada Jumat, 5 April 2024.",
+    "category": "LPPM",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0014",
+    "question": "Nomor surat keputusan rektor UPI yang merujuk pada pengumuman ini adalah?",
+    "expected_doc_title": "260_Pengumuman_penerima_dana_UPI_2023",
+    "expected_chunk_ids": [
+      "5500ed05007e22df::19765"
+    ],
+    "expected_keywords": [
+      "bapak ibu",
+      "bapak",
+      "penerima hibah",
+      "kami"
+    ],
+    "ground_truth": "Surat Keputusan Rektor Universitas Pendidikan Indonesia dengan nomor 535/UN40/PT.01.02/2023 menjadi acuan dalam pengumuman ini.",
+    "category": "LPPM",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0015",
+    "question": "Contoh bahan apa yang harus ditulis rinciannya dalam satuan?",
+    "expected_doc_title": "PANDUAN_RIIM_KOMPETISI",
+    "expected_chunk_ids": [
+      "d585a90ab73e2299::52343"
+    ],
+    "expected_keywords": [
+      "pcs",
+      "sub total",
+      "tuliskan",
+      "riset luaran"
+    ],
+    "ground_truth": "Pcs adalah contoh satuan yang harus ditulis secara rinci untuk bahan-bahan seperti dalam kegiatan pengadaan bahan.",
+    "category": "LPPM",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0017",
+    "question": "Nomor telepon kantor Direktur Jenderal Pendidikan Tinggi, Riset dan Teknologi adalah berapa?",
+    "expected_doc_title": "Perpanjangan_Batas_Waktu_Pengunggahan_Laporan_Kemajuan_dan_SPTB_2022_BIMA",
+    "expected_chunk_ids": [
+      "18cdbe4a814f2b54::6105"
+    ],
+    "expected_keywords": [
+      "jenderal",
+      "tinggi riset",
+      "riset teknologi",
+      "jenderal pendidikan"
+    ],
+    "ground_truth": "Nomor telepon kantor Direktur Jenderal Pendidikan Tinggi, Riset dan Teknologi adalah (021) 57946104.",
+    "category": "LPPM",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0018",
+    "question": "Penelitian unggulan di Perguruan Tinggi MOKHAMAD SYAOM BARLIANA adalah apa?",
+    "expected_doc_title": "Jadwal_Monev_Internal_DRTPM_2023",
+    "expected_chunk_ids": [
+      "303bcf0c5216b784::9914"
+    ],
+    "expected_keywords": [
+      "kerjasama negeri",
+      "jahe merah",
+      "disertasi doktor",
+      "jahe"
+    ],
+    "ground_truth": "Penelitian unggulan di Perguruan Tinggi Mokhamad Syaom Barliana adalah sintesis fructone (ethyl 2-(2-methyl-1,3-dioxolan-2-yl)acetate).",
+    "category": "LPPM",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "LPPM_0019",
+    "question": "Bagaimana cara mengirimkan usulan?",
+    "expected_doc_title": "Panduan_Mengajukan_Proposal_Dana_Mandiri_Untuk_Pembuatan_Nilai_Kumulatif_Dosen",
+    "expected_chunk_ids": [
+      "3be99cba45426d68::14437"
+    ],
+    "expected_keywords": [
+      "submit",
+      "email",
+      "data sudah",
+      "bila ada"
+    ],
+    "ground_truth": "Usulan dapat disubmit setelah semua data diisi dan anggota yang terlibat telah mengkonfirmasi melalui email yang dikirim oleh sistem.",
+    "category": "LPPM",
+    "difficulty": "hard",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0001",
+    "question": "Tema perayaan Hari Buku Sedunia tahun ini adalah apa?",
+    "expected_doc_title": "WORLD BOOK DAY 2025 : Read Your Way",
+    "expected_chunk_ids": [
+      "c10aee1166dde7d7::1"
+    ],
+    "expected_keywords": [
+      "sambil",
+      "membaca",
+      "anak anak",
+      "mereka"
+    ],
+    "ground_truth": "Tema perayaan Hari Buku Sedunia tahun ini adalah 'Read Your Way' atau yang artinya bacalah dengan caramu sendiri.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0002",
+    "question": "Siapakah nama penulis surat selamat menempuh hidup baru yang disampaikan pada Dr. Muh. Asriadi AM, S.Pd., M.Pd.?",
+    "expected_doc_title": "Selamat Menempuh Hidup Baru",
+    "expected_chunk_ids": [
+      "f8ca09a03bd622f1::0"
+    ],
+    "expected_keywords": [
+      "menempuh",
+      "selamat",
+      "hidup",
+      "penjemputan"
+    ],
+    "ground_truth": "Nama penulis surat selamat menempuh hidup baru tersebut adalah Iwan Budiawansyah.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0003",
+    "question": "Perpustakaan menawarkan suasana seperti apa bagi mahasiswa?",
+    "expected_doc_title": "PERPUSTAKAAN SEBAGAI SALAH SATU TEMPAT FAVORIT BAGI MAHASISWA",
+    "expected_chunk_ids": [
+      "eaa7e01c9a5aa5de::0"
+    ],
+    "expected_keywords": [
+      "favorit",
+      "perpustakaan",
+      "fasilitas memadai",
+      "perpustakaan menyediakan"
+    ],
+    "ground_truth": "Perpustakaan menawarkan suasana yang tenang dan nyaman sehingga mahasiswa dapat fokus pada studi mereka.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0004",
+    "question": "Kapan PGPAUD Kampus UPI di Cibiru melaksanakan akreditasi internasional ACQUIN?",
+    "expected_doc_title": "PGPAUD Kampus UPI di Cibiru Laksanakan Akreditasi Internasional ACQUIN",
+    "expected_chunk_ids": [
+      "d1b64200447f682d::0"
+    ],
+    "expected_keywords": [
+      "acquin",
+      "pgpaud",
+      "internasional acquin",
+      "akreditasi internasional"
+    ],
+    "ground_truth": "PGPAUD Kampus Universitas Pendidikan Indonesia (UPI) di Cibiru telah melaksanakan proses akreditasi internasional dari lembaga ACQUIN pada tanggal 3 dan 4 Juli 2025.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0005",
+    "question": "Berapa banyak tim perwakilan yang berhasil lolos dalam ajang LIDM 2024 kategori Video Digital?",
+    "expected_doc_title": "Pendidikan Multimedia",
+    "expected_chunk_ids": [
+      "6e09b31b64c17abe::7"
+    ],
+    "expected_keywords": [
+      "lidm kategori",
+      "kategori video",
+      "video digital",
+      "tim perwakilan"
+    ],
+    "ground_truth": "5 tim perwakilan dari Program Studi Pendidikan Multimedia UPI Cibiru berhasil lolos dalam ajang Lomba Inovasi Digital Mahasiswa (LIDM) 2024 pada kategori Video Digital.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0006",
+    "question": "Proses microteaching di UPI Kampus Cibiru didampingi oleh siapa?",
+    "expected_doc_title": "Mahasiswa PGPAUD UPI Kampus Cibiru Laksanakan Perkuliahan Microteaching sebagai Bagian dari Persiapan Profesional Pendidik PAUD",
+    "expected_chunk_ids": [
+      "8a7d3defb635ea19::1"
+    ],
+    "expected_keywords": [
+      "microteaching",
+      "memberikan umpan",
+      "mahasiswa sebelum",
+      "mengasah kemampuan"
+    ],
+    "ground_truth": "Dosen pengampu yang memberikan umpan balik konstruktif untuk meningkatkan kualitas pengajaran mahasiswa dalam proses microteaching.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0007",
+    "question": "Bagaimana cara menghubungi pihak penyelenggara jika ada pertanyaan?",
+    "expected_doc_title": "UPI Cibiru Website",
+    "expected_chunk_ids": [
+      "4b4168e30f37a944::1"
+    ],
+    "expected_keywords": [
+      "your",
+      "please",
+      "you",
+      "step"
+    ],
+    "ground_truth": "Jika Anda memiliki pertanyaan atau membutuhkan bantuan, Anda dapat menghubungi pihak penyelenggara melalui nomor telepon +62-811-2111-1549.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "hard",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0008",
+    "question": "Hari Kebangkitan Nasional diselenggarakan pada tanggal berapa?",
+    "expected_doc_title": "Selamat Hari Kebangkitan Nasional",
+    "expected_chunk_ids": [
+      "5beb47749dbd70a9::0"
+    ],
+    "expected_keywords": [
+      "kebangkitan",
+      "kebangkitan nasional",
+      "hari kebangkitan",
+      "semangat"
+    ],
+    "ground_truth": "Hari Kebangkitan Nasional ditetapkan pada tanggal 20 Mei 2025, seperti yang tercantum dalam admin TEKKOM berita.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0009",
+    "question": "Apakah status akreditasi yang diperoleh PGPAUD UPI Cibiru Campus?",
+    "expected_doc_title": "PGPAUD UPI Cibiru Ambil Bagian dalam Open Visit UPI 2025, Tampilkan Keunggulan Program Unggulan",
+    "expected_chunk_ids": [
+      "43818fdb214a9f00::1"
+    ],
+    "expected_keywords": [
+      "facilities",
+      "its",
+      "pgpaud",
+      "laboratory"
+    ],
+    "ground_truth": "PGPAUD UPI Cibiru Campus telah dianakreditasi sebagai UNGGUL oleh Independent Education Accreditation Institute (LAMDIK).",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0013",
+    "question": "Di mana dan kapan ujian pertahanan tesis tahap pertama diselenggarakan oleh Program Studi Pendidikan Guru Sekolah Dasar?",
+    "expected_doc_title": "The Master of Elementary School Teacher Education Study Program at the UPI Campus in Cibiru Holds Phase I Thesis Defense Examination",
+    "expected_chunk_ids": [
+      "5cc846bf28478abc::0"
+    ],
+    "expected_keywords": [
+      "master elementary",
+      "phase",
+      "master",
+      "thesis"
+    ],
+    "ground_truth": "Ujian pertahanan tesis tahap pertama diselenggarakan di UPI Campus Cibiru, Bandung pada tanggal 14 Agustus 2025.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0014",
+    "question": "Tahun ajaran manakah program studi PGTK S1 mulai diimplementasikan di UPI Campus Cibiru?",
+    "expected_doc_title": "UPI Cibiru Website",
+    "expected_chunk_ids": [
+      "00b0a81718c010c4::4"
+    ],
+    "expected_keywords": [
+      "pgtk",
+      "opened",
+      "bachelor degree",
+      "bachelor"
+    ],
+    "ground_truth": "Program studi PGTK S1 mulai diimplementasikan di UPI Campus Cibiru pada tahun ajaran 2009/2010.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0015",
+    "question": "Kapan Program Studi Pendidikan Multimedia Kampus UPI di Cibiru akan melaksanakan Ujian Akhir Semester Genap tahun akademik 2023/2024?",
+    "expected_doc_title": "UPI Cibiru Website",
+    "expected_chunk_ids": [
+      "0821dc0705b5dfbb::35"
+    ],
+    "expected_keywords": [
+      "kompetensi internasional",
+      "april program",
+      "multimedia",
+      "pendidikan multimedia"
+    ],
+    "ground_truth": "Ujian Akhir Semester Genap tahun akademik 2023/2024 untuk Program Studi Pendidikan Multimedia Kampus UPI di Cibiru akan dilaksanakan mulai tanggal 26 April hingga 5 Mei 2024.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0016",
+    "question": "Kapan Senayan Library Management System (SLiMS) diluncurkan kepada publik?",
+    "expected_doc_title": "REVITALISASI PERPUSTAKAAN: INPUT KEMBALI KOLEKSI PERPUSTAKAAN UPI KAMPUS CIBIRU PADA SLiMS",
+    "expected_chunk_ids": [
+      "ceb91a63f1535178::0"
+    ],
+    "expected_keywords": [
+      "perpustakaan",
+      "koleksi",
+      "pertama kali",
+      "koleksi perpustakaan"
+    ],
+    "ground_truth": "Senayan Library Management System (SLiMS) pertama kali diluncurkan kepada publik pada tanggal 29 November 2007.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0018",
+    "question": "Di area mana kegiatan pemangkasan pohon dilakukan oleh pejabat dan anggota UPI Cibiru?",
+    "expected_doc_title": "SDGs 15: Terrestrial Ecosystems",
+    "expected_chunk_ids": [
+      "1e834bbd63328a3d::0"
+    ],
+    "expected_keywords": [
+      "campus environmental",
+      "spaces",
+      "environmental",
+      "cleaning"
+    ],
+    "ground_truth": "Kegiatan pemangkasan pohon tersebut dilakukan di kampus UPI Cibiru.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "CIBIRU_0019",
+    "question": "Berapa jumlah dilihat pada artikel tentang sivitas akademika UPI?",
+    "expected_doc_title": "Peringatan Nuzulul Quran dan Buka Bersama Program Studi Pendidikan Multimedia UPI Cibiru Tahun 2024",
+    "expected_chunk_ids": [
+      "0264880bb3e53771::2"
+    ],
+    "expected_keywords": [
+      "bakti sosial",
+      "bulan suci",
+      "ramadan",
+      "resmi dibuka"
+    ],
+    "ground_truth": "Artikel tersebut memiliki jumlah dilihat sebanyak 344 kali.",
+    "category": "UPI Kampus Cibiru",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0001",
+    "question": "Di mana bisa ditemukan surat keputusan tentang kalender akademik 2025-2026?",
+    "expected_doc_title": "Kalender Akademik UPI PSTI – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "0d4bf9533f2b8ef0::0"
+    ],
+    "expected_keywords": [
+      "web banner",
+      "banner",
+      "web",
+      "banner web"
+    ],
+    "ground_truth": "Surat keputusan tentang kalender akademik 2025-2026 dapat diunduh dari bagian 'Unduh' pada situs web resmi Universitas Pendidikan Indonesia.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0003",
+    "question": "Di mana dapat ditemukan Pedoman Tugas Akhir Mahasiswa tahun 2024?",
+    "expected_doc_title": "Unduh – MKB – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "e82947fafb4519b3::0"
+    ],
+    "expected_keywords": [
+      "unduh sini",
+      "sini",
+      "unduh",
+      "sini pedoman"
+    ],
+    "ground_truth": "Pedoman Tugas Akhir Mahasiswa Tahun 2024 dapat diunduh dari tautan 'Pedoman Tugas Akhir Mahasiswa Tahun 2024 Unduh di sini' yang tersedia pada web banner UPI.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0004",
+    "question": "Berapa jumlah lab komputer yang disebutkan dalam profil UPI?",
+    "expected_doc_title": "Fasilitas Belajar PSTI – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "d8b19f1be63b928f::0"
+    ],
+    "expected_keywords": [
+      "lab",
+      "lab komputer",
+      "ruang perpustakaan",
+      "komputer lab"
+    ],
+    "ground_truth": "Dalam profil UPI, terdapat tiga laboratorium komputer yang disebutkan.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0005",
+    "question": "Berita mana yang menyebutkan pelatihan Machine Learning?",
+    "expected_doc_title": "Pelatihan Unplugged Coding Berbasis STEAM untuk Guru SD: Membuka Wawasan Baru Pembelajaran di Era Digital – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "bdbc196f519bf89a::4"
+    ],
+    "expected_keywords": [
+      "dilaksanakan masa",
+      "mendatang koresponden",
+      "joyful",
+      "joyful banyak"
+    ],
+    "ground_truth": "PGSD/Tiara melaporkan adanya pelatihan Machine Learning yang ditujukan bagi inisiator komunitas AI dari Prodi Manajemen Kemasyarakatan dan Bisnis (MKB) sebagai bagian dari berita lain yang dilakukan di UPI.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0006",
+    "question": "Nomor telepon/faks kantor Universitas Pendidikan Indonesia di Purwakarta adalah apa?",
+    "expected_doc_title": "Akreditasi – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "2d70ceeda6e2b309::1"
+    ],
+    "expected_keywords": [
+      "ult",
+      "wib",
+      "tautan",
+      "laporan"
+    ],
+    "ground_truth": "Nomor telepon/faks kantor Universitas Pendidikan Indonesia di Purwakarta adalah (0264) 200395.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0007",
+    "question": "Nomor telepon/faks kantor akademik UPI Purwakarta adalah apa?",
+    "expected_doc_title": "Layanan – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "6c6d9b8619cb003f::0"
+    ],
+    "expected_keywords": [
+      "layanan",
+      "habis pakai",
+      "barang habis",
+      "permintaan barang"
+    ],
+    "ground_truth": "Nomor telepon/faks kantor akademik Universitas Pendidikan Indonesia di Purwakarta adalah (0264) 200395.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0008",
+    "question": "Siapa yang menjabat sebagai Ketua Kepengurusan Himatronika-AI?",
+    "expected_doc_title": "Kepengurusan Baru Himatronika-AI UPI Purwakarta Siap Wujudkan Organisasi yang Sehat dan Profesional – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "0db686e58e15a407::1"
+    ],
+    "expected_keywords": [
+      "kepengurusan",
+      "anggota",
+      "organisasi",
+      "tata kelola"
+    ],
+    "ground_truth": "Ariel Dwika menjabat sebagai Ketua Kepengurusan Himatronika-AI.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0009",
+    "question": "Hari Guru Nasional 2025 jatuh pada tanggal berapa?",
+    "expected_doc_title": "Meneguhkan Keteladanan di Hari Guru Purwakarta – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "33949529325baf3d::0"
+    ],
+    "expected_keywords": [
+      "hari guru",
+      "hari",
+      "meneguhkan",
+      "purwakarta november"
+    ],
+    "ground_truth": "Peringatan Hari Guru Nasional 2025 jatuh pada tanggal 25 November, sesuai dengan informasi yang disampaikan dalam teks tersebut.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0010",
+    "question": "Berapa jumlah mahasiswa PGSD UPI Purwakarta yang berhasil tuntaskan studi 3,5 tahun?",
+    "expected_doc_title": "Berita – PGSD – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "a4e8ab3eb25f7879::1"
+    ],
+    "expected_keywords": [
+      "pgsd upi",
+      "lanjut mahasiswa",
+      "mahasiswa pgsd",
+      "baca lebih"
+    ],
+    "ground_truth": "Sebanyak 33 mahasiswa Program Studi Pendidikan Guru Sekolah Dasar (PGSD) UPI Kampus di Purwakarta berhasil tuntaskan studi dalam waktu 3,5 tahun.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0011",
+    "question": "Alamat kampus UPI di Kecamatan Purwakarta adalah apa?",
+    "expected_doc_title": "Kerjasama – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "d1b7887bee02c550::1"
+    ],
+    "expected_keywords": [
+      "portal",
+      "engli",
+      "kinerja engli",
+      "tautan"
+    ],
+    "ground_truth": "Alamat kampus UPI di Kecamatan Purwakarta adalah Jl. Veteran No.8, Nagri Kaler, Kec. Purwakarta, Kabupaten Purwakarta, Jawa Barat 41115.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0014",
+    "question": "Tim program studi memaparkan apa dalam sesi pertama?",
+    "expected_doc_title": "Prodi Sistem Telekomunikasi UPI Purwakarta Gelar Tinjauan Kurikulum Bersama Adjunct Professor, Alumni dan Mitra Industri – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "484b00174c65ca79::1"
+    ],
+    "expected_keywords": [
+      "struktur kurikulum",
+      "pengguna lulusan",
+      "mitra industri",
+      "menyoroti"
+    ],
+    "ground_truth": "Tim program studi memaparkan struktur kurikulum yang saat ini berjalan, termasuk capaian pembelajaran, peta mata kuliah, serta integrasi praktik laboratorium.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0016",
+    "question": "Kompetisi ide Inovasi Nutriject mendukung tujuan yang mana dari SDGs?",
+    "expected_doc_title": "Mahasiswa MKB Borong Juara di PADI Awards: MKB membawa piala ke-3 sebagai Juara – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "524fe252b78f1eb7::3"
+    ],
+    "expected_keywords": [
+      "kesehatan",
+      "berkelanjutan reporter",
+      "solusi kesehatan",
+      "teknologi solusi"
+    ],
+    "ground_truth": "Inovasi Nutriject mendukung SDG 3 (Kesehatan dan Kesejahteraan) karena mendorong pola hidup sehat berbasis informasi gizi, serta SDG 9 (Industri, Inovasi dan Infrastruktur) melalui pemanfaatan teknologi AI untuk solusi kesehatan yang inklusif dan berkelanjutan.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0019",
+    "question": "Inisiatif penjajakan kerja sama ini terkait dengan Sustainable Development Goals (SDGs) nomor berapakah?",
+    "expected_doc_title": "Bangun Generasi Digital Cerdas, PSTI UPI Gandeng MAXY Academy dalam Penjajakan Kolaborasi EduTech – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "30a35ad36bfb332f::4"
+    ],
+    "expected_keywords": [
+      "industry",
+      "sdg",
+      "talenta inovatif",
+      "inovatif berdaya"
+    ],
+    "ground_truth": "Inisiatif penjajakan kerja sama ini terkait dengan Sustainable Development Goals (SDGs) khususnya SDG 4 (Quality Education), SDG 8 (Decent Work and Economic Growth), dan SDG 9 (Industry, Innovation, and Infrastructure).",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0020",
+    "question": "Email resmi dari Program Studi Pendidikan Guru Sekolah Dasar di UPI adalah apa?",
+    "expected_doc_title": "Program Studi – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "155cb0d352717b70::2"
+    ],
+    "expected_keywords": [
+      "karta upi",
+      "karta",
+      "portal",
+      "informasi"
+    ],
+    "ground_truth": "Alamat email resmi untuk Program Studi Pendidikan Guru Sekolah Dasar (PGSD) di Universitas Pendidikan Indonesia (UPI) adalah karta@upi.edu.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "PWK_0021",
+    "question": "Pemilihan mahasiswa berprestasi yang diselenggarakan oleh Prodi PGPAUD tahun 2026 bertujuan untuk mendukung tujuan apa?",
+    "expected_doc_title": "SK Standar Operasional Prosedur Penanganan Pengaduan Penerima Layanan pada Kampus UPI Purwakarta – Kampus Purwakarta | Universitas Pendidikan Indonesia",
+    "expected_chunk_ids": [
+      "4515b75d9bf20578::0"
+    ],
+    "expected_keywords": [
+      "penerima layanan",
+      "pengaduan penerima",
+      "standar operasional",
+      "operasional prosedur"
+    ],
+    "ground_truth": "Pemilihan mahasiswa berprestasi Prodi PGPAUD 2026 diselenggarakan untuk mendukung tujuan Sustainable Development Goals nomor 4, yaitu pendidikan berkualitas.",
+    "category": "UPI Kampus Purwakarta",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0001",
+    "question": "Apakah prodi Industri Pariwisata melaksanakan on job training magang mandiri?",
+    "expected_doc_title": "Berita Prodi Penjas",
+    "expected_chunk_ids": [
+      "88f235686738bbb9::0"
+    ],
+    "expected_keywords": [
+      "magang mandiri",
+      "magang",
+      "job",
+      "training magang"
+    ],
+    "ground_truth": "Program studi industri pariwisata melaksanakan on job training magang mandiri bagi mahasiswa 2022 yang akan melaksanakan magang mandiri pada semester 6 awal 2025 nanti.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0002",
+    "question": "Alamat email direktorat Kamda Sumedang UPI adalah apa?",
+    "expected_doc_title": "PENGEMBANGAN E-BOOK “PUSTAKA SANDYA BUDAYA” SEBAGAI MEDIA PEMBELAJARAN MATERI KERAGAMAN BUDAYA INDONESIA DI SEKOLAH DASAR",
+    "expected_chunk_ids": [
+      "557975747d168c5b::7"
+    ],
+    "expected_keywords": [
+      "kamda",
+      "ang",
+      "licin",
+      "version"
+    ],
+    "ground_truth": "Alamat email direktorat Kamda Sumedang Universitas Pendidikan Indonesia (UPI) adalah dirkamda_sumedang@upi.edu.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0004",
+    "question": "Tahapan seleksi apa saja yang dilalui oleh mahasiswa dalam program Magang Berdampak Kemdiktisaintek di Educourse.id?",
+    "expected_doc_title": "Tiga Mahasiswa PGSD UPI Kampus Sumedang Lolos “STEM Teacher for K–12 Students” di Educourse.id",
+    "expected_chunk_ids": [
+      "67e299266e0e0579::6"
+    ],
+    "expected_keywords": [
+      "pedagogik literasi",
+      "kompetensi pedagogik",
+      "pedagogik",
+      "stem"
+    ],
+    "ground_truth": "Mahasiswa melalui tahapan seleksi yang meliputi screening administrasi, uji kompetensi pedagogik dan literasi STEM, serta wawancara.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0005",
+    "question": "Penataran wasit tenis meja tingkat pengcab dan pemprov diadakan tahun berapa?",
+    "expected_doc_title": "Penataran Wasit Tenis Meja Tingkat Pengcab dan Pemprov Tahun 2026 UKM Tenis Meja UPI Sumedang",
+    "expected_chunk_ids": [
+      "5801b02165fa524e::0"
+    ],
+    "expected_keywords": [
+      "pemprov ukm",
+      "pengcab pemprov",
+      "tenis meja",
+      "tenis"
+    ],
+    "ground_truth": "Penataran wasit tenis meja tingkat pengcab dan pemprov diadakan pada tahun 2026.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0006",
+    "question": "Tempat pelaksanaan Uji Kompetensi Ners Indonesia Tahun 2025 di Prodi NERS UPI Sumedang adalah?",
+    "expected_doc_title": "Berita Prodi Keperawatan",
+    "expected_chunk_ids": [
+      "4d4f22c33a1ed1f3::0"
+    ],
+    "expected_keywords": [
+      "kesadaran hipertensi",
+      "dosenkeperawatan upi",
+      "hipertensi desa",
+      "pkm dosenkeperawatan"
+    ],
+    "ground_truth": "Uji Kompetensi Ners Indonesia Tahun 2025 yang diselenggarakan oleh Program Studi Ners Universitas Pendidikan Indonesia Kampus Sumedang dilaksanakan di Gedung 1 UPI Sumedang.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0007",
+    "question": "Kapan ibu Sri Utami akan memasuki masa purnabakti?",
+    "expected_doc_title": "ACARA PELEPASAN PURNABAKTI KASIE ADUM UPI SUMEDANG",
+    "expected_chunk_ids": [
+      "049ee698f33ad192::1"
+    ],
+    "expected_keywords": [
+      "memasuki masa",
+      "memasuki",
+      "dirumah",
+      "pengabdian ibu"
+    ],
+    "ground_truth": "Ibu Sri Utami memasuki masa purnabakti pada bulan Februari 2024, sehubungan dengan jabatannya sebagai Kasie Keuangan dan administrasi umum di Tendik UPI Sumedang yang akan berakhir.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0008",
+    "question": "Kegiatan apa yang diselenggarakan oleh Civitas UPI Sumedang pada tanggal 17 Agustus 2025?",
+    "expected_doc_title": "Berita UPI Sumedang",
+    "expected_chunk_ids": [
+      "4241ef7c4d032ce4::6"
+    ],
+    "expected_keywords": [
+      "panitia penjaringan",
+      "kunjungan panitia",
+      "anggota komite",
+      "komite audit"
+    ],
+    "ground_truth": "UPI Sumedang melaksanakan upacara bendera dalam rangka memperingati Hari Ulang Tahun ke-80 Kemerdekaan Republik Indonesia pada hari Minggu, 17 Agustus 2025.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0009",
+    "question": "Pada kunjungan panitia penjaringan pemilihan anggota Komite Audit, apa yang dilakukan selain proses penjaringan?",
+    "expected_doc_title": "KUNJUNGAN PANITIA PENJARINGAN PEMILIHAN ANGGOTA KOMITE AUDIT DAN PEMASANGAN BALIGO",
+    "expected_chunk_ids": [
+      "34df40ef8276b36c::0"
+    ],
+    "expected_keywords": [
+      "audit pemasangan",
+      "panitia penjaringan",
+      "penjaringan pemilihan",
+      "anggota komite"
+    ],
+    "ground_truth": "Selain proses penjaringan, panitia juga melakukan pemasangan baligo.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0010",
+    "question": "Prodi Penjas mengirimkan berapa calon mahasiswa berprestasi dalam acara pemilihan mahasiswa berprestasi UPI Sumedang?",
+    "expected_doc_title": "Berita Prodi Penjas",
+    "expected_chunk_ids": [
+      "19abfe418b8aadfc::0"
+    ],
+    "expected_keywords": [
+      "hari pendidikan",
+      "selamat hari",
+      "mahasiswa berprestasi",
+      "semangat"
+    ],
+    "ground_truth": "Prodi Penjas UPI Sumedang mengirimkan beberapa calon mahasiswa berprestasi dalam acara pemilihan mahasiswa berprestasi UPI Sumedang.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0011",
+    "question": "Alamat lengkap Fakultas Penjas UPI Sumedang adalah apa?",
+    "expected_doc_title": "Berita Prodi Penjas",
+    "expected_chunk_ids": [
+      "79181dab6fb20bac::3"
+    ],
+    "expected_keywords": [
+      "mber desember",
+      "mber",
+      "penjas upi",
+      "beranda penjas"
+    ],
+    "ground_truth": "Alamat lengkap Fakultas Penjas UPI Sumedang adalah Jl. Mayor Abdurahman No.211, Kotakaler, Kec. Sumedang Utara, Kabupaten Sumedang, Jawa Barat dengan kode pos 45322.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0012",
+    "question": "Visi Perjalanan UPI dalam beberapa tahun terakhir mencakup aspek apa?",
+    "expected_doc_title": "Visi Misi",
+    "expected_chunk_ids": [
+      "edae3bedad2c6855::3"
+    ],
+    "expected_keywords": [
+      "perjalanan upi",
+      "kokoh program",
+      "kepada keberhasilan",
+      "keberhasilan menilik"
+    ],
+    "ground_truth": "Visi Perjalanan UPI dalam beberapa tahun terakhir mencakup peningkatan tatanan kelembagaan dan manajemen yang lebih kokoh, peningkatan kualitas program dan layanan akademik, serta penyediaan aset dan fasilitas yang lebih fleksibel.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0013",
+    "question": "Kapan visitasi akreditasi Prodi Industri Pariwisata akan dilaksanakan?",
+    "expected_doc_title": "List Berita Inpar",
+    "expected_chunk_ids": [
+      "076578e2c595b8e1::0"
+    ],
+    "expected_keywords": [
+      "june sivitas",
+      "idhul",
+      "adha hijriyah",
+      "idhul adha"
+    ],
+    "ground_truth": "Visitasi akreditasi Prodi Industri Pariwisata akan dilaksanakan pada hari Kamis, satu hari sebelum hari Jumat yang telah ditentukan untuk visitasi tersebut.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0014",
+    "question": "Di mana workshop kurikulum pendidikan profesi NERS UPI Sumedang diselenggarakan?",
+    "expected_doc_title": "WORKSHOP KURIKULUM PENDIDIKAN PROFESI NERS UPI SUMEDANG",
+    "expected_chunk_ids": [
+      "b210d91abda71208::0"
+    ],
+    "expected_keywords": [
+      "kurikulum pendidikan",
+      "pendidikan profesi",
+      "workshop kurikulum",
+      "ners upi"
+    ],
+    "ground_truth": "Workshop kurikulum pendidikan profesi NERS UPI Sumedang diselenggarakan berdasarkan URL yang diberikan pada sumber teks.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0015",
+    "question": "Di mana kegiatan Eco Grow Maggot dilaksanakan?",
+    "expected_doc_title": "Berita Prodi Keperawatan",
+    "expected_chunk_ids": [
+      "eee7a8b0054079cb::1"
+    ],
+    "expected_keywords": [
+      "maggot",
+      "november mahasiswa",
+      "desa buahdua",
+      "kelompok"
+    ],
+    "ground_truth": "Kegiatan Eco Grow Maggot dilaksanakan di Desa Buahdua, Kabupaten Sumedang.",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SMD_0016",
+    "question": "Hari Donor Darah Sedunia diperingati pada tanggal berapa?",
+    "expected_doc_title": "Berita Prodi Keperawatan",
+    "expected_chunk_ids": [
+      "16fd6527106b9a43::0"
+    ],
+    "expected_keywords": [
+      "berdarah dengue",
+      "dengue asean",
+      "dengue",
+      "berdarah"
+    ],
+    "ground_truth": "Hari Donor Darah Sedunia atau World Blood Donor Day diperingati setiap tanggal 14 Juni, dengan tema tahun ini yakni, '20 years of celebrating: thank you, blood donors!'",
+    "category": "UPI Kampus Sumedang",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0001",
+    "question": "Siapa nama mahasiswa UPI Serang yang berhasil meraih Juara 2 pada Banten Open Silat 2026?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "306b027f37de7199::5"
+    ],
+    "expected_keywords": [
+      "informasi lanjutan",
+      "kelas literasi",
+      "kilau",
+      "literasi informasi"
+    ],
+    "ground_truth": "Zalsha Zahratul Syita, seorang mahasiswa Program Studi Pendidikan Kelautan dan Perikanan di Kampus Universitas Pendidikan Indonesia (UPI) Serang, berhasil meraih Juara 2 pada kelas A Dewasa Putri pada Banten Open Silat 2026.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0002",
+    "question": "Pihak mana yang mengukur luas tanah kampus UPI di Kampus Serang?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "9a1d4213c32b0e66::2"
+    ],
+    "expected_keywords": [
+      "kepemilikan",
+      "pgri kota",
+      "smk pgri",
+      "pgri"
+    ],
+    "ground_truth": "Kampus Serang adalah pihak yang melakukan pengukuran luas tanah kampus UPI di Kampus Serang untuk mencocokkan dengan data kepemilikan.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0004",
+    "question": "Dimana pengumuman ini berasal?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "17b7828d544900d3::0"
+    ],
+    "expected_keywords": [
+      "perkuliahan bulan",
+      "bulan ramadhan",
+      "tentang jadwal",
+      "jadwal perkuliahan"
+    ],
+    "ground_truth": "Pengumuman ini berasal dari UPI Kampus Serang.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0006",
+    "question": "Alamat kantor Direktur Kampus UPI di Serang adalah apa?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "558d40b9fa2cabe6::0"
+    ],
+    "expected_keywords": [
+      "herman",
+      "syafri",
+      "herman syafri",
+      "syafri jenis"
+    ],
+    "ground_truth": "Alamat kantor Direktur Kampus UPI di Serang adalah Jl. Raya Ciracas Batok Bali No. 02 Serang.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0008",
+    "question": "Siapa yang mewakili UPI dalam acara Seba Baduy 2026?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "12c4122d26cb7d96::0"
+    ],
+    "expected_keywords": [
+      "baduy",
+      "seba baduy",
+      "seba",
+      "adat"
+    ],
+    "ground_truth": "UPI diwakili oleh Rektor UPI, Prof. Dr. H. Didi Sukyadi, M.A., beserta timnya, yang didampingi oleh Direktur Kampus UPI Serang, Prof. Dr. Supriadi, M.Pd., beserta unsur pimpinannya.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0009",
+    "question": "Surat undangan public campaign tentang pengendalian gratifikasi diselenggarakan di kampus UPI mana?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "d1f0c95e6832003a::0"
+    ],
+    "expected_keywords": [
+      "pengendalian",
+      "gratifikasi",
+      "public",
+      "pengendalian gratifikasi"
+    ],
+    "ground_truth": "Surat undangan public campaign tentang pengendalian gratifikasi diselenggarakan di kampus UPI Kampus Serang.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0010",
+    "question": "UPI Kampus Serang berupaya memastikan akses pendidikan tinggi yang seperti apa?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "1801db6da4705483::3"
+    ],
+    "expected_keywords": [
+      "berkelanjutan kemajuan",
+      "cerah berkelanjutan",
+      "guna menciptakan",
+      "menciptakan masa"
+    ],
+    "ground_truth": "UPI Kampus Serang berupaya memastikan akses pendidikan tinggi yang inklusif dan merata.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0011",
+    "question": "Nama Direktur UPI Kampus Serang adalah siapa?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "730dd170f3a42aa3::0"
+    ],
+    "expected_keywords": [
+      "ferry dwi",
+      "ferry",
+      "dwi cahyadi",
+      "dwi"
+    ],
+    "ground_truth": "Nama Direktur UPI Kampus Serang adalah Ferry Dwi Cahyadi, S.Pd., M.Sc.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0012",
+    "question": "Kapan UPI Kampus Serang menerima kunjungan kerja dari Senat Akademik UPI?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "79aab09b6dd1948a::0"
+    ],
+    "expected_keywords": [
+      "senat",
+      "senat akademik",
+      "akademik upi",
+      "prof yadi"
+    ],
+    "ground_truth": "Kunjungan kerja tersebut terjadi pada Selasa (02/12/2025).",
+    "category": "UPI Kampus Serang",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0014",
+    "question": "Siapakah nama Direktur Kampus UPI di Serang?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "4f72bd0ff3bb9a05::0"
+    ],
+    "expected_keywords": [
+      "iik nurulpaik",
+      "nurulpaik",
+      "iik",
+      "mutu identitas"
+    ],
+    "ground_truth": "Nama Direktur Kampus UPI di Serang adalah Dr. Iik Nurulpaik, S.Pd., M.Pd., M.A.P.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0018",
+    "question": "Kapan pengumuman ini dibuat?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "0406c856dd84cb83::0"
+    ],
+    "expected_keywords": [
+      "kerja kedinasan",
+      "kedinasan",
+      "tentang penyesuaian",
+      "penyesuaian sistem"
+    ],
+    "ground_truth": "Pengumuman ini dibuat pada tanggal 26 Februari 2026.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0019",
+    "question": "Di mana profil UPI Kampus Serang dapat ditemukan?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "dada43b168066f8b::0"
+    ],
+    "expected_keywords": [
+      "klik disini",
+      "disini",
+      "klik",
+      "upi klik"
+    ],
+    "ground_truth": "Profil UPI Kampus Serang dapat ditemukan pada bagian Daftar Informasi Publik dengan mengklik link Profil UPI Kampus Serang.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0020",
+    "question": "Siapa nama Direktur Kampus UPI di Serang?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "e647db035a3d4dfc::0"
+    ],
+    "expected_keywords": [
+      "deri hendriawan",
+      "deri",
+      "hendriawan",
+      "hendriawan jenis"
+    ],
+    "ground_truth": "Nama Direktur Kampus UPI di Serang adalah Dr. Deri Hendriawan, S.Pd., M.Pd.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0021",
+    "question": "Nama Direktur Kampus UPI di Serang adalah siapa?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "e1905113c836e4c1::0"
+    ],
+    "expected_keywords": [
+      "iik nurulpaik",
+      "nurulpaik",
+      "iik",
+      "nurulpaik jenis"
+    ],
+    "ground_truth": "Direktur Kampus UPI di Serang bernama Dr. Iik Nurulpaik, S.Pd., M.Pd., M.A.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "SRG_0023",
+    "question": "Di mana informasi ini berasal?",
+    "expected_doc_title": "Kampus UPI di Serang | Official Website",
+    "expected_chunk_ids": [
+      "4444c38a83bd0dce::0"
+    ],
+    "expected_keywords": [
+      "integritas daring",
+      "persiapan monev",
+      "monev",
+      "rakor"
+    ],
+    "ground_truth": "Informasi ini berasal dari Home Informasi & Agenda Kegiatan UPI Kampus Serang.",
+    "category": "UPI Kampus Serang",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0001",
+    "question": "Tahapan awal penerimaan beasiswa Ikatan Alumni UPI dimulai pada tanggal berapa?",
+    "expected_doc_title": "Penerimaan Beasiswa Ikatan Alumni UPI – UPI",
+    "expected_chunk_ids": [
+      "8c8c07ed7432ec4d::0"
+    ],
+    "expected_keywords": [
+      "juli",
+      "beasiswa",
+      "penerimaan beasiswa",
+      "beasiswa ika"
+    ],
+    "ground_truth": "Tahapan sosialisasi dan pendaftaran beasiswa Ikatan Alumni UPI dimulai pada tanggal 5 - 22 Juni 2023.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0002",
+    "question": "Tgl berapakah program Student Mobility FESWARA UPI Kampus Tasikmalaya dan Universiti Pendidikan Sultan Idris diselenggarakan?",
+    "expected_doc_title": "Berita Utama – Page 2 – UPI",
+    "expected_chunk_ids": [
+      "cd8cfeb8b4e4b665::0"
+    ],
+    "expected_keywords": [
+      "feswara upi",
+      "feswara",
+      "student mobility",
+      "mobility"
+    ],
+    "ground_truth": "Program Student Mobility tersebut diselenggarakan pada tanggal 19–24 April 2026.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0003",
+    "question": "Apakah Tim GRIYA PANDU RACANA UPI Kampus Tasikmalaya mendapatkan pendanaan?",
+    "expected_doc_title": "",
+    "expected_chunk_ids": [
+      "1c1e0c9de0acc035::0"
+    ],
+    "expected_keywords": [
+      "racana upi",
+      "xmlns",
+      "tim griya",
+      "griya"
+    ],
+    "ground_truth": "Ya, Tim GRIYA PANDU RACANA UPI Kampus Tasikmalaya lolos pendanaan PPK ORMAWA 2026.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0004",
+    "question": "Di kampus mana prestasi mahasiswa Desain Produk Industri UPI dicapai?",
+    "expected_doc_title": "May 21, 2026 – UPI",
+    "expected_chunk_ids": [
+      "c2631722e87ea654::0"
+    ],
+    "expected_keywords": [
+      "inddex furniture",
+      "furniture competition",
+      "furniture",
+      "may"
+    ],
+    "ground_truth": "Prestasi tersebut dicapai di UPI Kampus Tasikmalaya.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0005",
+    "question": "Kapan Universitas Pendidikan Indonesia Kampus Tasikmalaya melakukan kunjungan akademik ke FKIP UAD?",
+    "expected_doc_title": "PGSD – Page 4 – UPI",
+    "expected_chunk_ids": [
+      "e45fb926b5ccbada::0"
+    ],
+    "expected_keywords": [
+      "uad",
+      "fkip",
+      "dahlan uad",
+      "ahmad dahlan"
+    ],
+    "ground_truth": "Universitas Pendidikan Indonesia Kampus Tasikmalaya melakukan kunjungan akademik ke Fakultas Keguruan dan Ilmu Pendidikan Universitas Ahmad Dahlan pada tanggal 6 Oktober 2025.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0007",
+    "question": "Tempat dan tanggal kegiatan Ekspose Riset Dosen PGSD UPI Kampus Tasikmalaya diselenggarakan?",
+    "expected_doc_title": "Class Visit for the Basic Design Project of the Industrial Product Design Program with Prof. Dr. M. Hariri Abdullah – UPI",
+    "expected_chunk_ids": [
+      "b7ef15ad04b10843::4"
+    ],
+    "expected_keywords": [
+      "ekspose riset",
+      "ekspose",
+      "riset",
+      "riset dosen"
+    ],
+    "ground_truth": "Kegiatan tersebut diadakan di Kota Tasikmalaya pada tanggal 9 Juni 2026.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0008",
+    "question": "Tempat dan tanggal kegiatan Ekspose Riset Dosen PGSD UPI Kampus Tasikmalaya dilaksanakan?",
+    "expected_doc_title": "Futsal UPITAS Raih Kemenangan – UPI",
+    "expected_chunk_ids": [
+      "0f744a4a1264f97d::2"
+    ],
+    "expected_keywords": [
+      "ekspose riset",
+      "riset",
+      "ekspose",
+      "pgsd upi"
+    ],
+    "ground_truth": "Kegiatan Ekspose Riset Dosen PGSD Universitas Pendidikan Indonesia Kampus Tasikmalaya dilaksanakan di Tasikmalaya pada tanggal 9 Juni 2026.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0009",
+    "question": "Siapa yang mengunjungi Creative Hub Kabupaten Tasikmalaya dan Kampung Naga?",
+    "expected_doc_title": "Sepekan Bersama Assoc. Prof. Dr. Mohd Khairezan Rahmat UiTM Malaysia – UPI",
+    "expected_chunk_ids": [
+      "3d02d36c33633ba4::6"
+    ],
+    "expected_keywords": [
+      "rahmat uitm",
+      "reputasi",
+      "khairezan",
+      "assoc prof"
+    ],
+    "ground_truth": "Tim dosen Program Studi S1 PGPAUD Universitas Pendidikan Indonesia mengajak Assoc. Prof. Dr. Mohd Khairezan Rahmat dari UiTM untuk mengunjungi Creative Hub Kabupaten Tasikmalaya dan Kampung Naga.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0010",
+    "question": "Program kolaboratif yang melibatkan UPI Kampus Tasikmalaya bersama Disparbud Jabar pada tahun 2026 mencakup kegiatan apa saja?",
+    "expected_doc_title": "Audiensi Kolaborasi UPI Tasikmalaya dan Disparbud Jabar: Sinergi Strategis Pengembangan UMKM di Sektor Ekonomi Kreatif – UPI",
+    "expected_chunk_ids": [
+      "0595c8aa6b763fca::3"
+    ],
+    "expected_keywords": [
+      "pariwisata",
+      "disparbud",
+      "disparbud jabar",
+      "jabar"
+    ],
+    "ground_truth": "Program kolaboratif tersebut melibatkan pelatihan sumber daya manusia, kampanye digital pariwisata, serta penyelenggaraan event wisata edukatif.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0011",
+    "question": "Di mana kegiatan Ekspose Riset Dosen PGSD UPI Kampus Tasikmalaya diselenggarakan?",
+    "expected_doc_title": "KAMPUS UPI TASIKMALAYA PERKUAT KOLABORASI MELALUI KUNJUNGAN AKADEMIK DARI UNIVERSITAS BHAYANGKARA JAKARTA RAYA – UPI",
+    "expected_chunk_ids": [
+      "eacada1ccce798a6::3"
+    ],
+    "expected_keywords": [
+      "omisi pemilihan",
+      "omisi",
+      "ekspose riset",
+      "riset"
+    ],
+    "ground_truth": "Kegiatan Ekspose Riset Dosen PGSD UPI Kampus Tasikmalaya diselenggarakan di Tasikmalaya.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0012",
+    "question": "Siapa nama salah satu Pengadministrasi Perpustakaan di Bagian Pendidikan dan Kemahasiswaan?",
+    "expected_doc_title": "Tenaga Kependidikan – UPI",
+    "expected_chunk_ids": [
+      "d69ac630caff3e0d::9"
+    ],
+    "expected_keywords": [
+      "golongan bagian",
+      "kemahasiswaan email",
+      "bagian pendidikan",
+      "jabatan"
+    ],
+    "ground_truth": "Firda Ruhyah Mau'Izhah, S.Pd. adalah salah satu Pengadministrasi Perpustakaan di Bagian Pendidikan dan Kemahasiswaan Universitas Pendidikan Indonesia.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0014",
+    "question": "Di mana workshop Montessori Play digelar?",
+    "expected_doc_title": "PGPAUD – Page 5 – UPI",
+    "expected_chunk_ids": [
+      "a97c370253cc65e9::0"
+    ],
+    "expected_keywords": [
+      "montessori play",
+      "play",
+      "montessori",
+      "workshop"
+    ],
+    "ground_truth": "Workshop Montessori Play digelar di Aula Universitas Pendidikan Indonesia (UPI) Kampus Tasikmalaya.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0015",
+    "question": "Siapa yang menjabat sebagai Ketua Satuan Kendali Mutu?",
+    "expected_doc_title": "Struktur Organisasi – UPI",
+    "expected_chunk_ids": [
+      "36d2b0b75a1861cc::0"
+    ],
+    "expected_keywords": [
+      "gkm",
+      "gkm pgsd",
+      "satuan kendali",
+      "kendali mutu"
+    ],
+    "ground_truth": "Ketua Satuan Kendali Mutu di bidang akademik, administrasi, dan manajemen adalah Dr. Erwin Rahayu Saputra, M.Pd.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0016",
+    "question": "Laporan survey kepuasan pelayanan mahasiswa di lingkungan UPI Kampus Tasikmalaya ditempatkan di bagian mana?",
+    "expected_doc_title": "Hasil Kepuasan Mahasiswa – UPI",
+    "expected_chunk_ids": [
+      "b9df09e58301bb7a::0"
+    ],
+    "expected_keywords": [
+      "kepuasan",
+      "kepuasan pelayanan",
+      "pelayanan mahasiswa",
+      "kepuasan mahasiswa"
+    ],
+    "ground_truth": "Laporan survey kepuasan pelayanan mahasiswa di lingkungan UPI Kampus Tasikmalaya dapat didownload dari link yang disediakan dalam dokumen tersebut.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "TSM_0017",
+    "question": "Tempat pelaksanaan pelatihan internasional yang diikuti oleh Rizky Salis di India adalah di kota mana?",
+    "expected_doc_title": "Tendik Kampus UPI Tasikmalaya Rampungkan Pelatihan Internasional Perubahan Iklim di India – UPI",
+    "expected_chunk_ids": [
+      "ea882c19a4d63ddb::0"
+    ],
+    "expected_keywords": [
+      "salis",
+      "rizky salis",
+      "rizky",
+      "pelatihan internasional"
+    ],
+    "ground_truth": "Pelatihan tersebut diselenggarakan di Hyderabad, India.",
+    "category": "UPI Kampus Tasikmalaya",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0006",
+    "question": "Tanggal pendaftaran dan booking online untuk Program Penguatan Profesional Kependidikan (P3K) dan Program Penguatan Profesional Non Kependidikan (P3NK) adalah kapan?",
+    "expected_doc_title": "Universitas Pendidikan Indonesia_Tahun Akademik 2026 2027",
+    "expected_chunk_ids": [
+      "088876c622867ac8::61494"
+    ],
+    "expected_keywords": [
+      "aug",
+      "sep",
+      "dec",
+      "penguatan profesional"
+    ],
+    "ground_truth": "Pendaftaran dan booking online untuk Program Penguatan Profesional Kependidikan (P3K) dan Program Penguatan Profesional Non Kependidikan (P3NK) dilaksanakan pada tanggal 28-29 Agustus 2026.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0007",
+    "question": "Tgl mulai dan berakhir pendaftaran program P3K dan P3NK adalah kapan?",
+    "expected_doc_title": "Surat_Keputusan_Kalender_Akademik_2024-2025",
+    "expected_chunk_ids": [
+      "f134da82bf552425::55162"
+    ],
+    "expected_keywords": [
+      "agu",
+      "feb",
+      "sep",
+      "penguatan profesional"
+    ],
+    "ground_truth": "Pendaftaran untuk Program Penguatan Profesional Kependidikan (P3K) dan Program Penguatan Profesional Non Kependidikan (P3NK) dibuka mulai tanggal 1 Juli hingga 27 Agustus 2024.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0008",
+    "question": "Apakah syarat yang harus dipenuhi mahasiswa Doktor jalur perkuliahan untuk dapat mengikuti ujian Tesis/Disertasi?",
+    "expected_doc_title": "Pedoman-Penyelenggaran-Pendidikan-UPI-Tahun-2024-rev",
+    "expected_chunk_ids": [
+      "6c58b64cda8670c6::24521"
+    ],
+    "expected_keywords": [
+      "tesis",
+      "disertasi",
+      "tesis disertasi",
+      "seluruh mata"
+    ],
+    "ground_truth": "Mahasiswa Doktor jalur perkuliahan harus menyelesaikan seluruh mata kuliah yang dipersyaratkan, lulus Ujian Kualifikasi, serta menyelesaikan Disertasi yang telah disetujui oleh pembimbing dan mendapat pertimbangan kelayakan dari",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0009",
+    "question": "Tanggal mulai pengajuan cuti akademik tahun ini adalah quando?",
+    "expected_doc_title": "Universitas Pendidikan Indonesia_Tahun Akademik 2026 2027",
+    "expected_chunk_ids": [
+      "088876c622867ac8::61495"
+    ],
+    "expected_keywords": [
+      "dec",
+      "pemasukan nilai",
+      "pemasukan",
+      "ujian ulang"
+    ],
+    "ground_truth": "Pengajuan cuti akademik dimulai pada tanggal 27 Juli hingga 31 Agustus 2025.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0010",
+    "question": "Keputusan ini berlaku pada tanggal apa?",
+    "expected_doc_title": "Surat_Keputusan_Kalender_Akademik_2024-2025",
+    "expected_chunk_ids": [
+      "f134da82bf552425::55158"
+    ],
+    "expected_keywords": [
+      "kalender akademik",
+      "elektronik",
+      "kalender",
+      "akademik universitas"
+    ],
+    "ground_truth": "Keputusan ini berlaku pada tanggal 26 Maret 2024, sesuai dengan informasi dalam kesatu keputusan rektor Universitas Pendidikan Indonesia tentang kalender akademik tahun 2024/2025.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0011",
+    "question": "Mahasiswa yang gagal pada evaluasi tahap kedua doktor dapat melanjutkan studinya di program apa?",
+    "expected_doc_title": "Pedoman-Penyelenggaran-Pendidikan-UPI-Tahun-2024-rev",
+    "expected_chunk_ids": [
+      "6c58b64cda8670c6::24408"
+    ],
+    "expected_keywords": [
+      "studinya program",
+      "dinyatakan gagal",
+      "menyelesaikan studinya",
+      "program doktor"
+    ],
+    "ground_truth": "Mahasiswa yang dinyatakan gagal pada evaluasi tahap kedua program doktor dapat menyelesaikan studinya pada program doktor reguler tanpa melalui tes seleksi masuk kembali.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0012",
+    "question": "Bulan berapa pendaftaran untuk jalur SNBP dimulai?",
+    "expected_doc_title": "Universitas Pendidikan Indonesia_Tahun Akademik 2026 2027",
+    "expected_chunk_ids": [
+      "088876c622867ac8::61493"
+    ],
+    "expected_keywords": [
+      "jul",
+      "aug",
+      "may",
+      "jun"
+    ],
+    "ground_truth": "Pendaftaran untuk jalur SNBP dimulai pada 6 April 2026.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0014",
+    "question": "Pendaftaran untuk Seleksi Nasional Berdasarkan Test (SNBT) dilakukan pada tanggal berapa?",
+    "expected_doc_title": "Universitas Pendidikan Indonesia_Tahun Akademik 2026 2027",
+    "expected_chunk_ids": [
+      "088876c622867ac8::61492"
+    ],
+    "expected_keywords": [
+      "jul",
+      "may",
+      "apr",
+      "pengumuman kelulusan"
+    ],
+    "ground_truth": "Pendaftaran untuk Seleksi Nasional Berdasarkan Test (SNBT) di UPI dilaksanakan dari tanggal 25 Maret hingga 7 Juli 2026.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0015",
+    "question": "Kapan acara Porsema diselenggarakan?",
+    "expected_doc_title": "Surat_Keputusan_Kalender_Akademik_2024-2025",
+    "expected_chunk_ids": [
+      "f134da82bf552425::55165"
+    ],
+    "expected_keywords": [
+      "okt",
+      "wisuda gelombang",
+      "wisuda",
+      "agu"
+    ],
+    "ground_truth": "Porsema diselenggarakan pada tanggal 24 - 28 Agustus 2025.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0016",
+    "question": "Calon mahasiswa yang dinyatakan lulus seleksi tidak dapat mendaftarkan diri melalui siapa?",
+    "expected_doc_title": "Pedoman-Penyelenggaran-Pendidikan-UPI-Tahun-2024-rev",
+    "expected_chunk_ids": [
+      "6c58b64cda8670c6::24456"
+    ],
+    "expected_keywords": [
+      "layanan administrasi",
+      "administrasi akademik",
+      "registrasi",
+      "laman pmb"
+    ],
+    "ground_truth": "Calon mahasiswa yang dinyatakan lulus seleksi tidak dapat mendaftar melalui wakil, harus mendaftarkan diri secara langsung.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0017",
+    "question": "Tgl berapakah pendaftaran untuk Kelas Mahasiswa Internasional dibuka?",
+    "expected_doc_title": "Universitas Pendidikan Indonesia_Tahun Akademik 2026 2027",
+    "expected_chunk_ids": [
+      "088876c622867ac8::61491"
+    ],
+    "expected_keywords": [
+      "feb",
+      "mahasiswa asing",
+      "aug",
+      "jul"
+    ],
+    "ground_truth": "Pendaftaran untuk Kelas Mahasiswa Internasional dibuka pada periode 05 Januari - 02 Februari 2026.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0018",
+    "question": "Alasan utama penyusunan Kalender Akademik di Universitas Pendidikan Indonesia adalah?",
+    "expected_doc_title": "Surat_Keputusan_Kalender_Akademik_2024-2025",
+    "expected_chunk_ids": [
+      "f134da82bf552425::55154"
+    ],
+    "expected_keywords": [
+      "bahwa memberikan",
+      "rektor universitas",
+      "indonesia mengingat",
+      "akademik perlu"
+    ],
+    "ground_truth": "Penyusunan Kalender Akademik di Universitas Pendidikan Indonesia dilakukan untuk memberikan kepastian dalam penyelenggaraan kegiatan akademik di institusi tersebut.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "hard",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0019",
+    "question": "Berapa jadwal penerimaan mahasiswa baru program sarjana/sarjana terapan yang dilaksanakan setiap tahun?",
+    "expected_doc_title": "Pedoman-Penyelenggaran-Pendidikan-UPI-Tahun-2024-rev",
+    "expected_chunk_ids": [
+      "6c58b64cda8670c6::24294"
+    ],
+    "expected_keywords": [
+      "penerimaan mahasiswa",
+      "penerimaan",
+      "dimaksud poin",
+      "mahasiswa baru"
+    ],
+    "ground_truth": "Jadwal penerimaan mahasiswa baru program sarjana/sarjana terapan dilaksanakan menjelang Semester Ganjil setiap tahun.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0021",
+    "question": "Berapakah biaya retensi yang harus dibayar oleh mahasiswa yang mengikuti program pertukaran mahasiswa internasional atau dual degree?",
+    "expected_doc_title": "Pedoman-Penyelenggaran-Pendidikan-UPI-Tahun-2024-rev",
+    "expected_chunk_ids": [
+      "6c58b64cda8670c6::24466"
+    ],
+    "expected_keywords": [
+      "administrasi akademik",
+      "portal",
+      "mahasiswa upi",
+      "input nilai"
+    ],
+    "ground_truth": "Biaya retensi yang harus dibayar oleh mahasiswa yang mengikuti program pertukaran mahasiswa internasional atau dual degree sebesar Rp 250.000.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "medium",
+    "source": "legacy_RAG_UPI"
+  },
+  {
+    "id": "UMUM_0022",
+    "question": "Peraturan yang mengganti Peraturan Majelis Wali Amanat Nomor 03/PER/MWA UPI/2015 tentang Peraturan Pelaksanaan Peraturan Pemerintah Nomor 15 Tahun 2014 tentang Statuta Universitas Pendidikan Indonesia adalah nomor apa?",
+    "expected_doc_title": "Surat_Keputusan_Kalender_Akademik_2024-2025",
+    "expected_chunk_ids": [
+      "f134da82bf552425::55157"
+    ],
+    "expected_keywords": [
+      "wali amanat",
+      "majelis wali",
+      "majelis",
+      "amanat"
+    ],
+    "ground_truth": "Peraturan yang menggantikan Peraturan Majelis Wali Amanat Nomor 03/PER/MWA UPI/2015 adalah Peraturan Majelis Wali Amanat Nomor 04/PER/MWA UPI/2019, yang merupakan perubahan ketiga atas peraturan tersebut.",
+    "category": "Informasi Umum UPI & Kalender Akademik",
+    "difficulty": "easy",
+    "source": "legacy_RAG_UPI"
+  }
+]

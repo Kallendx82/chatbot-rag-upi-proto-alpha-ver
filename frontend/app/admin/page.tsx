@@ -1,15 +1,31 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Plus, ChevronDown, ChevronUp, Info } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  Plus,
+  Minus,
+  ChevronDown,
+  ChevronUp,
+  Info,
+  Trash2,
+  FileText,
+  RefreshCw,
+  Search,
+  Filter,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/services/api";
 import { useAuthStore } from "@/store/authStore";
 import { useMounted } from "@/hooks/useMounted";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
-const DEFAULT_CATEGORIES = [
+const INITIAL_DEFAULT_CATEGORIES = [
   "PPID UPI",
   "PMB UPI",
   "LPPM UPI",
@@ -22,11 +38,12 @@ const DEFAULT_CATEGORIES = [
   "Dokumen Kepegawaian dan regulasi institusi",
 ];
 
-const CUSTOM_CATEGORY_KEY = "__custom__";
+const STORAGE_KEY = "upi-rag-all-categories";
+const VISIBLE_WITHOUT_SCROLL = 6;
 
-const BG_IMAGES = [
-  "/backgrounds/isola.jpg",
-  "/backgrounds/upi-kampus-cibiru.jpg",
+const DEFAULT_BG_FALLBACK = [
+  "/backgrounds/background-1.jpg",
+  "/backgrounds/background-2.jpg",
   "/backgrounds/sumedang.jpg",
   "/backgrounds/pwk.jpg",
   "/backgrounds/tasik.jpg",
@@ -34,6 +51,30 @@ const BG_IMAGES = [
 ];
 
 const BG_INTERVAL_MS = 9 * 60 * 1000;
+
+function loadCategories(): string[] {
+  if (typeof window === "undefined") return INITIAL_DEFAULT_CATEGORIES;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return INITIAL_DEFAULT_CATEGORIES;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((s: unknown) => typeof s === "string" && (s as string).trim()) : INITIAL_DEFAULT_CATEGORIES;
+  } catch {
+    return INITIAL_DEFAULT_CATEGORIES;
+  }
+}
+
+function saveCategories(cats: string[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cats));
+}
+
+interface IngestedDoc {
+  doc_id: string;
+  title: string;
+  category?: string;
+  chunks_count: number;
+  created_at?: string;
+}
 
 export default function AdminIngestPage() {
   const mounted = useMounted();
@@ -43,8 +84,142 @@ export default function AdminIngestPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORIES[0]);
-  const [customCategory, setCustomCategory] = useState("");
+
+  // --- category state ---
+  const [categories, setCategories] = useState<string[]>(INITIAL_DEFAULT_CATEGORIES);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [newCategoryInput, setNewCategoryInput] = useState("");
+  const [showNewInput, setShowNewInput] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  // --- ingested documents state ---
+  const [documents, setDocuments] = useState<IngestedDoc[]>([]);
+  const [loadingDocs, setLoadingDocs] = useState(false);
+  const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
+  const [docConfirmDelete, setDocConfirmDelete] = useState<string | null>(null);
+
+  // --- filter & sort state for document list ---
+  const [searchDocQuery, setSearchDocQuery] = useState("");
+  const [filterDocCategory, setFilterDocCategory] = useState("ALL");
+  const [sortDocOrder, setSortDocOrder] = useState<"newest" | "oldest" | "title_asc" | "chunks_desc">("newest");
+
+  useEffect(() => {
+    const loaded = loadCategories();
+    setCategories(loaded);
+    if (loaded.length > 0) {
+      setSelectedCategory(loaded[0]);
+    }
+  }, []);
+
+  const fetchDocuments = useCallback(async () => {
+    if (!token) return;
+    setLoadingDocs(true);
+    try {
+      const docs = await api.listDocuments(token);
+      setDocuments(docs);
+    } catch {
+      // ignore
+    } finally {
+      setLoadingDocs(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (mounted && token && user?.is_admin) {
+      fetchDocuments();
+    }
+  }, [mounted, token, user, fetchDocuments]);
+
+  // Filter & sort documents
+  const filteredDocuments = useMemo(() => {
+    let result = [...documents];
+
+    // Search by title/name
+    if (searchDocQuery.trim()) {
+      const q = searchDocQuery.toLowerCase().trim();
+      result = result.filter(
+        (d) => d.title.toLowerCase().includes(q) || d.doc_id.toLowerCase().includes(q)
+      );
+    }
+
+    // Filter by category
+    if (filterDocCategory !== "ALL") {
+      result = result.filter((d) => (d.category || "Uncategorized") === filterDocCategory);
+    }
+
+    // Sort
+    result.sort((a, b) => {
+      if (sortDocOrder === "title_asc") {
+        return a.title.localeCompare(b.title);
+      }
+      if (sortDocOrder === "chunks_desc") {
+        return b.chunks_count - a.chunks_count;
+      }
+      if (sortDocOrder === "oldest") {
+        return (a.created_at || "").localeCompare(b.created_at || "");
+      }
+      // default: newest
+      return (b.created_at || "").localeCompare(a.created_at || "");
+    });
+
+    return result;
+  }, [documents, searchDocQuery, filterDocCategory, sortDocOrder]);
+
+  // Unique categories existing in documents
+  const existingDocCategories = useMemo(() => {
+    const set = new Set<string>();
+    for (const d of documents) {
+      if (d.category) set.add(d.category);
+    }
+    return Array.from(set);
+  }, [documents]);
+
+  const needsScroll = categories.length > VISIBLE_WITHOUT_SCROLL;
+
+  const addCategory = () => {
+    const name = newCategoryInput.trim();
+    if (!name) return;
+    if (categories.includes(name)) {
+      setSelectedCategory(name);
+      setShowNewInput(false);
+      setNewCategoryInput("");
+      return;
+    }
+    const updated = [...categories, name];
+    setCategories(updated);
+    saveCategories(updated);
+    setSelectedCategory(name);
+    setShowNewInput(false);
+    setNewCategoryInput("");
+  };
+
+  const deleteCategory = (cat: string) => {
+    const updated = categories.filter((c) => c !== cat);
+    setCategories(updated);
+    saveCategories(updated);
+    if (selectedCategory === cat) {
+      setSelectedCategory(updated[0] || "");
+    }
+    setDeleteConfirm(null);
+  };
+
+  const handleDeleteDocument = async (docId: string) => {
+    if (!token) return;
+    setDeletingDocId(docId);
+    try {
+      await api.deleteDocument(token, docId);
+      setResult(`Berhasil menghapus dokumen '${docId}' beserta chunk-nya.`);
+      fetchDocuments();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Gagal menghapus dokumen.");
+    } finally {
+      setDeletingDocId(null);
+      setDocConfirmDelete(null);
+    }
+  };
+
+  // --- chunk / upload state ---
+  const [subcategory, setSubcategory] = useState("");
   const [chunkSize, setChunkSize] = useState("");
   const [overlap, setOverlap] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -53,10 +228,8 @@ export default function AdminIngestPage() {
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const category = selectedCategory === CUSTOM_CATEGORY_KEY ? customCategory.trim() : selectedCategory;
-
   const handleSubmit = useCallback(async () => {
-    if (!file || !token || !category) return;
+    if (!file || !token || !selectedCategory) return;
     setLoading(true);
     setError(null);
     setResult(null);
@@ -68,33 +241,34 @@ export default function AdminIngestPage() {
         setLoading(false);
         return;
       }
-      if (ov !== undefined && (isNaN(ov) || ov < 0 || ov > 5)) {
-        setError("Overlap harus antara 0–5 kalimat.");
+      if (ov !== undefined && (isNaN(ov) || ov < 0 || ov > 500)) {
+        setError("Overlap harus antara 0–500 karakter.");
         setLoading(false);
         return;
       }
-      const res = await api.ingestPdf(token, file, category, title || undefined, cs, ov);
+      const res = await api.ingestPdf(token, file, selectedCategory, subcategory || undefined, title || undefined, cs, ov);
       setResult(
         `${res.message}${res.chunks_added != null ? ` (${res.chunks_added} potongan ditambahkan)` : ""}`,
       );
       setFile(null);
       setTitle("");
+      setSubcategory("");
       if (fileRef.current) fileRef.current.value = "";
+      fetchDocuments();
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Gagal mengunggah file.");
     } finally {
       setLoading(false);
     }
-  }, [file, token, category, title, chunkSize, overlap]);
+  }, [file, token, selectedCategory, subcategory, title, chunkSize, overlap, fetchDocuments]);
 
-  if (!mounted) return null;
+  if (!mounted) return <LoadingScreen />;
 
   if (!user || !user.is_admin) {
     return (
       <Shell>
         <p className="text-sm text-muted-foreground">
-          Halaman ini hanya untuk admin. Silakan masuk dengan akun admin
-          terlebih dahulu.
+          Halaman ini hanya untuk admin. Silakan masuk dengan akun admin terlebih dahulu.
         </p>
       </Shell>
     );
@@ -104,24 +278,19 @@ export default function AdminIngestPage() {
     <Shell>
       <div className="mx-auto w-full max-w-lg space-y-6">
         <div className="flex items-center gap-4">
-          <img
-            src="/add-pdf-icon.png"
-            alt="Tambah Dokumen"
-            className="h-12 w-12 object-contain"
-          />
+          <img src="/add-pdf-icon.png" alt="Tambah Dokumen" className="h-12 w-12 object-contain" />
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold">Tambah Dokumen PDF</h2>
+            <h2 className="text-lg font-semibold">Kelola & Tambah Dokumen PDF</h2>
             <p className="text-sm text-muted-foreground">
-              Unggah file PDF untuk ditambahkan ke basis pengetahuan chatbot.
+              Unggah atau hapus dokumen PDF &amp; chunk dari basis pengetahuan chatbot.
             </p>
           </div>
         </div>
 
         <div className="space-y-4">
+          {/* File input */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium">
-              File PDF
-            </label>
+            <label className="mb-1.5 block text-sm font-medium">File PDF</label>
             <input
               ref={fileRef}
               type="file"
@@ -136,6 +305,7 @@ export default function AdminIngestPage() {
             )}
           </div>
 
+          {/* Title */}
           <div>
             <label className="mb-1.5 block text-sm font-medium">
               Judul Dokumen{" "}
@@ -150,36 +320,115 @@ export default function AdminIngestPage() {
             />
           </div>
 
+          {/* Category selector */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium">
-              Kategori
-            </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="block w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+            <label className="mb-1.5 block text-sm font-medium">Kategori</label>
+            <div
+              className={`rounded-md border border-border bg-background ${needsScroll ? "max-h-52 overflow-y-auto" : ""}`}
             >
-              {DEFAULT_CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-              <option value={CUSTOM_CATEGORY_KEY}>+ Kategori lainnya…</option>
-            </select>
+              {categories.length === 0 ? (
+                <div className="px-3 py-3 text-xs text-muted-foreground text-center">
+                  Belum ada kategori. Tambahkan kategori baru di bawah.
+                </div>
+              ) : (
+                categories.map((cat) => {
+                  const isSelected = selectedCategory === cat;
+                  return (
+                    <div
+                      key={cat}
+                      className={`flex items-center justify-between px-3 py-2 cursor-pointer transition-colors text-sm ${
+                        isSelected ? "bg-primary/10 text-primary font-medium" : "hover:bg-surface-muted text-foreground"
+                      }`}
+                      onClick={() => setSelectedCategory(cat)}
+                    >
+                      <span className="truncate flex-1">{cat}</span>
+                      {deleteConfirm === cat ? (
+                        <div
+                          className="flex items-center gap-1.5 ml-2 shrink-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <span className="text-xs text-destructive">Hapus?</span>
+                          <button
+                            onClick={() => deleteCategory(cat)}
+                            className="rounded px-2 py-0.5 text-xs font-medium bg-destructive text-destructive-foreground hover:bg-destructive/80"
+                          >
+                            Ya
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirm(null)}
+                            className="rounded px-2 py-0.5 text-xs font-medium bg-muted text-muted-foreground hover:bg-muted/80"
+                          >
+                            Batal
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setDeleteConfirm(cat); }}
+                          title={`Hapus kategori "${cat}"`}
+                          className="ml-2 shrink-0 flex h-5 w-5 items-center justify-center rounded hover:bg-destructive/15 text-muted-foreground hover:text-destructive transition-colors"
+                        >
+                          <Minus className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
 
-            {selectedCategory === CUSTOM_CATEGORY_KEY && (
+            {showNewInput ? (
               <div className="mt-2 flex items-center gap-2">
                 <Plus className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <input
                   type="text"
-                  value={customCategory}
-                  onChange={(e) => setCustomCategory(e.target.value)}
-                  placeholder="Tulis nama kategori baru"
+                  value={newCategoryInput}
+                  onChange={(e) => setNewCategoryInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") addCategory();
+                    if (e.key === "Escape") { setShowNewInput(false); setNewCategoryInput(""); }
+                  }}
+                  placeholder="Tulis nama kategori baru, lalu Enter"
                   autoFocus
-                  className="block w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
+                  className="block flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
                 />
+                <button
+                  onClick={addCategory}
+                  disabled={!newCategoryInput.trim()}
+                  className="rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90 transition-colors"
+                >
+                  Tambah
+                </button>
+                <button
+                  onClick={() => { setShowNewInput(false); setNewCategoryInput(""); }}
+                  className="rounded-md border border-border px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-surface-muted transition-colors"
+                >
+                  Batal
+                </button>
               </div>
+            ) : (
+              <button
+                onClick={() => setShowNewInput(true)}
+                className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                + Kategori lainnya…
+              </button>
             )}
+          </div>
+
+          {/* Sub-category */}
+          <div>
+            <label className="mb-1.5 block text-sm font-medium">
+              Sub-kategori{" "}
+              <span className="font-normal text-muted-foreground">(opsional, mis. Kalender-Akademik-2026)</span>
+            </label>
+            <input
+              type="text"
+              value={subcategory}
+              onChange={(e) => setSubcategory(e.target.value)}
+              placeholder="Contoh: Kalender-Akademik-2026"
+              className="block w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
+            />
           </div>
 
           {/* Advanced: Chunk Settings */}
@@ -199,7 +448,6 @@ export default function AdminIngestPage() {
                   Atur bagaimana teks PDF dipotong menjadi potongan-potongan kecil (chunk) untuk pencarian.
                   Kosongkan untuk menggunakan nilai default.
                 </p>
-
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="mb-1 block text-xs font-medium">
@@ -210,7 +458,7 @@ export default function AdminIngestPage() {
                       type="number"
                       value={chunkSize}
                       onChange={(e) => setChunkSize(e.target.value)}
-                      placeholder="Auto (350/900)"
+                      placeholder="Auto (350/1000)"
                       min={100}
                       max={2000}
                       className="block w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
@@ -219,33 +467,28 @@ export default function AdminIngestPage() {
                   <div>
                     <label className="mb-1 block text-xs font-medium">
                       Overlap
-                      <span className="ml-1 font-normal text-muted-foreground">(kalimat)</span>
+                      <span className="ml-1 font-normal text-muted-foreground">(karakter)</span>
                     </label>
                     <input
                       type="number"
                       value={overlap}
                       onChange={(e) => setOverlap(e.target.value)}
-                      placeholder="Default (1)"
+                      placeholder="Default (200)"
                       min={0}
-                      max={5}
+                      max={500}
                       className="block w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
                     />
                   </div>
                 </div>
-
                 <div className="rounded bg-surface-muted px-3 py-2 text-xs text-muted-foreground space-y-1">
-                  <p><strong>Default:</strong> Tabel → 350 karakter, teks biasa → 900 karakter, overlap 1 kalimat.</p>
-                  <p><strong>Tip:</strong> Untuk PDF dengan banyak tabel/jadwal, gunakan chunk kecil (200–400). Untuk PDF narasi panjang, bisa lebih besar (800–1200).</p>
+                  <p><strong>Default:</strong> Tabel → 350 karakter, teks biasa → 1000 karakter, overlap 200 karakter.</p>
+                  <p><strong>Tip:</strong> PDF tabel/jadwal: chunk kecil (200–400). PDF narasi panjang: chunk lebih besar (800–1200). Setiap chunk otomatis diakhiri di titik atau baris baru.</p>
                 </div>
               </div>
             )}
           </div>
 
-          <Button
-            onClick={handleSubmit}
-            disabled={!file || !category || loading}
-            className="w-full"
-          >
+          <Button onClick={handleSubmit} disabled={!file || !selectedCategory || loading} className="w-full">
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -254,7 +497,7 @@ export default function AdminIngestPage() {
             ) : (
               <>
                 <img src="/add-pdf-icon.png" alt="" className="mr-2 h-4 w-4 object-contain" />
-                Unggah & Proses
+                Unggah &amp; Proses
               </>
             )}
           </Button>
@@ -265,13 +508,148 @@ export default function AdminIngestPage() {
               <span>{result}</span>
             </div>
           )}
-
           {error && (
             <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
+        </div>
+
+        {/* Section: Daftar Dokumen & Filter/Urutkan/Hapus Chunk */}
+        <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold">
+                Daftar Dokumen di Index ({filteredDocuments.length}/{documents.length})
+              </h3>
+            </div>
+            <button
+              onClick={fetchDocuments}
+              disabled={loadingDocs}
+              title="Refresh daftar dokumen"
+              className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-surface-muted transition-colors"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${loadingDocs ? "animate-spin" : ""}`} />
+            </button>
+          </div>
+
+          {/* Filter, Search & Sort Bar */}
+          <div className="space-y-2 pt-1">
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                value={searchDocQuery}
+                onChange={(e) => setSearchDocQuery(e.target.value)}
+                placeholder="Cari berdasarkan nama/judul dokumen..."
+                className="w-full rounded-md border border-border bg-background pl-8 pr-3 py-1.5 text-xs placeholder:text-muted-foreground"
+              />
+            </div>
+
+            {/* Category Filter & Sort Order Controls */}
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <select
+                  value={filterDocCategory}
+                  onChange={(e) => setFilterDocCategory(e.target.value)}
+                  className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+                >
+                  <option value="ALL">Semua Kategori</option>
+                  {existingDocCategories.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <select
+                  value={sortDocOrder}
+                  onChange={(e) => setSortDocOrder(e.target.value as any)}
+                  className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+                >
+                  <option value="newest">Terbaru</option>
+                  <option value="oldest">Terlama</option>
+                  <option value="title_asc">Nama (A-Z)</option>
+                  <option value="chunks_desc">Chunk Terbanyak</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+            {filteredDocuments.length === 0 ? (
+              <p className="py-4 text-center text-xs text-muted-foreground">
+                {loadingDocs ? "Memuat dokumen…" : "Tidak ada dokumen yang sesuai filter."}
+              </p>
+            ) : (
+              filteredDocuments.map((doc) => {
+                const isDeleting = deletingDocId === doc.doc_id;
+                const isConfirming = docConfirmDelete === doc.doc_id;
+                return (
+                  <div
+                    key={doc.doc_id}
+                    className="flex items-center justify-between p-2.5 rounded-md border border-border bg-surface hover:border-primary/40 transition-colors gap-2"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium truncate text-foreground">{doc.title}</p>
+                      <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-0.5">
+                        {doc.category && (
+                          <span className="rounded bg-surface-muted px-1.5 py-0.5 font-medium">
+                            {doc.category}
+                          </span>
+                        )}
+                        {doc.subcategory && (
+                          <span className="rounded bg-primary/10 text-primary px-1.5 py-0.5 font-medium">
+                            {doc.subcategory}
+                          </span>
+                        )}
+                        <span>{doc.chunks_count} chunk</span>
+                        {doc.created_at && (
+                          <span className="font-mono text-[10px] text-muted-foreground/80">
+                            ({doc.created_at})
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {isConfirming ? (
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-xs text-destructive">Hapus chunk?</span>
+                        <button
+                          onClick={() => handleDeleteDocument(doc.doc_id)}
+                          disabled={isDeleting}
+                          className="rounded px-2 py-1 text-xs font-medium bg-destructive text-destructive-foreground hover:bg-destructive/80 disabled:opacity-50"
+                        >
+                          {isDeleting ? <Loader2 className="h-3 w-3 animate-spin" /> : "Ya"}
+                        </button>
+                        <button
+                          onClick={() => setDocConfirmDelete(null)}
+                          disabled={isDeleting}
+                          className="rounded px-2 py-1 text-xs font-medium bg-muted text-muted-foreground hover:bg-muted/80"
+                        >
+                          Batal
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setDocConfirmDelete(doc.doc_id)}
+                        disabled={isDeleting}
+                        title={`Hapus dokumen "${doc.title}" dan seluruh chunk-nya`}
+                        className="p-1.5 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors shrink-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
 
         {/* Panduan Upload PDF */}
@@ -282,12 +660,19 @@ export default function AdminIngestPage() {
             className="flex w-full items-center gap-2 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             <Info className="h-4 w-4" />
-            <span>Panduan Upload PDF</span>
+            <span>Panduan Upload &amp; Kelola Dokumen</span>
             {showGuide ? <ChevronUp className="ml-auto h-4 w-4" /> : <ChevronDown className="ml-auto h-4 w-4" />}
           </button>
 
           {showGuide && (
             <div className="border-t border-border px-4 pb-4 pt-3 text-sm text-muted-foreground space-y-4">
+              <section>
+                <h4 className="font-semibold text-foreground mb-1">Menghapus Dokumen &amp; Chunk</h4>
+                <p>
+                  Gunakan daftar <strong>Daftar Dokumen di Index</strong> untuk mencari, menyaring per kategori, mengurutkan berdasarkan nama/tanggal, dan menghapus dokumen yang tidak relevan. Menghapus dokumen akan menghapus seluruh chunk-nya dari FAISS vectorstore secara langsung tanpa merestart server.
+                </p>
+              </section>
+
               <section>
                 <h4 className="font-semibold text-foreground mb-1">Jenis Dokumen yang Didukung</h4>
                 <ul className="list-disc ml-4 space-y-0.5">
@@ -301,56 +686,34 @@ export default function AdminIngestPage() {
                 <h4 className="font-semibold text-foreground mb-1">Tips Agar Tabel Ter-extract dengan Baik</h4>
                 <ul className="list-disc ml-4 space-y-0.5">
                   <li>Tabel dalam PDF akan otomatis dikonversi ke kalimat terstruktur</li>
-                  <li>Untuk PDF yang <strong>didominasi tabel</strong> (jadwal, kalender), gunakan
-                    ukuran chunk kecil (<strong>200–400 karakter</strong>) agar setiap jadwal menjadi
-                    chunk terpisah dan lebih mudah ditemukan chatbot</li>
-                  <li>Untuk PDF <strong>narasi panjang</strong> (panduan, peraturan), biarkan default
-                    atau gunakan chunk lebih besar (<strong>800–1200 karakter</strong>)</li>
+                  <li>Untuk PDF yang <strong>didominasi tabel</strong> (jadwal, kalender), gunakan ukuran chunk kecil (<strong>200–400 karakter</strong>) agar setiap jadwal menjadi chunk terpisah</li>
+                  <li>Untuk PDF <strong>narasi panjang</strong> (panduan, peraturan), biarkan default atau gunakan chunk lebih besar (<strong>800–1200 karakter</strong>)</li>
                 </ul>
               </section>
 
               <section>
-                <h4 className="font-semibold text-foreground mb-1">Kapan Perlu Atur Chunk Manual?</h4>
-                <ul className="list-disc ml-4 space-y-0.5">
-                  <li><strong>Chatbot tidak bisa menjawab</strong> pertanyaan dari PDF baru →
-                    coba upload ulang dengan chunk lebih kecil (300–400)</li>
-                  <li><strong>Jawaban terpotong</strong> atau konteksnya kurang →
-                    perbesar chunk (1000–1500) dan/atau naikkan overlap ke 2–3</li>
-                  <li><strong>PDF berisi banyak tabel kecil</strong> (jadwal per baris) →
-                    chunk 200–350, overlap 0</li>
+                <h4 className="font-semibold text-foreground mb-1">Mencegah Dokumen Tidak Relevan &amp; Penamaan Judul/Kategori</h4>
+                <ul className="list-disc ml-4 space-y-1">
+                  <li>
+                    <strong>Gunakan Judul Dokumen yang Jelas &amp; Deskriptif:</strong> Isi bidang <em>Judul Dokumen (opsional)</em> dengan nama yang jelas (contoh: <code>Pedoman Penulisan Karya Ilmiah UPI 2024</code> alih-alih <code>Doc1.pdf</code>). Judul dokumen ikut di-embed ke dalam pencarian sehingga menentukan relevansi hasil RAG.
+                  </li>
+                  <li>
+                    <strong>Pilih / Buat Kategori Spesifik:</strong> Selalu tempatkan dokumen pada kategori yang tepat (misal: <em>Direktorat Pendidikan</em>, <em>PMB UPI</em>, dll). Jika dokumen berisi topik spesifik baru, Anda dapat menambahkan kategori/sub-kategori spesifik baru dengan mengklik <code>+ Kategori lainnya…</code>.
+                  </li>
+                  <li>
+                    <strong>Periksa Relevansi di Retrieval Debug:</strong> Setelah meng-ingest dokumen baru, gunakan tombol <strong>Retrieval Debug</strong> di pojok kanan atas untuk mengetes pertanyaan uji dan memastikan chunk baru tersebut di-retrieve secara tepat pada topik yang relevan.
+                  </li>
                 </ul>
               </section>
 
               <section>
                 <h4 className="font-semibold text-foreground mb-1">Pengaturan Overlap</h4>
-                <p>
-                  Overlap menambahkan kalimat terakhir dari chunk sebelumnya ke awal chunk berikutnya,
-                  agar konteks tidak hilang di perbatasan chunk.
-                </p>
-                <ul className="list-disc ml-4 space-y-0.5">
+                <p>Overlap menyalin sejumlah karakter terakhir dari chunk sebelumnya ke awal chunk berikutnya, agar konteks tidak hilang di perbatasan chunk.</p>
+                <ul className="list-disc ml-4 space-y-0.5 mt-1">
                   <li><strong>0</strong> — Tanpa overlap. Cocok untuk tabel/jadwal yang tiap baris independen</li>
-                  <li><strong>1</strong> (default) — Satu kalimat overlap. Cukup untuk kebanyakan dokumen</li>
-                  <li><strong>2–3</strong> — Lebih banyak konteks. Untuk narasi panjang yang saling terhubung</li>
+                  <li><strong>200</strong> (default) — ~200 karakter overlap. Cukup untuk kebanyakan dokumen</li>
+                  <li><strong>300–400</strong> — Lebih banyak konteks. Untuk narasi panjang yang saling terhubung</li>
                 </ul>
-              </section>
-
-              <section>
-                <h4 className="font-semibold text-foreground mb-1">Menghindari Masalah Umum</h4>
-                <ol className="list-decimal ml-4 space-y-1">
-                  <li>
-                    <strong>Upload ulang PDF yang sama:</strong> Sistem otomatis mengganti chunk lama
-                    jika path file sama. Jika perlu memperbarui konten, upload ulang dari halaman ini.
-                  </li>
-                  <li>
-                    <strong>Judul dokumen penting:</strong> Judul yang deskriptif
-                    (mis. &ldquo;Kalender Akademik UPI 2026/2027&rdquo;) membantu chatbot menemukan
-                    chunk yang relevan. Hindari judul generik seperti &ldquo;Dokumen&rdquo;.
-                  </li>
-                  <li>
-                    <strong>Kategori yang tepat:</strong> Gunakan kategori yang konsisten.
-                    Kategori membantu pengguna mengetahui asal sumber jawaban.
-                  </li>
-                </ol>
               </section>
             </div>
           )}
@@ -361,15 +724,27 @@ export default function AdminIngestPage() {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  const [bgIndex, setBgIndex] = useState(
-    () => Math.floor(Math.random() * BG_IMAGES.length),
-  );
+  const [bgList, setBgList] = useState<string[]>(DEFAULT_BG_FALLBACK);
+  const [bgIndex, setBgIndex] = useState(0);
   const [nextIndex, setNextIndex] = useState<number | null>(null);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
+    fetch("/api/backgrounds")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setBgList(data);
+          setBgIndex(Math.floor(Math.random() * data.length));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (bgList.length <= 1) return;
     const id = setInterval(() => {
-      const next = (bgIndex + 1) % BG_IMAGES.length;
+      const next = (bgIndex + 1) % bgList.length;
       setNextIndex(next);
       setFading(true);
       const fadeTimer = setTimeout(() => {
@@ -380,29 +755,23 @@ function Shell({ children }: { children: React.ReactNode }) {
       return () => clearTimeout(fadeTimer);
     }, BG_INTERVAL_MS);
     return () => clearInterval(id);
-  }, [bgIndex]);
+  }, [bgIndex, bgList]);
+
+  const currentBg = bgList[bgIndex] || DEFAULT_BG_FALLBACK[0];
+  const nextBg = nextIndex !== null ? bgList[nextIndex] : null;
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-start px-4 pt-16">
-      {/* Background photo layer */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-[1500ms]"
-        style={{
-          backgroundImage: `url(${BG_IMAGES[bgIndex]})`,
-          opacity: fading ? 0 : 1,
-        }}
+        style={{ backgroundImage: `url(${currentBg})`, opacity: fading ? 0 : 1 }}
       />
-      {nextIndex !== null && (
+      {nextBg !== null && (
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-[1500ms]"
-          style={{
-            backgroundImage: `url(${BG_IMAGES[nextIndex]})`,
-            opacity: fading ? 1 : 0,
-          }}
+          style={{ backgroundImage: `url(${nextBg})`, opacity: fading ? 1 : 0 }}
         />
       )}
-
-      {/* Noise texture overlay (CSS-generated, no external image) */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -410,11 +779,7 @@ function Shell({ children }: { children: React.ReactNode }) {
           mixBlendMode: "multiply",
         }}
       />
-
-      {/* Semi-transparent overlay for readability */}
       <div className="pointer-events-none absolute inset-0 bg-background/75 dark:bg-background/85" />
-
-      {/* Content */}
       <div className="relative z-10 mb-6 w-full max-w-lg">
         <Link href="/">
           <Button variant="ghost" size="sm" className="gap-1">

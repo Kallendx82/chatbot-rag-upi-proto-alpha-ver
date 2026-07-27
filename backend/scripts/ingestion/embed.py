@@ -113,6 +113,10 @@ def run(in_dir: Path, data_dir: Path) -> int:
     from app.core.config import Settings
     from app.rag.embedder import Embedder
 
+    # Always work with absolute paths so file I/O never depends on CWD.
+    data_dir = data_dir.resolve()
+    data_dir.mkdir(parents=True, exist_ok=True)
+
     faiss_path = data_dir / "faiss.index"
     meta_path = data_dir / "chunks_meta.json"
     info_path = data_dir / "index_info.json"
@@ -132,6 +136,19 @@ def run(in_dir: Path, data_dir: Path) -> int:
     if faiss_path.is_file() and meta_path.is_file():
         existing_index = faiss.read_index(str(faiss_path))
         existing_meta = json.loads(meta_path.read_text(encoding="utf-8"))
+
+        # Guard: detect index/meta mismatch caused by a previously interrupted
+        # write (FAISS updated but chunks_meta.json write failed).  When this
+        # happens the safest recovery is to treat the index as if it were brand
+        # new — all chunks in new_chunks will be embedded and merged in fresh.
+        if existing_index.ntotal != len(existing_meta):
+            print(
+                f"[WARN] Index/meta mismatch detected "
+                f"({existing_index.ntotal} vectors vs {len(existing_meta)} meta rows). "
+                f"Rebuilding from scratch to recover."
+            )
+            existing_index = faiss.IndexFlatIP(embedder.dimension)
+            existing_meta = []
     else:
         print("[*] No existing index found - creating a brand new one.")
         existing_index = faiss.IndexFlatIP(embedder.dimension)
@@ -141,22 +158,54 @@ def run(in_dir: Path, data_dir: Path) -> int:
 
     new_index, new_meta = merge_and_embed(new_chunks, existing_index, existing_meta, embedder)
 
-    faiss.write_index(new_index, str(faiss_path))
-    meta_path.write_text(json.dumps(new_meta, ensure_ascii=False), encoding="utf-8")
-    info_path.write_text(
-        json.dumps(
-            {
-                "embedding_model": embedder.model_name,
-                "embedding_dim": embedder.dimension,
-                "n_vectors": new_index.ntotal,
-                "use_e5_prefixes": settings.use_e5_prefixes,
-                "rebuilt_at": dt.datetime.now().isoformat(),
-            },
-            ensure_ascii=False,
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
+    # --- Atomic write: write to .tmp files first, then rename ---
+    # This guarantees that if a write fails mid-way, the existing files remain
+    # intact and the index never ends up in a corrupt/mismatched state.
+    faiss_tmp = faiss_path.with_suffix(".index.tmp")
+    meta_tmp = meta_path.with_suffix(".json.tmp")
+    info_tmp = info_path.with_suffix(".json.tmp")
+
+    try:
+        faiss.write_index(new_index, str(faiss_tmp))
+        meta_tmp.write_text(json.dumps(new_meta, ensure_ascii=False), encoding="utf-8")
+        info_tmp.write_text(
+            json.dumps(
+                {
+                    "embedding_model": embedder.model_name,
+                    "embedding_dim": embedder.dimension,
+                    "n_vectors": new_index.ntotal,
+                    "use_e5_prefixes": settings.use_e5_prefixes,
+                    "rebuilt_at": dt.datetime.now().isoformat(),
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        # All writes succeeded — replace the live files.
+        # On Windows, os.replace() can raise PermissionError (WinError 5) if
+        # the target file is held open by another process (e.g. the running
+        # backend, antivirus scan).  We work around this by explicitly deleting
+        # the target before renaming, which Windows allows even for open files
+        # as long as the opener used FILE_SHARE_DELETE.
+        import shutil as _shutil
+
+        def _safe_replace(src: Path, dst: Path) -> None:
+            try:
+                src.replace(dst)          # fast, atomic on Unix; try first
+            except PermissionError:
+                if dst.exists():
+                    dst.unlink()          # delete locked target, then move
+                _shutil.move(str(src), str(dst))
+
+        _safe_replace(faiss_tmp, faiss_path)
+        _safe_replace(meta_tmp, meta_path)
+        _safe_replace(info_tmp, info_path)
+    except Exception:
+        # Clean up temp files on any failure so they don't litter the dir.
+        for tmp in (faiss_tmp, meta_tmp, info_tmp):
+            tmp.unlink(missing_ok=True)
+        raise
 
     print(f"[OK] Index now has {new_index.ntotal} vectors ({len(new_chunks)} added/replaced) -> {data_dir}")
     print("[!] Restart the backend for the new documents to be searchable.")

@@ -129,6 +129,7 @@ export const api = {
   },
 
   retrieveDebug(
+    token: string,
     query: string,
     topK?: number,
     scoreThreshold?: number,
@@ -139,7 +140,7 @@ export const api = {
     if (scoreThreshold != null) params.set("score_threshold", String(scoreThreshold));
     return request<RetrievalDebugResponse>(
       `/api/retrieve/debug?${params.toString()}`,
-      { method: "GET" },
+      { method: "GET", headers: authHeader(token) },
     );
   },
 
@@ -264,20 +265,32 @@ export const api = {
     token: string,
     file: File,
     category: string,
+    subcategory?: string,
     title?: string,
     chunkSize?: number,
     overlap?: number,
-  ): Promise<{ message: string; filename: string; category: string; chunks_added: number | null }> {
+  ): Promise<{ message: string; filename: string; category: string; subcategory?: string; chunks_added: number | null }> {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("category", category);
+    if (subcategory) formData.append("subcategory", subcategory);
     if (title) formData.append("title", title);
     if (chunkSize != null) formData.append("chunk_size", String(chunkSize));
     if (overlap != null) formData.append("overlap", String(overlap));
-    const res = await fetch(`${BASE_URL}/api/ingest`, {
+
+    // Ingest can take 3–5 minutes for large PDFs (OCR + embedding).
+    // The Next.js dev proxy has a ~30-second timeout, so we bypass it by
+    // calling the backend directly. Falls back to BASE_URL in production
+    // where the proxy is not involved.
+    const directBase =
+      process.env.NEXT_PUBLIC_BACKEND_DIRECT_URL?.replace(/\/$/, "") ||
+      "http://localhost:8000";
+
+    const res = await fetch(`${directBase}/api/ingest`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
+      signal: AbortSignal.timeout(10 * 60 * 1000), // 10 minutes
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
@@ -285,6 +298,20 @@ export const api = {
     }
     return res.json();
   },
+
+  async listDocuments(token: string): Promise<Array<{ doc_id: string; title: string; category?: string; subcategory?: string; chunks_count: number; created_at?: string }>> {
+    return request("/api/documents", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
+  async deleteDocument(token: string, docId: string): Promise<{ message: string; doc_id: string; chunks_removed: number; total_chunks_remaining: number }> {
+    return request(`/api/documents?doc_id=${encodeURIComponent(docId)}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
+
 
   // --- stats (admin) --------------------------------------------------------
   stats(token: string): Promise<StatsResponse> {

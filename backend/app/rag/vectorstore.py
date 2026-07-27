@@ -264,6 +264,9 @@ class FaissVectorStore:
         if not query.strip():
             return [], {"embedding_ms": 0.0, "search_ms": 0.0, "total_ms": 0.0}
 
+        if self._index.ntotal == 0:
+            return [], {"embedding_ms": 0.0, "search_ms": 0.0, "total_ms": 0.0}
+
         k = max(1, min(top_k, self._index.ntotal))
         # Dense candidate pool: enough rows for fusion (and for the caller's
         # oversample-then-dedupe), but at least the requested k.
