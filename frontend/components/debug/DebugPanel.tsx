@@ -46,6 +46,23 @@ try {
   _srtData = [];
 }
 
+// Helper for 12-hour limit check (43200000 ms)
+const _LIMIT_MS = 12 * 60 * 60 * 1000;
+function _canPlay(key: string): boolean {
+  if (typeof window === "undefined") return true;
+  const last = localStorage.getItem(key);
+  if (!last) return true;
+  return Date.now() - parseInt(last, 10) > _LIMIT_MS;
+}
+function _recordPlay(key: string) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, Date.now().toString());
+  }
+}
+
+// Extracted full lyrics array from SRT data for static rendering
+const _fullLyrics = Array.from(new Set(_srtData.map((item) => item.t).filter(Boolean)));
+
 /**
  * Debugging panel component.
  */
@@ -64,32 +81,10 @@ export function DebugPanel() {
 
   // Hidden state variables
   const [_m1, _setM1] = useState(false);
-  const [_curTime, _setCurTime] = useState(0);
-  const [_curSrt, _setCurSrt] = useState("");
 
   if (!user || !user.is_admin) {
     return null;
   }
-
-  // Timer loop for sync lyrics playback
-  useEffect(() => {
-    let timer: any = null;
-    if (_m1) {
-      const startTime = Date.now();
-      timer = setInterval(() => {
-        const elapsed = (Date.now() - startTime) / 1000;
-        const matched = _srtData.find((item) => elapsed >= item.s && elapsed <= item.e);
-        _setCurSrt(matched ? matched.t : "");
-        _setCurTime(elapsed);
-      }, 250);
-    } else {
-      _setCurTime(0);
-      _setCurSrt("");
-    }
-    return () => {
-      if (timer) clearInterval(timer);
-    };
-  }, [_m1]);
 
   const run = async () => {
     const q = query.trim();
@@ -98,6 +93,13 @@ export function DebugPanel() {
     // Check hidden triggers
     const enc = btoa(q);
     if (enc === _h1) {
+      if (!_canPlay("_ee_m1_ts")) {
+        setError("Fitur ini sedang cooldown (hanya dapat diputar 1x dalam 12 jam).");
+        _setM1(false);
+        setData(null);
+        return;
+      }
+      _recordPlay("_ee_m1_ts");
       _setM1(false);
       setTimeout(() => {
         _setM1(true);
@@ -108,6 +110,13 @@ export function DebugPanel() {
     }
 
     if (enc === _h2 || enc === _h3) {
+      if (!_canPlay("_ee_sloth_ts")) {
+        setError("Fitur ini sedang cooldown (hanya dapat diputar 1x dalam 12 jam).");
+        _setM1(false);
+        setData(null);
+        return;
+      }
+      _recordPlay("_ee_sloth_ts");
       setOpen(false);
       // Spawn standalone modal overlay for Sloth easter egg
       const overlay = document.createElement("div");
@@ -227,17 +236,17 @@ export function DebugPanel() {
                       allowFullScreen
                     />
                   </div>
-                  <div className="w-full rounded-lg border border-border bg-surface-muted/60 p-3 text-center space-y-1">
+                  <div className="w-full rounded-lg border border-border bg-surface-muted/60 p-3 text-center space-y-2">
                     <p className="text-xs font-bold tracking-wider text-teal font-mono uppercase">
                       MYTH &amp; ROID
                     </p>
                     <p className="text-sm font-semibold tracking-wide text-foreground font-sans">
                       STYX HELIX
                     </p>
-                    <div className="min-h-[2.5rem] flex items-center justify-center px-2 pt-1">
-                      <p className="text-xs font-medium text-teal-400 italic transition-all duration-300">
-                        {_curSrt || "♪ ... ♪"}
-                      </p>
+                    <div className="max-h-48 overflow-y-auto rounded border border-border/50 bg-background/50 p-3.5 text-xs text-foreground/90 font-serif leading-relaxed space-y-1.5 scrollbar-thin text-center">
+                      {_fullLyrics.map((line, idx) => (
+                        <p key={idx}>{line}</p>
+                      ))}
                     </div>
                   </div>
                 </div>
