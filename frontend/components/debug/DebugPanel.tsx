@@ -98,7 +98,10 @@ export function DebugPanel() {
     // Check hidden triggers
     const enc = btoa(q);
     if (enc === _h1) {
-      _setM1(true);
+      _setM1(false);
+      setTimeout(() => {
+        _setM1(true);
+      }, 50);
       setError(null);
       setData(null);
       return;
