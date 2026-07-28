@@ -228,8 +228,37 @@ export default function AdminIngestPage() {
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const validateAndSetFile = (f: File | null) => {
+    if (!f) {
+      setFile(null);
+      setError(null);
+      return;
+    }
+    const isPdfExt = f.name.toLowerCase().endsWith(".pdf");
+    const isPdfMime = f.type === "application/pdf" || f.type === "";
+    if (!isPdfExt || !isPdfMime) {
+      setFile(null);
+      setError("Dokumen yang diunggah harus berformat .pdf! File yang Anda pilih terdeteksi bukan file .pdf. Silakan upload file PDF resmi.");
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+    setError(null);
+    setFile(f);
+  };
+
   const handleSubmit = useCallback(async () => {
     if (!file || !token || !selectedCategory) return;
+
+    // Double check PDF format before submitting
+    const isPdfExt = file.name.toLowerCase().endsWith(".pdf");
+    const isPdfMime = file.type === "application/pdf" || file.type === "";
+    if (!isPdfExt || !isPdfMime) {
+      setError("Dokumen yang diunggah terdeteksi bukan file berformat .pdf! Mohon upload file PDF yang valid.");
+      setFile(null);
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setResult(null);
@@ -256,7 +285,7 @@ export default function AdminIngestPage() {
       if (fileRef.current) fileRef.current.value = "";
       fetchDocuments();
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Gagal mengunggah file.");
+      setError(e instanceof Error ? e.message : "Gagal mengunggah file. Pastikan file berformat .pdf yang valid.");
     } finally {
       setLoading(false);
     }
@@ -294,8 +323,8 @@ export default function AdminIngestPage() {
             <input
               ref={fileRef}
               type="file"
-              accept=".pdf"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              accept=".pdf,application/pdf"
+              onChange={(e) => validateAndSetFile(e.target.files?.[0] ?? null)}
               className="block w-full rounded-md border border-border bg-background px-3 py-2 text-sm file:mr-3 file:rounded file:border-0 file:bg-primary/10 file:px-3 file:py-1 file:text-sm file:font-medium file:text-primary"
             />
             {file && (

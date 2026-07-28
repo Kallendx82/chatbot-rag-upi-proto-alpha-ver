@@ -308,13 +308,13 @@ export const useConversationStore = create<ConversationState>()(
       onRehydrateStorage: () => (state) => {
         if (!state) return;
         // Check if user is logged in
-        let isAuthenticated = false;
+        let userToken: string | null = null;
         try {
           const authRaw = localStorage.getItem("upi-rag-auth");
           if (authRaw) {
             const parsed = JSON.parse(authRaw);
             if (parsed?.state?.token && parsed?.state?.user) {
-              isAuthenticated = true;
+              userToken = parsed.state.token;
             }
           }
         } catch {
@@ -322,13 +322,18 @@ export const useConversationStore = create<ConversationState>()(
         }
 
         // Unauthenticated users' chat sessions are ephemeral (cleared on browser/tab close)
-        if (!isAuthenticated) {
+        if (!userToken) {
           useConversationStore.setState({
             conversations: [],
             activeId: null,
           });
           return;
         }
+
+        // Trigger automatic cross-device pull and sync on refresh
+        import("@/services/sessionSync").then(({ pullAndSyncWithServer }) => {
+          pullAndSyncWithServer(userToken!).catch(() => {});
+        });
 
         for (const conv of state.conversations) {
           for (let i = 0; i < conv.messages.length; i++) {
