@@ -36,23 +36,34 @@ export function DebugPanel() {
   const topK = useSettingsStore((s) => s.topK);
   const language = useSettingsStore((s) => s.language);
   const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<RetrievalDebugResponse | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
 
+  // All hooks must be called before any early return (Rules of Hooks).
   if (!user || !user.is_admin) {
     return null;
   }
 
+  const [isEasterEgg, setIsEasterEgg] = useState(false);
+
   const run = async () => {
     const q = query.trim();
     if (!q || loading) return;
+    if (q === "eYe's") {
+      setIsEasterEgg(true);
+      setError(null);
+      setData(null);
+      return;
+    }
+    setIsEasterEgg(false);
     setLoading(true);
     setError(null);
     try {
-      const res = await api.retrieveDebug(q, topK, undefined, language);
+      const res = await api.retrieveDebug(token!, q, topK, undefined, language);
       setData(res);
     } catch (err) {
       setError(
@@ -135,7 +146,24 @@ export function DebugPanel() {
                 </div>
               )}
 
-              {!data && !error && !loading && (
+              {isEasterEgg && (
+                <div className="flex flex-col items-center justify-center py-4 space-y-3">
+                  <div className="w-full overflow-hidden rounded-xl border border-teal/40 bg-black shadow-lg aspect-video">
+                    <iframe
+                      className="h-full w-full"
+                      src="https://www.youtube.com/embed/tIhL2KHVdgE?autoplay=1"
+                      title="Easter Egg Video Player"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  </div>
+                  <p className="text-xs font-mono text-teal animate-pulse">
+                    ✨ Secret Easter Egg Activated: eYe's ✨
+                  </p>
+                </div>
+              )}
+
+              {!data && !error && !loading && !isEasterEgg && (
                 <div className="flex flex-col items-center justify-center py-16 text-center text-sm text-muted-foreground">
                   <Bug className="mb-3 h-8 w-8 opacity-40" />
                   Masukkan query lalu jalankan untuk melihat chunk yang diambil,
