@@ -241,17 +241,13 @@ export function MessageBubble({
                       Tanpa sumber
                     </Badge>
                   )}
-                  {debugMode && (
-                    <Badge variant="outline" className="gap-1 font-mono">
-                      <Timer className="h-3 w-3" />
-                      {Math.round(message.metrics.totalMs || 0)}ms
-                    </Badge>
-                  )}
-                  {debugMode && (
-                    <Badge variant="outline" className="font-mono">
-                      {message.metrics.backend}
-                    </Badge>
-                  )}
+                  <Badge variant="outline" className="gap-1 font-mono">
+                    <Timer className="h-3 w-3" />
+                    {Math.round(message.metrics.totalMs || 0)}ms
+                  </Badge>
+                  <Badge variant="outline" className="font-mono">
+                    {message.metrics.backend}
+                  </Badge>
                 </>
               )}
 
