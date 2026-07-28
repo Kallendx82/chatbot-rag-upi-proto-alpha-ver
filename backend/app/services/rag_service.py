@@ -110,13 +110,13 @@ _IDENTITY_RE = re.compile(
 # Non-UPI topic detection: If a question is clearly out-of-scope (not about UPI),
 # short-circuit retrieval so we don't fetch irrelevant documents.
 _UPI_KEYWORDS_RE = re.compile(
-    r"\b(upi|universitas pendidikan indonesia|ditpend|pmb|ppid|lppm|cibiru|purwakarta|sumedang|serang|tasikmalaya|ukt|irs|prs|sbmptn|snmptn|snbp|snbt|kategori\s+ukt|prodi|fakultas|jurusan|biro|rektor|dosen|kurikulum|akademik|kampus|ijazah|wisuda|cuti|ipk|sks|matakuliah|mata\s+kuliah|mahasiswa|spmb|beasiswa)\b",
+    r"\b(upi|universitas\s+pendidikan\s+indonesia|ditpend|pmb|ppid|lppm|cibiru|purwakarta|sumedang|serang|tasikmalaya|ukt|irs|prs|sbmptn|snmptn|snbp|snbt|kategori\s+ukt|prodi|fakultas|jurusan|biro|rektor|dosen|kurikulum|akademik|kampus|ijazah|wisuda|cuti|ipk|sks|matakuliah|mata\s+kuliah|mahasiswa|spmb|beasiswa|pendaftaran|biaya|kuliah|fpbs|fip|fpebu|fpmipa|fserang|fcibiru|fpurwakarta|fsumedang|ftasikmalaya)\b",
     re.IGNORECASE,
 )
 
 # Common general knowledge / off-topic indicators that are clearly not UPI-related
 _NON_UPI_EXPLICIT_RE = re.compile(
-    r"\b(presiden|menteri|kuda|germany|jerman|sepak\s*bola|sejarah\s+dunia|ibu\s*kota|ibukota|cuaca|resep|film|lagu|musik|game|liga|pemilu|politik|indonesia\s+merdeka)\b",
+    r"\b(presiden|menteri|kuda|grass\s+wonder|germany|jerman|sepak\s*bola|sejarah|ibu\s*kota|ibukota|cuaca|resep|film|lagu|musik|game|liga|pemilu|politik|artis|sekolah|cuaca|makanan|olahraga)\b",
     re.IGNORECASE,
 )
 
@@ -364,6 +364,11 @@ class RagService:
         retrieval = self.retrieve(message, top_k=top_k)
         chunks = retrieval["results"]
         retrieval_ms = retrieval["timings"]["total_ms"]
+
+        # If chunks exist but top similarity score is very low (< 0.72) and query has no UPI domain keywords,
+        # consider it off-topic and drop the sources to prevent weak irrelevant retrieval.
+        if chunks and not _UPI_KEYWORDS_RE.search(message) and (chunks[0].get("score", 0.0) < 0.72):
+            chunks = []
 
         # Style few-shot exemplars from the knowledge layer (facts still from SOURCES).
         examples = None

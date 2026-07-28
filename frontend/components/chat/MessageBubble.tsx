@@ -356,12 +356,17 @@ export function MessageBubble({
                       <Button
                         variant="ghost"
                         size="icon-sm"
+                        disabled={(message.responseHistory?.length || message.responses?.length || 1) >= 2}
                         onClick={() => onRetry(message)}
                       >
                         <RefreshCw className="h-3.5 w-3.5" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Hasilkan ulang</TooltipContent>
+                    <TooltipContent>
+                      {(message.responseHistory?.length || message.responses?.length || 1) >= 2
+                        ? (language === "en" ? "Regenerate limit reached (1 max)" : "Batas hasilkan ulang tercapai (maks 1x)")
+                        : (language === "en" ? "Regenerate answer" : "Hasilkan ulang")}
+                    </TooltipContent>
                   </Tooltip>
                 )}
               </div>
