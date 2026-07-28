@@ -75,14 +75,13 @@ export function DebugPanel() {
   useEffect(() => {
     let timer: any = null;
     if (_m1) {
+      const startTime = Date.now();
       timer = setInterval(() => {
-        _setCurTime((t) => {
-          const next = t + 0.5;
-          const matched = _srtData.find((item) => next >= item.s && next <= item.e);
-          _setCurSrt(matched ? matched.t : "");
-          return next;
-        });
-      }, 500);
+        const elapsed = (Date.now() - startTime) / 1000;
+        const matched = _srtData.find((item) => elapsed >= item.s && elapsed <= item.e);
+        _setCurSrt(matched ? matched.t : "");
+        _setCurTime(elapsed);
+      }, 250);
     } else {
       _setCurTime(0);
       _setCurSrt("");
