@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { BarChart3, ChevronDown, Key, LogIn, LogOut, UserPlus } from "lucide-react";
+import { BarChart3, ChevronDown, Key, LogIn, LogOut, UserPlus, UserX } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useUIStore } from "@/store/settingsStore";
 import { useI18n } from "@/contexts/I18nContext";
 import { ChangePasswordModal } from "@/components/auth/ChangePasswordModal";
+import { DeleteAccountModal } from "@/components/auth/DeleteAccountModal";
 
 /**
  * Compact auth controls for the top bar. Logged out: a "Masuk" button that
@@ -27,6 +28,7 @@ export function UserMenu() {
   const setAuthModalOpen = useUIStore((s) => s.setAuthModalOpen);
   const [open, setOpen] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -126,9 +128,20 @@ export function UserMenu() {
           <button
             onClick={() => {
               setOpen(false);
-              void logout();
+              setShowDeleteAccount(true);
             }}
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors text-left"
+          >
+            <UserX className="h-4 w-4" />
+            <span>Hapus Akun</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setOpen(false);
+              void logout();
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-muted transition-colors text-left"
           >
             <LogOut className="h-4 w-4" />
             <span>{t("user.logout")}</span>
@@ -139,6 +152,10 @@ export function UserMenu() {
       <ChangePasswordModal
         open={showChangePassword}
         onOpenChange={setShowChangePassword}
+      />
+      <DeleteAccountModal
+        open={showDeleteAccount}
+        onOpenChange={setShowDeleteAccount}
       />
     </div>
   );

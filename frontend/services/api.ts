@@ -182,6 +182,15 @@ export const api = {
     });
   },
 
+  deleteAccount(token: string, password: string): Promise<void> {
+    return requestVoid("/api/auth/delete-account", {
+      method: "DELETE",
+      headers: authHeader(token),
+      body: JSON.stringify({ password }),
+      timeoutMs: 15_000,
+    });
+  },
+
   forgotPassword(email: string): Promise<{ token: string; message: string }> {
     return request<{ token: string; message: string }>("/api/auth/forgot-password", {
       method: "POST",

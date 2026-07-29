@@ -25,6 +25,7 @@ interface AuthState {
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string, email: string) => Promise<void>;
   logout: () => Promise<void>;
+  deleteAccount: (password: string) => Promise<void>;
   triggerPasswordSave: (username: string, password: string) => void;
 }
 
@@ -70,6 +71,13 @@ export const useAuthStore = create<AuthState>()(
             // Token dihapus lokal; kegagalan revoke server tidak menghalangi.
           }
         }
+      },
+
+      deleteAccount: async (password: string) => {
+        const token = get().token;
+        if (!token) throw new Error("Belum login");
+        await api.deleteAccount(token, password);
+        set({ token: null, user: null, lastUsername: null });
       },
 
       triggerPasswordSave: (username: string, password: string) => {
