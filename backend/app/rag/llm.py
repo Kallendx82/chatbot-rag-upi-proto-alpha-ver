@@ -73,7 +73,7 @@ class LLMService:
                         "model": self._settings.ollama_model,
                         "prompt": "Hi",
                         "stream": False,
-                        "keep_alive": "-1",
+                        "keep_alive": -1,
                         "options": {"num_predict": 1},
                     },
                     timeout=240.0,
@@ -160,7 +160,7 @@ class LLMService:
                 # Keep the model resident indefinitely (-1). By default Ollama
                 # unloads after 5m (or 30m), causing a ~35-85s cold load for
                 # idle users. -1 keeps it permanently loaded in VRAM/RAM.
-                "keep_alive": "-1",
+                "keep_alive": -1,
                 "options": {
                     "temperature": temp,
                     "num_predict": self._settings.llm_max_tokens,
