@@ -65,28 +65,35 @@ class LLMService:
         import httpx
 
         t0 = time.time()
-        try:
-            httpx.post(
-                f"{self._settings.ollama_base_url}/api/generate",
-                json={
-                    "model": self._settings.ollama_model,
-                    "prompt": "Hi",
-                    "stream": False,
-                    "keep_alive": "30m",
-                    "options": {"num_predict": 1},
-                },
-                timeout=180.0,
-            ).raise_for_status()
-            logger.info(
-                "Ollama model '%s' warmed up in %.1fs.",
-                self._settings.ollama_model, time.time() - t0,
-            )
-        except Exception as exc:  # noqa: BLE001
-            logger.warning(
-                "Ollama warm-up for '%s' failed (%s) - first real chat "
-                "request will pay the cold-load cost instead.",
-                self._settings.ollama_model, exc,
-            )
+        for attempt in range(1, 4):
+            try:
+                httpx.post(
+                    f"{self._settings.ollama_base_url}/api/generate",
+                    json={
+                        "model": self._settings.ollama_model,
+                        "prompt": "Hi",
+                        "stream": False,
+                        "keep_alive": "-1",
+                        "options": {"num_predict": 1},
+                    },
+                    timeout=240.0,
+                ).raise_for_status()
+                logger.info(
+                    "Ollama model '%s' warmed up in %.1fs.",
+                    self._settings.ollama_model, time.time() - t0,
+                )
+                return
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(
+                    "Ollama warm-up attempt %d/3 for '%s' failed (%s).",
+                    attempt, self._settings.ollama_model, exc,
+                )
+                if attempt < 3:
+                    time.sleep(2.0)
+        logger.warning(
+            "Ollama warm-up for '%s' failed after 3 attempts - first real chat request will pay the cold-load cost instead.",
+            self._settings.ollama_model,
+        )
 
     def generate(
         self,
@@ -150,11 +157,10 @@ class LLMService:
                 "model": effective_model,
                 "prompt": prompt,
                 "stream": False,
-                # Keep the model resident for 30 min after each call. Ollama's
-                # default unloads it after 5 min idle, so the next chat pays a
-                # ~35 s cold-load that can blow past client/proxy timeouts and
-                # surface as an HTTP 500. Keeping it warm makes answers fast.
-                "keep_alive": "30m",
+                # Keep the model resident indefinitely (-1). By default Ollama
+                # unloads after 5m (or 30m), causing a ~35-85s cold load for
+                # idle users. -1 keeps it permanently loaded in VRAM/RAM.
+                "keep_alive": "-1",
                 "options": {
                     "temperature": temp,
                     "num_predict": self._settings.llm_max_tokens,
