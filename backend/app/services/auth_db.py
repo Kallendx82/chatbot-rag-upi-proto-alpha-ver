@@ -365,9 +365,6 @@ def replace_messages(
                 for i, m in enumerate(messages)
             ],
         )
-        db.execute(
-            "UPDATE chat_sessions SET updated_at = ? WHERE id = ?", (now, session_id)
-        )
         db.commit()
     return True
 

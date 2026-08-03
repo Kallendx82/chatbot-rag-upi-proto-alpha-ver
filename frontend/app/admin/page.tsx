@@ -24,6 +24,7 @@ import { api } from "@/services/api";
 import { useAuthStore } from "@/store/authStore";
 import { useMounted } from "@/hooks/useMounted";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { cn } from "@/lib/utils";
 
 const INITIAL_DEFAULT_CATEGORIES = [
   "PPID UPI",
@@ -72,6 +73,7 @@ interface IngestedDoc {
   doc_id: string;
   title: string;
   category?: string;
+  subcategory?: string;
   chunks_count: number;
   created_at?: string;
 }
@@ -203,8 +205,31 @@ export default function AdminIngestPage() {
     setDeleteConfirm(null);
   };
 
+  // --- math CAPTCHA validation for delete ---
+  const [captchaNum1, setCaptchaNum1] = useState(0);
+  const [captchaNum2, setCaptchaNum2] = useState(0);
+  const [userAnswer, setUserAnswer] = useState("");
+  const [captchaError, setCaptchaError] = useState(false);
+
+  const initCaptcha = () => {
+    setCaptchaNum1(Math.floor(Math.random() * 9) + 1); // 1-9
+    setCaptchaNum2(Math.floor(Math.random() * 9) + 1); // 1-9
+    setUserAnswer("");
+    setCaptchaError(false);
+  };
+
+  const startConfirmDelete = (docId: string) => {
+    initCaptcha();
+    setDocConfirmDelete(docId);
+  };
+
   const handleDeleteDocument = async (docId: string) => {
     if (!token) return;
+    const answer = parseInt(userAnswer.trim(), 10);
+    if (isNaN(answer) || answer !== (captchaNum1 + captchaNum2)) {
+      setCaptchaError(true);
+      return;
+    }
     setDeletingDocId(docId);
     try {
       await api.deleteDocument(token, docId);
@@ -215,6 +240,8 @@ export default function AdminIngestPage() {
     } finally {
       setDeletingDocId(null);
       setDocConfirmDelete(null);
+      setUserAnswer("");
+      setCaptchaError(false);
     }
   };
 
@@ -647,26 +674,46 @@ export default function AdminIngestPage() {
                     </div>
 
                     {isConfirming ? (
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-xs text-destructive">Hapus chunk?</span>
-                        <button
-                          onClick={() => handleDeleteDocument(doc.doc_id)}
-                          disabled={isDeleting}
-                          className="rounded px-2 py-1 text-xs font-medium bg-destructive text-destructive-foreground hover:bg-destructive/80 disabled:opacity-50"
-                        >
-                          {isDeleting ? <Loader2 className="h-3 w-3 animate-spin" /> : "Ya"}
-                        </button>
-                        <button
-                          onClick={() => setDocConfirmDelete(null)}
-                          disabled={isDeleting}
-                          className="rounded px-2 py-1 text-xs font-medium bg-muted text-muted-foreground hover:bg-muted/80"
-                        >
-                          Batal
-                        </button>
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[11px] font-semibold text-destructive">
+                            Berapa {captchaNum1} + {captchaNum2}?
+                          </span>
+                          <input
+                            type="text"
+                            value={userAnswer}
+                            onChange={(e) => {
+                              setUserAnswer(e.target.value);
+                              setCaptchaError(false);
+                            }}
+                            placeholder="?"
+                            className={cn(
+                              "w-10 rounded border bg-background px-1.5 py-0.5 text-center text-xs font-mono",
+                              captchaError ? "border-red-500 bg-red-50" : "border-border"
+                            )}
+                            style={{ width: "3rem" }}
+                          />
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleDeleteDocument(doc.doc_id)}
+                            disabled={isDeleting || !userAnswer}
+                            className="rounded px-2 py-0.5 text-[11px] font-medium bg-destructive text-destructive-foreground hover:bg-destructive/80 disabled:opacity-50"
+                          >
+                            {isDeleting ? <Loader2 className="h-3 w-3 animate-spin" /> : "Hapus"}
+                          </button>
+                          <button
+                            onClick={() => setDocConfirmDelete(null)}
+                            disabled={isDeleting}
+                            className="rounded px-2 py-0.5 text-[11px] font-medium bg-muted text-muted-foreground hover:bg-muted/80"
+                          >
+                            Batal
+                          </button>
+                        </div>
                       </div>
                     ) : (
                       <button
-                        onClick={() => setDocConfirmDelete(doc.doc_id)}
+                        onClick={() => startConfirmDelete(doc.doc_id)}
                         disabled={isDeleting}
                         title={`Hapus dokumen "${doc.title}" dan seluruh chunk-nya`}
                         className="p-1.5 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors shrink-0"

@@ -49,10 +49,10 @@ def _validate_query(text: str, settings: Settings) -> str:
     if not text:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
                             "Query must not be empty.")
-    if len(text) < 3:
+    if len(text) < 1:
         raise HTTPException(
             status.HTTP_422_UNPROCESSABLE_ENTITY,
-            "Query terlalu pendek (minimal 3 karakter).",
+            "Query terlalu pendek (minimal 1 karakter).",
         )
     # Block single repeated character noise (e.g. "aaaaaaa", "?????")
     if len(set(text)) == 1 and len(text) > 4:

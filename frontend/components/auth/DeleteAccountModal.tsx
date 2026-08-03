@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AlertTriangle, Eye, EyeOff, UserX } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,8 +27,26 @@ export function DeleteAccountModal({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Math challenge state
+  const [num1, setNum1] = useState(0);
+  const [num2, setNum2] = useState(0);
+  const [mathAnswer, setMathAnswer] = useState("");
+
+  const generateCaptcha = () => {
+    setNum1(Math.floor(Math.random() * 9) + 1); // 1-9
+    setNum2(Math.floor(Math.random() * 9) + 1); // 1-9
+    setMathAnswer("");
+  };
+
+  useEffect(() => {
+    if (open) {
+      generateCaptcha();
+    }
+  }, [open]);
+
   const reset = () => {
     setPassword("");
+    setMathAnswer("");
     setError(null);
     setLoading(false);
   };
@@ -46,6 +62,13 @@ export function DeleteAccountModal({
 
     if (!password.trim()) {
       setError("Masukkan password Anda untuk konfirmasi.");
+      return;
+    }
+
+    const calculated = num1 + num2;
+    if (parseInt(mathAnswer.trim(), 10) !== calculated) {
+      setError("Hasil penjumlahan salah. Silakan coba lagi.");
+      generateCaptcha();
       return;
     }
 
@@ -112,6 +135,21 @@ export function DeleteAccountModal({
               </button>
             </div>
           </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="del-captcha" className="text-xs font-medium text-destructive">
+              Keamanan Tambahan: Berapa {num1} + {num2}?
+            </Label>
+            <Input
+              id="del-captcha"
+              type="text"
+              value={mathAnswer}
+              onChange={(e) => setMathAnswer(e.target.value)}
+              placeholder="Masukkan hasil penjumlahan"
+              disabled={loading}
+              className="text-sm font-mono"
+              required
+            />
+          </div>
 
           <div className="flex justify-end gap-2 pt-2">
             <Button
@@ -127,7 +165,7 @@ export function DeleteAccountModal({
               type="submit"
               variant="destructive"
               size="sm"
-              disabled={loading}
+              disabled={loading || !mathAnswer}
             >
               {loading ? "Menghapus..." : "Hapus Akun Saya"}
             </Button>
