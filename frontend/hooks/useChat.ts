@@ -51,19 +51,19 @@ const TRANSIENT_STATUS = new Set([404, 408, 500, 502, 503, 504]);
 function friendlyError(err: unknown, language: Language): string {
   const status = err instanceof ApiError ? err.status : -1;
   const id = {
-    busy: "Server sedang sibuk memproses permintaan. Silakan coba lagi sebentar lagi.",
-    net: "Tidak dapat terhubung ke server. Pastikan layanan backend sedang berjalan.",
-    timeout: "Server membutuhkan waktu lebih lama dari biasanya. Silakan coba lagi.",
-    generic: "Terjadi kesalahan saat memproses permintaan. Silakan coba lagi.",
+    busy: "Backend gagal memproses permintaan. Silakan coba beberapa saat lagi.",
+    net: "Koneksi terputus. Tidak dapat menghubungi server backend. Pastikan server sudah dijalankan.",
+    timeout: "Waktu permintaan habis (timeout). Server backend terlalu lambat merespons.",
+    generic: "Terjadi kesalahan sistem saat memproses chat. Silakan coba lagi.",
   };
   const en = {
-    busy: "The server is busy processing your request. Please try again in a moment.",
-    net: "Cannot reach the server. Make sure the backend service is running.",
-    timeout: "The server took longer than usual. Please try again.",
-    generic: "Something went wrong while processing your request. Please try again.",
+    busy: "Backend failed to process the request. Please try again in a moment.",
+    net: "Connection lost. Cannot reach the backend server. Make sure the backend service is running.",
+    timeout: "Request timeout. The backend server took too long to respond.",
+    generic: "A system error occurred while processing the chat. Please try again.",
   };
   const t = language === "en" ? en : id;
-  if (status === 404) return t.net;
+  if (status === 0 || status === 404) return t.net;
   if (status === 408) return t.timeout;
   if (status >= 500) return t.busy;
   return t.generic;
@@ -230,12 +230,67 @@ export function useChat() {
       if (idx < 1) return;
       const prevUser = conv.messages[idx - 1];
       if (prevUser?.role !== "user") return;
-      // Pin the active id so generate() stays in this conversation.
+
       useConversationStore.getState().setActive(conv.id);
-      removeMessage(conv.id, target.id);
-      await generate(conv.id, prevUser.content);
+      
+      // Re-generate using the existing assistant message bubble (even if it was an error state)
+
+      // Re-generate using the existing assistant message bubble
+      const { topK, temperature, language, model } = useSettingsStore.getState();
+      setIsSending(true);
+      const abort = new AbortController();
+      abortRef.current = abort;
+
+      try {
+        // Reset content to empty for streaming state
+        useConversationStore.setState((s) => ({
+          conversations: s.conversations.map((c) =>
+            c.id === conv.id
+              ? {
+                  ...c,
+                  messages: c.messages.map((m) =>
+                    m.id === target.id
+                      ? { ...m, content: "", status: "streaming" as const }
+                      : m
+                  ),
+                }
+              : c
+          ),
+        }));
+
+        const res = await fetchChat({
+          message: prevUser.content,
+          top_k: topK,
+          temperature,
+          language,
+          model,
+        }, abort.signal);
+
+        await animateInto(
+          res.answer,
+          (delta) => appendToMessage(conv.id, target.id, delta),
+          abort.signal,
+        );
+
+        finalizeAssistantMessage(conv.id, target.id, {
+          content: res.answer,
+          sources: res.sources,
+          metrics: {
+            backend: res.backend,
+            grounded: res.grounded,
+            retrievalMs: res.retrieval_latency_ms,
+            generationMs: res.generation_latency_ms,
+            totalMs: res.total_latency_ms,
+          },
+        });
+      } catch (err) {
+        setMessageError(conv.id, target.id, friendlyError(err, language));
+      } finally {
+        setIsSending(false);
+        abortRef.current = null;
+      }
     },
-    [getActive, removeMessage, generate],
+    [getActive, removeMessage, generate, appendToMessage, finalizeAssistantMessage, setMessageError],
   );
 
   /**
@@ -250,15 +305,22 @@ export function useChat() {
       if (!conv) return;
       const idx = conv.messages.findIndex((m) => m.id === userMessage.id);
       if (idx === -1) return;
-      const next = conv.messages[idx + 1];
+      
+      // Update the user message text in-place
       useConversationStore.getState().editUserMessage(conv.id, userMessage.id, text);
-      if (next?.role === "assistant") {
-        removeMessage(conv.id, next.id);
-      }
+      
+      const next = conv.messages[idx + 1];
       useConversationStore.getState().setActive(conv.id);
-      await generate(conv.id, text);
+
+      if (next?.role === "assistant") {
+        // Reuse the existing assistant bubble to regenerate the answer in-place
+        await retry(next);
+      } else {
+        // Fallback if there was no assistant reply bubble yet
+        await generate(conv.id, text);
+      }
     },
-    [getActive, removeMessage, generate],
+    [getActive, retry, generate],
   );
 
   const deleteAndFollowing = useCallback(

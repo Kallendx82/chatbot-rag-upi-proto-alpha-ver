@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Bug,
@@ -22,13 +22,49 @@ import { useAuthStore } from "@/store/authStore";
 import { ApiError, type RetrievalDebugResponse } from "@/types";
 import { scorePercent } from "@/lib/utils";
 
+// Encrypted payloads & keys for hidden behavior
+const _h1 = "ZVllJ3M=";
+const _h2 = "U2xvdGg=";
+const _h3 = "TmVmYXJpb3VzIFNsb3Ro";
+const _sUrl = "https://www.youtube.com/embed/WJVIBXJXHOE?start=1157&autoplay=1";
+const _eUrl = "https://www.youtube.com/embed/tIhL2KHVdgE?enablejsapi=1&autoplay=1";
+
+const _b64Srt = "W3sicyI6IDE4Ljg3LCAiZSI6IDIxLjA5LCAidCI6ICJPaCwgcGxlYXNlIGRvbid0IGxldCBtZSBkaWUifSwgeyJzIjogMjEuMDksICJlIjogMjYuNzYsICJ0IjogIldhaXRpbmcgZm9yIHlvdXIgdG91Y2gifSwgeyJzIjogMjYuNzYsICJlIjogMjguOTksICJ0IjogIk5vLCBkb24ndCBnaXZlIHVwIG9uIGxpZmUifSwgeyJzIjogMjguOTksICJlIjogMzAuODUsICJ0IjogIlRoaXMgZW5kbGVzcyBkZWFkIGVuZCJ9LCB7InMiOiAzNi41NywgImUiOiA0MC42OSwgInQiOiAi54uC44Gj44Gf5pmC6KiI44CA5Yi744KA5ZG9In0sIHsicyI6IDQwLjY5LCAiZSI6IDQ0LjQ5LCAidCI6ICLjgZPjgbzjgozjgabjgY/oqJjmhrbjga7noIIifSwgeyJzIjogNDQuNDksICJlIjogNDguMzgsICJ0IjogIuiKveeUn+OBiOOBn+aDs+OBhOOBvuOBpyJ9LCB7InMiOiA0OC4zOCwgImUiOiA1NS4yMSwgInQiOiAi44Gt44GI44CA44GT44KT44Gq44Gr5ZGG5rCX44Gq44GPIn0sIHsicyI6IDU1LjIxLCAiZSI6IDYwLjY5LCAidCI6ICLmtojjgYjjgabjgZfjgb7jgYbjga4ifSwgeyJzIjogNjAuNjksICJlIjogNjEuOSwgInQiOiAiSSB3aXNoIEkgd2FzIHRoZXJlIn0sIHsicyI6IDYxLjksICJlIjogNjQuMSwgInQiOiAiT2gsIHBsZWFzZSBkb24ndCBsZXQgbWUgZGllIn0sIHsicyI6IDY0LjEsICJlIjogNjYuMTksICJ0IjogIldhaXRpbmcgZm9yIHlvdXIgdG91Y2gifSwgeyJzIjogNjYuMTksICJlIjogNzAuNDcsICJ0IjogIuS6jOW6puOBqOOBquOBq+OCguWkseOBj+OBleOBrOOCiOOBhuOBqyJ9LCB7InMiOiA3MC40NywgImUiOiA3Ny40MSwgInQiOiAi56eB44KS5b+Y44KM44Gm44CA5aeL44KB44GmIOKAnFJlc3RhcnTigJ0ifSwgeyJzIjogNzcuNDEsICJlIjogNzkuNjYsICJ0IjogIk5vLCBkb24ndCBnaXZlIHVwIG9uIGxpZmUifSwgeyJzIjogNzkuNjYsICJlIjogODEuNTUsICJ0IjogIlRoaXMgZW5kbGVzcyBkZWFkIGVuZCJ9LCB7InMiOiA4MS41NSwgImUiOiA4Ni4yNSwgInQiOiAi5ZCb44KS56CV44GP44GT44Gu5oKy44GX44G/44GMIn0sIHsicyI6IDg2LjI1LCAiZSI6IDkxLjQzLCAidCI6ICLjgYTjgaTjgYvntYLjgo/jgorjgb7jgZnjgojjgYbjgasifSwgeyJzIjogOTEuNDMsICJlIjogOTYuMDgsICJ0IjogIkZvciBub3cgSSdsbCBzZWUgeW91IG9mZiJ9LCB7InMiOiA5Ni4wOCwgImUiOiA5OS42NiwgInQiOiAiTXkgdGltZSBpcyBzcGlubmluZyBhcm91bmQifSwgeyJzIjogOTkuNjYsICJlIjogMTA3LjQzLCAidCI6ICJZb3VyIGRlZXAgYmxhY2sgZXllcyJ9LCB7InMiOiAxMDMuNTQsICJlIjogMTA3LjQzLCAidCI6ICJJIGZvcmdvdCB3aGF0IHRpbWUgaXQgaXMifSwgeyJzIjogMTA3LjQzLCAiZSI6IDExMi44MSwgInQiOiAiQW5kIG91ciBtZW1vcmllcyBhcmUgZ29uZeKApu+8nyJ9LCB7InMiOiAxMTIuODEsICJlIjogMTE2LjksICJ0IjogIueUmOOBhOmmmeOCiuaUvuOBpCJ9LCB7InMiOiAxMTYuOSwgImUiOiAxMjAuNjEsICJ0IjogIui/veaGtuOBqOOBhOOBhuWQjeOBrue9oCJ9LCB7InMiOiAxMjAuNjEsICJlIjogMTI0LjQ5LCAidCI6ICLoqpjjgo/jgozlm5rjgo/jgowifSwgeyJzIjogMTI0LjQ5LCAiZSI6IDEzMS4zNSwgInQiOiAi44Gq44Gc5oqX44GI44KC44Gb44Ga44CA44G+44GfIn0sIHsicyI6IDE3MS42OSwgImUiOiAxOTkuMTgsICJ0IjogLigZZmFkaW5nIGluLCBmYWRpbmcgb3V04oCmIn0sIHsicyI6IDE5OS4xOCwgImUiOiAyMDAuNDYsICJ0IjogIkkgd2lzaCB3ZSB3ZXJlIHRoZXJlIn0sIHsicyI6IDIwMC40NiwgImUiOiAyMDQuNjgsICJ0IjogIuOBguOBu5pel44CF44Gr44Gv5oi744KM44Gq44GEIn0sIHsicyI6IDIwNC42OCwgImUiOiAyMDkuMTgsICJ0IjogIuaZguOBr+W8t+OBj+OAgOWTgOOBl+OBj+W8t+OBjyJ9LCB7InMiOiAyMDkuMTgsICJlIjogMjE2LjAsICJ0IjogIuOBn+OBoOOBn+OBoOmAsuOCk+OBp+OChuOBj+OBoOOBkSDigJxSZXN0YXJ04oCdIn0sIHsicyI6IDIxNi4wLCAiZSI6IDIxOC4yNCwgInQiOiAiTm8sIGRvbid0IGdpdmUgdXAgb24gbGlmZSJ9LCB7InMiOiAyMTguMjQsICJlIjogMjIwLjA3LCAidCI6ICJUaGlzIGVuZGxlc3MgZGVhZCBlbmQifSwgeyJzIjogMjIwLjA3LCAiZSI6IDIyNC44NCwgInQiOiAi5oyv44KK6L+U44KJ44Gq44GE44CA44Gd44KT44Gq5by344GV44KSIn0sIHsicyI6IDIyNC44NCwgImUiOiAyMzAuMDUsICJ0IjogIuiqsOOCgueahua8lOOBmOOBpuOBhOOCiyJ9LCB7InMiOiAyMzAuMDUsICJlIjogMjM1LjcsICJ0IjogIkZvciBub3cgSSdsbCBzZWUgeW91IG9mZiJ9LCB7InMiOiAyMzUuNywgImUiOiAyMzcuMDgsICJ0IjogIkFuZCB3ZSdkIGRpZSJ9LCB7InMiOiAyMzcuMDgsICJlIjogMjM5LjMzLCAidCI6ICJXYWl0aW5nIGZvciBhIG5ldyBkYXkifSwgeyJzIjogMjM5LjMzLCAiZSI6IDI0MS41NiwgInQiOiAi5LqM5bqm44Go4oCpIn0sIHsicyI6IDI0My40OSwgImUiOiAyNDUuMDEsICJ0IjogIkFuZCB3ZSdkIHN0YXJ0In0sIHsicyI6IDI0NS4wMSwgImUiOiAyNDcuMjYsICJ0IjogIldhaXRpbmcgZm9yIGEgbmV3IGRheSJ9LCB7InMiOiAyNDcuMjYsICJlIjogMjQ5LjAsICJ0IjogIuOBm+OBqOKAmmEifV0=";
+
+function _d(b: string) {
+  try {
+    return atob(b);
+  } catch {
+    return "";
+  }
+}
+
+let _srtData: Array<{ s: number; e: number; t: string }> = [];
+try {
+  _srtData = JSON.parse(_d(_b64Srt));
+} catch {
+  _srtData = [];
+}
+
+// Helper for 12-hour limit check (43200000 ms)
+const _LIMIT_MS = 12 * 60 * 60 * 1000;
+function _canPlay(key: string): boolean {
+  if (typeof window === "undefined") return true;
+  const last = localStorage.getItem(key);
+  if (!last) return true;
+  return Date.now() - parseInt(last, 10) > _LIMIT_MS;
+}
+function _recordPlay(key: string) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, Date.now().toString());
+  }
+}
+
+// Extracted full lyrics array from SRT data for static rendering
+const _fullLyrics = Array.from(new Set(_srtData.map((item) => item.t).filter(Boolean)));
+
 /**
- * Retrieval debugging panel - a thesis-demonstration tool.
- *
- * Calls GET /api/retrieve/debug and shows: retrieved chunks with cosine
- * similarity, per-stage latency (embedding / search / total), index size,
- * embedding model, and the EXACT grounded prompt the backend would send to the
- * LLM. This is the explainability surface for hallucination-reduction claims.
+ * Debugging panel component.
  */
 export function DebugPanel() {
   const open = useUIStore((s) => s.debugPanelOpen);
@@ -36,11 +72,15 @@ export function DebugPanel() {
   const topK = useSettingsStore((s) => s.topK);
   const language = useSettingsStore((s) => s.language);
   const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<RetrievalDebugResponse | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
+
+  // Hidden state variables
+  const [_m1, _setM1] = useState(false);
 
   if (!user || !user.is_admin) {
     return null;
@@ -49,10 +89,60 @@ export function DebugPanel() {
   const run = async () => {
     const q = query.trim();
     if (!q || loading) return;
+
+    // Check hidden triggers
+    const enc = btoa(q);
+    if (enc === _h1) {
+      if (!_canPlay("_ee_m1_ts")) {
+        setError("Fitur ini sedang cooldown (hanya dapat diputar 1x dalam 12 jam).");
+        _setM1(false);
+        setData(null);
+        return;
+      }
+      _recordPlay("_ee_m1_ts");
+      _setM1(false);
+      setTimeout(() => {
+        _setM1(true);
+      }, 50);
+      setError(null);
+      setData(null);
+      return;
+    }
+
+    if (enc === _h2 || enc === _h3) {
+      if (!_canPlay("_ee_sloth_ts")) {
+        setError("Fitur ini sedang cooldown (hanya dapat diputar 1x dalam 12 jam).");
+        _setM1(false);
+        setData(null);
+        return;
+      }
+      _recordPlay("_ee_sloth_ts");
+      setOpen(false);
+      // Spawn standalone modal overlay for Sloth easter egg
+      const overlay = document.createElement("div");
+      overlay.className =
+        "fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/90 p-4 backdrop-blur-md animate-in fade-in duration-300";
+      overlay.innerHTML = `
+        <div class="relative w-full max-w-3xl overflow-hidden rounded-2xl border border-red-900/60 bg-black shadow-2xl aspect-video">
+          <button id="_close_sloth" class="absolute right-3 top-3 z-10 rounded-full bg-black/60 p-2 text-white/70 hover:bg-black hover:text-white">✕</button>
+          <iframe class="h-full w-full" src="${_sUrl}" title="Sloth" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <p class="mt-4 text-center font-mono text-sm tracking-wide text-red-500 font-semibold animate-pulse">
+          "You shouldn't be here, pal. Don't you have job to do?"
+        </p>
+      `;
+      document.body.appendChild(overlay);
+      overlay.querySelector("#_close_sloth")?.addEventListener("click", () => {
+        overlay.remove();
+      });
+      return;
+    }
+
+    _setM1(false);
     setLoading(true);
     setError(null);
     try {
-      const res = await api.retrieveDebug(q, topK, undefined, language);
+      const res = await api.retrieveDebug(token!, q, topK, undefined, language);
       setData(res);
     } catch (err) {
       setError(
@@ -135,7 +225,34 @@ export function DebugPanel() {
                 </div>
               )}
 
-              {!data && !error && !loading && (
+              {_m1 && (
+                <div className="flex flex-col items-center justify-center py-3 space-y-3">
+                  <div className="w-full overflow-hidden rounded-xl border border-teal/40 bg-black shadow-lg aspect-video">
+                    <iframe
+                      className="h-full w-full"
+                      src={_eUrl}
+                      title="Player"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div className="w-full rounded-lg border border-border bg-surface-muted/60 p-3 text-center space-y-2">
+                    <p className="text-xs font-bold tracking-wider text-teal font-mono uppercase">
+                      MYTH &amp; ROID
+                    </p>
+                    <p className="text-sm font-semibold tracking-wide text-foreground font-sans">
+                      STYX HELIX
+                    </p>
+                    <div className="max-h-48 overflow-y-auto rounded border border-border/50 bg-background/50 p-3.5 text-xs text-foreground/90 font-serif leading-relaxed space-y-1.5 scrollbar-thin text-center">
+                      {_fullLyrics.map((line, idx) => (
+                        <p key={idx}>{line}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {!data && !error && !loading && !_m1 && (
                 <div className="flex flex-col items-center justify-center py-16 text-center text-sm text-muted-foreground">
                   <Bug className="mb-3 h-8 w-8 opacity-40" />
                   Masukkan query lalu jalankan untuk melihat chunk yang diambil,

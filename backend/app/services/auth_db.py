@@ -365,11 +365,27 @@ def replace_messages(
                 for i, m in enumerate(messages)
             ],
         )
-        db.execute(
-            "UPDATE chat_sessions SET updated_at = ? WHERE id = ?", (now, session_id)
-        )
         db.commit()
     return True
+
+
+def delete_account(user_id: int, password: str) -> bool:
+    """Delete account permanently after verifying current password.
+    Cascades to tokens, chat sessions, and messages via SQLite foreign key constraints."""
+    with _lock:
+        db = _db()
+        row = db.execute(
+            "SELECT pw_salt, pw_hash FROM users WHERE id = ?", (user_id,)
+        ).fetchone()
+        if row is None:
+            return False
+        expected = bytes(row["pw_hash"])
+        calc = _hash_password(password, bytes(row["pw_salt"]))
+        if not hmac.compare_digest(expected, calc):
+            return False
+        cur = db.execute("DELETE FROM users WHERE id = ?", (user_id,))
+        db.commit()
+    return cur.rowcount > 0
 
 
 # --- stats ------------------------------------------------------------------

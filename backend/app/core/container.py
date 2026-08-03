@@ -34,6 +34,11 @@ class Container:
     def startup(self) -> None:
         """Load heavy resources. Failures are recorded, not raised, so the app
         still boots and /health can report what is wrong."""
+        logger.info("Container startup: warming up LLM model first...")
+        # 1. Warm up Ollama LLM FIRST so it loads into VRAM immediately at startup
+        self.llm.warm_up()
+
+        # 2. Then load embedder, FAISS vector store, and example exemplars
         logger.info("Container startup: loading embedder and vector store...")
         self.embedder.load()
         self.store.load()
@@ -46,13 +51,6 @@ class Container:
                 "retrieval endpoints will return 503 until this is fixed.",
                 self.rag.readiness_detail(),
             )
-
-        # Warm up Ollama in the background so the first real user question
-        # doesn't pay the ~85s model-load cost itself (see LLMService.warm_up).
-        # Runs on a daemon thread: /health and retrieval already work while
-        # this is in flight, only chat answers are extractive until it's done.
-        import threading
-        threading.Thread(target=self.llm.warm_up, daemon=True).start()
 
     def reload_vectorstore(self) -> int:
         """Force-reload FAISS index and BM25 from disk."""

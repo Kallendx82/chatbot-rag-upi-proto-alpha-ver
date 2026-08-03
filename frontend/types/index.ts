@@ -98,12 +98,28 @@ export type MessageStatus =
   | "complete"
   | "error";
 
+export interface ResponseItem {
+  content: string;
+  sources?: SourceChunk[];
+  metrics?: {
+    backend: string;
+    grounded: boolean;
+    retrievalMs: number;
+    generationMs: number;
+    totalMs: number;
+  };
+}
+
 export interface ChatMessage {
   id: string;
   role: MessageRole;
   content: string;
   createdAt: number;
   status: MessageStatus;
+  /** Assistant-only: history of generated responses for navigation (< >). */
+  responses?: string[];
+  responseHistory?: ResponseItem[];
+  responseIndex?: number;
   /** Assistant-only: retrieved sources for citation rendering. */
   sources?: SourceChunk[];
   /** Assistant-only: per-turn metrics for the debug panel. */

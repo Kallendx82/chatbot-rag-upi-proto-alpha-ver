@@ -29,7 +29,8 @@ function ViewerInner() {
     );
   }
 
-  const fileUrl = `${API_BASE}/api/source/${encodeURIComponent(doc)}.pdf`;
+  const isWebOrMd = doc.endsWith(".md") || doc.endsWith(".txt");
+  const fileUrl = `${API_BASE}/api/source/${encodeURIComponent(doc)}${isWebOrMd ? "" : ".pdf"}`;
   return <PdfViewer fileUrl={fileUrl} initialPage={page} title={title} />;
 }
 

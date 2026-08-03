@@ -70,14 +70,16 @@ export async function pushConversation(
   }
 }
 
-/** Login-time sync: push local, pull server, replace local store. */
-export async function syncOnLogin(token: string): Promise<void> {
-  // Import store lazily to keep module-eval order cycle-safe.
+/** Full pull & sync from server: merges sessions across devices ordered by timestamp. */
+export async function pullAndSyncWithServer(token: string): Promise<void> {
   const { useConversationStore } = await import("@/store/conversationStore");
   const store = useConversationStore.getState();
 
+  // First, push any local un-synced conversations to server
   for (const conv of store.conversations) {
-    if (conv.messages.length > 0) await pushConversation(token, conv);
+    if (conv.messages.length > 0) {
+      await pushConversation(token, conv);
+    }
   }
 
   try {
@@ -88,14 +90,22 @@ export async function syncOnLogin(token: string): Promise<void> {
         return fromStored(d, d.messages);
       }),
     );
+    // Sort conversations chronologically by latest updated_at
     detailed.sort((a, b) => b.updatedAt - a.updatedAt);
     useConversationStore.setState({
       conversations: detailed,
-      activeId: detailed[0]?.id ?? null,
+      activeId: store.activeId && detailed.some((d) => d.id === store.activeId)
+        ? store.activeId
+        : (detailed[0]?.id ?? null),
     });
   } catch {
-    // Pull failure leaves the local list untouched — still usable offline.
+    // Fail silently: offline fallback retains local store
   }
+}
+
+/** Login-time sync: push local, pull server, replace local store. */
+export async function syncOnLogin(token: string): Promise<void> {
+  await pullAndSyncWithServer(token);
 }
 
 let unsubscribe: (() => void) | null = null;

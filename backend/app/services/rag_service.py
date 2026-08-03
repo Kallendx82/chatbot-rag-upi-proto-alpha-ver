@@ -107,6 +107,42 @@ _IDENTITY_RE = re.compile(
 )
 
 
+# Non-UPI topic detection: If a question is clearly out-of-scope (not about UPI),
+# short-circuit retrieval so we don't fetch irrelevant documents.
+_UPI_KEYWORDS_RE = re.compile(
+    r"\b(upi|universitas\s+pendidikan\s+indonesia|ditpend|pmb|ppid|lppm|cibiru|purwakarta|sumedang|serang|tasikmalaya|ukt|irs|prs|sbmptn|snmptn|snbp|snbt|kategori\s+ukt|prodi|fakultas|jurusan|biro|rektor|dosen|kurikulum|akademik|kampus|ijazah|wisuda|cuti|ipk|sks|matakuliah|mata\s+kuliah|mahasiswa|spmb|beasiswa|pendaftaran|biaya|kuliah|fpbs|fip|fpebu|fpmipa|fserang|fcibiru|fpurwakarta|fsumedang|ftasikmalaya)\b",
+    re.IGNORECASE,
+)
+
+# Common general knowledge / off-topic indicators that are clearly not UPI-related
+_NON_UPI_EXPLICIT_RE = re.compile(
+    r"\b(presiden|menteri|kuda|grass\s+wonder|germany|jerman|sepak\s*bola|sejarah|ibu\s*kota|ibukota|cuaca|resep|film|lagu|musik|game|liga|pemilu|politik|artis|sekolah|cuaca|makanan|olahraga)\b",
+    re.IGNORECASE,
+)
+
+def _is_off_topic_question(message: str) -> bool:
+    msg_lower = message.lower()
+    # Explicit off-topic trigger (e.g. questions about Germany, horses, politics, etc)
+    if _NON_UPI_EXPLICIT_RE.search(msg_lower) and not _UPI_KEYWORDS_RE.search(msg_lower):
+        return True
+    return False
+
+def _off_topic_reply(language: str) -> str:
+    if language == "en":
+        return (
+            "I am the **UPI Information Assistant**, specialized in answering questions about "
+            "**Universitas Pendidikan Indonesia (UPI)**.\n\n"
+            "Your question does not appear to be related to UPI (academic regulations, PMB, UKT, study programs, or campus facilities). "
+            "Please ask a question related to UPI so I can provide official and accurate information. 🙂"
+        )
+    return (
+        "Saya adalah **Asisten Informasi UPI** yang khusus bertugas menjawab pertanyaan seputar "
+        "**Universitas Pendidikan Indonesia (UPI)**.\n\n"
+        "Pertanyaan Anda terdeteksi di luar lingkup informasi UPI (akademik, PMB, UKT, program studi, atau fasilitas kampus). "
+        "Silakan ajukan pertanyaan yang berkaitan dengan UPI agar saya dapat memberikan informasi resmi yang akurat. 🙂"
+    )
+
+
 def _is_identity_question(message: str) -> bool:
     return bool(_IDENTITY_RE.search(message.lower()))
 
@@ -311,9 +347,28 @@ class RagService:
                 "generation_latency_ms": 0.0, "total_latency_ms": total_ms,
             }
 
+        # Short-circuit off-topic / non-UPI questions: do NOT retrieve documents, reply immediately.
+        if _is_off_topic_question(message):
+            answer = _off_topic_reply(self._resolve_language(message, language))
+            total_ms = round((time.time() - t0) * 1000, 2)
+            logging_service.log_chat(
+                query=message, backend="offtopic", grounded=False, n_sources=0,
+                retrieval_ms=0.0, generation_ms=0.0, total_ms=total_ms,
+            )
+            return {
+                "answer": answer, "backend": "offtopic", "grounded": False,
+                "sources": [], "retrieval_latency_ms": 0.0,
+                "generation_latency_ms": 0.0, "total_latency_ms": total_ms,
+            }
+
         retrieval = self.retrieve(message, top_k=top_k)
         chunks = retrieval["results"]
         retrieval_ms = retrieval["timings"]["total_ms"]
+
+        # If chunks exist but top similarity score is very low (< 0.72) and query has no UPI domain keywords,
+        # consider it off-topic and drop the sources to prevent weak irrelevant retrieval.
+        if chunks and not _UPI_KEYWORDS_RE.search(message) and (chunks[0].get("score", 0.0) < 0.72):
+            chunks = []
 
         # Style few-shot exemplars from the knowledge layer (facts still from SOURCES).
         examples = None

@@ -18,6 +18,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from app.schemas.auth import (
     AuthResponse,
     ChangePasswordRequest,
+    DeleteAccountRequest,
     ForgotPasswordRequest,
     LoginRequest,
     MessagesReplaceRequest,
@@ -100,6 +101,18 @@ def change_password(
     if not auth_db.change_password(user["id"], body.old_password, body.new_password):
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED, "Password lama tidak sesuai."
+        )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.delete("/auth/delete-account", tags=["auth"])
+def delete_account(
+    body: DeleteAccountRequest,
+    user: dict[str, Any] = Depends(get_current_user),
+) -> Response:
+    if not auth_db.delete_account(user["id"], body.password):
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED, "Password yang Anda masukkan salah."
         )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 

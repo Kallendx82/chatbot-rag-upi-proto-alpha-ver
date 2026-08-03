@@ -25,12 +25,13 @@ import sys
 from pathlib import Path
 from typing import Any
 
-MAX_CHARS = 900       # soft ceiling per chunk
+MAX_CHARS = 1000      # soft ceiling per chunk
 MAX_CHARS_TABLE = 350  # tighter ceiling for structured table sentences — keeps each fact retrievable
 MIN_CHARS = 80        # merge trailing fragments smaller than this into the previous chunk
-OVERLAP_SENTENCES = 1  # carry the last sentence of a chunk into the next, for context continuity
+OVERLAP_CHARS = 200   # carry the last ~200 chars of a chunk into the next, for context continuity
 
 _SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
+_BOUNDARY_RE = re.compile(r"[.\n]")
 _HEADING_RE = re.compile(
     r"^(BAB\s+[IVXLCDM]+|[0-9]+(\.[0-9]+)*\s+[A-Z]|[A-Z][A-Z\s]{4,60})$"
 )
@@ -66,8 +67,28 @@ def _split_sentences(paragraph: str) -> list[str]:
     return [s.strip() for s in _SENTENCE_SPLIT_RE.split(paragraph) if s.strip()]
 
 
-def split_into_chunks(text: str, max_chars: int = MAX_CHARS, overlap_sentences: int | None = None) -> list[str]:
-    """Recursively pack paragraphs (falling back to sentences) into <= max_chars windows."""
+def _snap_to_boundary(text: str, max_chars: int) -> str:
+    """Trim `text` to `max_chars`, snapping back to the last '.' or '\\n'
+    so every chunk ends cleanly at a sentence or line boundary.
+    If no boundary is found within the limit, return the full text as-is
+    (handles edge cases like very long single-sentence paragraphs).
+    """
+    if len(text) <= max_chars:
+        return text
+    candidate = text[:max_chars]
+    # Search backwards for the last period or newline
+    match = None
+    for m in _BOUNDARY_RE.finditer(candidate):
+        match = m
+    if match:
+        return candidate[: match.end()].rstrip()
+    return candidate  # no boundary found — keep whole candidate
+
+
+def split_into_chunks(text: str, max_chars: int = MAX_CHARS, overlap_chars: int | None = None) -> list[str]:
+    """Recursively pack paragraphs (falling back to sentences) into <= max_chars windows.
+    Each chunk is snapped to end at a '.' or newline.
+    """
     paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
     units: list[str] = []
     for p in paragraphs:
@@ -81,13 +102,13 @@ def split_into_chunks(text: str, max_chars: int = MAX_CHARS, overlap_sentences: 
             current = candidate
             continue
         if current:
-            chunks.append(current)
+            chunks.append(_snap_to_boundary(current, max_chars))
         # a single unit longer than max_chars (rare) is kept whole rather than
         # cut mid-word - downstream embedding truncates, but no data is lost.
         current = unit
 
     if current:
-        chunks.append(current)
+        chunks.append(_snap_to_boundary(current, max_chars))
 
     # Merge a too-small trailing fragment into the previous chunk instead of
     # shipping a near-empty chunk (common on the last paragraph of a page).
@@ -95,17 +116,16 @@ def split_into_chunks(text: str, max_chars: int = MAX_CHARS, overlap_sentences: 
         chunks[-2] = f"{chunks[-2]} {chunks[-1]}".strip()
         chunks.pop()
 
-    # Light overlap: prefix each chunk (after the first) with the previous
-    # chunk's last sentence, so retrieval near a chunk boundary still has
-    # context on both sides.
-    ov = overlap_sentences if overlap_sentences is not None else OVERLAP_SENTENCES
+    # Character-based overlap: prefix each chunk (after the first) with the
+    # tail of the previous chunk (~overlap_chars characters), so retrieval near
+    # a chunk boundary still has context on both sides.
+    ov = overlap_chars if overlap_chars is not None else OVERLAP_CHARS
     if ov and len(chunks) > 1:
         for i in range(1, len(chunks)):
-            prev_sentences = _split_sentences(chunks[i - 1])
-            if prev_sentences:
-                overlap = " ".join(prev_sentences[-ov:])
-                if not chunks[i].startswith(overlap):
-                    chunks[i] = f"{overlap} {chunks[i]}".strip()
+            tail = chunks[i - 1][-ov:]
+            # Only prepend if the tail doesn't already appear at the start
+            if not chunks[i].startswith(tail):
+                chunks[i] = f"{tail} {chunks[i]}".strip()
 
     return chunks
 
@@ -128,6 +148,7 @@ def extract_keywords(text: str, top_n: int = 8) -> list[str]:
 def chunk_document(
     record: dict[str, Any],
     category: str,
+    subcategory: str | None = None,
     source_type: str = "pdf",
     max_chars_override: int | None = None,
     overlap_override: int | None = None,
@@ -136,7 +157,7 @@ def chunk_document(
     doc_id = record["doc_id"]
     chunks: list[dict[str, Any]] = []
     chunk_index = 0
-    overlap = overlap_override if overlap_override is not None else OVERLAP_SENTENCES
+    overlap = overlap_override if overlap_override is not None else OVERLAP_CHARS
 
     for page in record.get("pages", []):
         page_text = page.get("text", "")
@@ -148,13 +169,14 @@ def chunk_document(
             limit = max_chars_override
         else:
             limit = MAX_CHARS_TABLE if is_table_page else MAX_CHARS
-        for piece in split_into_chunks(page_text, max_chars=limit, overlap_sentences=overlap):
+        for piece in split_into_chunks(page_text, max_chars=limit, overlap_chars=overlap):
             chunks.append({
                 "doc_id": doc_id,
                 "source": record["source"],
                 "url": record.get("url"),
                 "title": record.get("title", doc_id),
                 "category": category,
+                "subcategory": subcategory,
                 "source_type": source_type,
                 "page": page["page"],
                 "section": section,
@@ -173,6 +195,7 @@ def run(
     in_dir: Path,
     out_dir: Path,
     category: str,
+    subcategory: str | None = None,
     max_chars_override: int | None = None,
     overlap_override: int | None = None,
 ) -> int:
@@ -187,6 +210,7 @@ def run(
         record = json.loads(f.read_text(encoding="utf-8"))
         chunks = chunk_document(
             record, category=category,
+            subcategory=subcategory,
             max_chars_override=max_chars_override,
             overlap_override=overlap_override,
         )

@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     # --- Retrieval ---
     default_top_k: int = 8
     max_top_k: int = 20
-    retrieval_score_threshold: float = 0.0  # 0 = keep all hits
+    retrieval_score_threshold: float = 0.38  # Default score threshold to filter out low-similarity / random noise
 
     # --- Hybrid retrieval (BM25 + dense, fused with Reciprocal Rank Fusion) ---
     # Improves keyword-heavy queries (program names, fees) that pure dense

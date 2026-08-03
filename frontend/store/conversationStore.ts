@@ -95,10 +95,26 @@ export const useConversationStore = create<ConversationState>()(
           createdAt: now,
           updatedAt: now,
         };
-        set((s) => ({
-          conversations: [conv, ...s.conversations],
-          activeId: id,
-        }));
+        set((s) => {
+          let updated = [conv, ...s.conversations];
+          // Limit to max 20 sessions: remove the oldest (last item) if overflow
+          if (updated.length > 20) {
+            const removed = updated.slice(20);
+            updated = updated.slice(0, 20);
+            // Delete removed sessions on server if logged in
+            for (const r of removed) {
+              mirrorToServer((token) =>
+                import("@/services/api").then(({ api }) =>
+                  api.deleteSession(token, r.id),
+                ),
+              );
+            }
+          }
+          return {
+            conversations: updated,
+            activeId: id,
+          };
+        });
         return id;
       },
 
@@ -212,17 +228,26 @@ export const useConversationStore = create<ConversationState>()(
             c.id === conversationId
               ? touch({
                   ...c,
-                  messages: c.messages.map((m) =>
-                    m.id === messageId
-                      ? {
-                          ...m,
-                          content: payload.content,
-                          sources: payload.sources,
-                          metrics: payload.metrics,
-                          status: "complete",
-                        }
-                      : m,
-                  ),
+                  messages: c.messages.map((m) => {
+                    if (m.id !== messageId) return m;
+                    const prevResponses = m.responses || (m.content ? [m.content] : []);
+                    const updatedResponses = [...prevResponses, payload.content];
+                    
+                    const newItem = { content: payload.content, sources: payload.sources, metrics: payload.metrics };
+                    const prevHistory = m.responseHistory || (m.content ? [{ content: m.content, sources: m.sources, metrics: m.metrics }] : []);
+                    const updatedHistory = [...prevHistory, newItem];
+
+                    return {
+                      ...m,
+                      content: payload.content,
+                      responses: updatedResponses,
+                      responseHistory: updatedHistory,
+                      responseIndex: updatedHistory.length - 1,
+                      sources: payload.sources,
+                      metrics: payload.metrics,
+                      status: "complete",
+                    };
+                  }),
                 })
               : c,
           ),
@@ -260,11 +285,15 @@ export const useConversationStore = create<ConversationState>()(
 
       removeMessage: (conversationId, messageId) =>
         set((s) => ({
-          conversations: s.conversations.map((c) =>
-            c.id === conversationId
-              ? { ...c, messages: c.messages.filter((m) => m.id !== messageId) }
-              : c,
-          ),
+          conversations: s.conversations.map((c) => {
+            if (c.id !== conversationId) return c;
+            const remaining = c.messages.filter((m) => m.id !== messageId);
+            return {
+              ...c,
+              title: remaining.length === 0 ? "Percakapan baru" : c.title,
+              messages: remaining,
+            };
+          }),
         })),
     }),
     {
@@ -278,6 +307,34 @@ export const useConversationStore = create<ConversationState>()(
       // usual edit/retry/copy affordances apply.
       onRehydrateStorage: () => (state) => {
         if (!state) return;
+        // Check if user is logged in
+        let userToken: string | null = null;
+        try {
+          const authRaw = localStorage.getItem("upi-rag-auth");
+          if (authRaw) {
+            const parsed = JSON.parse(authRaw);
+            if (parsed?.state?.token && parsed?.state?.user) {
+              userToken = parsed.state.token;
+            }
+          }
+        } catch {
+          // ignore
+        }
+
+        // Unauthenticated users' chat sessions are ephemeral (cleared on browser/tab close)
+        if (!userToken) {
+          useConversationStore.setState({
+            conversations: [],
+            activeId: null,
+          });
+          return;
+        }
+
+        // Trigger automatic cross-device pull and sync on refresh
+        import("@/services/sessionSync").then(({ pullAndSyncWithServer }) => {
+          pullAndSyncWithServer(userToken!).catch(() => {});
+        });
+
         for (const conv of state.conversations) {
           for (let i = 0; i < conv.messages.length; i++) {
             const m = conv.messages[i];

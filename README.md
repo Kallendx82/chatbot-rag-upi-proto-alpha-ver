@@ -8,12 +8,14 @@ Sistem chatbot berbasis Retrieval-Augmented Generation (RAG) untuk menjawab pert
 
 ## 🎯 Fitur Utama
 
-- **RAG Pipeline**: Retrieval dari 60,000+ vectors database dengan hybrid search
+- **RAG Pipeline**: Retrieval dari 63.700+ vector chunks database dengan Hybrid Search (FAISS Dense + BM25 RRF Fusion)
 - **Multi-language**: Support Bahasa Indonesia & English dengan dynamic switching
-- **Chat Management**: Riwayat percakapan tersimpan per user
-- **Document Viewer**: Akses dokumen sumber dengan deep-linking
-- **Customization**: Theme selector, model selection, retrieval tuning
-- **Security**: User authentication dengan password hashing
+- **Chat Management**: Sesi percakapan tersimpan, penamaan otomatis, navigasi riwayat jawaban multi-generasi (`< 1/N >`), dan tombol retry instan pada kesalahan server
+- **Admin Document Management**: Halaman `/admin` lengkap dengan pengunggahan PDF, kustomisasi judul, **Kategori Utama**, **Sub-kategori**, penyesuaian chunk size/overlap, serta **penghapusan instant dokumen & chunk** dari FAISS vectorstore
+- **Document Viewer**: Akses dokumen sumber (PDF & Web/Markdown) dengan deep-linking dan penampil internal berbasis `pdf.js`
+- **Retrieval Explainability**: Panel *Retrieval Debug* transparan untuk melihat latensi, skor kemiripan, dan pratinjau prompt grounded
+- **Evaluasi & Benchmarking**: Evaluasi RAGAS (Faithfulness, Answer Relevancy, Context Precision, Context Recall) dengan dataset sampel substantif (`dataset.substantive.json`) dan LLM-as-a-Judge
+- **Security**: User authentication berbasis SQLite dengan scrypt password hashing & role-based access control (RBAC Admin)
 
 ---
 
@@ -23,23 +25,25 @@ Sistem chatbot berbasis Retrieval-Augmented Generation (RAG) untuk menjawab pert
 chatbot-rag-upi-alpha/
 ├── backend/
 │   ├── app/
-│   │   ├── api/              # API routes
-│   │   ├── rag/              # RAG pipeline
-│   │   ├── services/         # Business logic
-│   │   └── data/             # SQLite, FAISS index
+│   │   ├── api/              # API routes (chat, ingest, documents, auth, debug, statistics)
+│   │   ├── rag/              # RAG pipeline (vectorstore, embedder, llm, prompt)
+│   │   ├── services/         # Business logic & authentication
+│   │   └── data/             # SQLite, FAISS index (63k+ vectors), metadata, sources
+│   ├── scripts/ingestion/    # Offline ingestion pipeline (extract, clean, chunk, embed)
 │   ├── requirements.txt
-│   ├── .env                  # Configuration
-│   └── manage_users.py        # CLI tools
+│   └── .env                  # Configuration
 │
 ├── frontend/
-│   ├── app/                  # Next.js app
-│   ├── components/           # React components
-│   ├── contexts/             # Global state (i18n)
-│   ├── locales/              # Translations
-│   └── public/               # Static assets
+│   ├── app/                  # Next.js app (chat, admin, stats, viewer)
+│   ├── components/           # React components (chat, citations, debug, ui)
+│   ├── locales/              # Translations (id, en)
+│   └── public/               # Static assets & dynamic background images
 │
-└── docs/
-    └── setup.md              # Setup guide
+├── docs/
+│   ├── evaluation/           # RAGAS evaluation scripts, dataset.400.json, & results
+│   └── thesis/               # Dokumentasi Bab IV & panduan skripsi
+│
+└── UPI-Chatbot-Launcher.exe  # One-click Windows launcher
 ```
 
 ---
@@ -64,206 +68,48 @@ npm run dev
 
 ### One-Click Launcher (Windows)
 
-`UPI-Chatbot-Launcher.exe` di root project menjalankan backend dan frontend
-sekaligus, lalu membuka browser otomatis. Cukup double-click — pada
-menjalankan pertama kali, launcher otomatis mendeteksi dan menginstall
-dependencies yang belum ada (`pip install`, `npm install`), jadi tidak perlu
-setup manual. Prasyarat: Python 3.10+ dan Node.js sudah terpasang dan ada
-di PATH.
-
-Browser: `http://localhost:3000`
-
-### Add New PDFs (Windows)
-
-`Add-New-PDF.exe` di root project menambahkan dokumen PDF baru ke basis
-pengetahuan chatbot tanpa command line: double-click, isi folder PDF +
-nama kategori, tunggu proses selesai. Di baliknya menjalankan pipeline
-extract → clean (OCR untuk halaman scan) → chunk → embed, lalu menggabungkan
-hasilnya ke index yang sama dipakai backend. Restart backend setelah selesai
-agar dokumen baru bisa ditemukan. Detail teknis tiap tahap ada di
-[`backend/scripts/ingestion/README.md`](backend/scripts/ingestion/README.md).
-
-Membutuhkan `backend/.venv` sudah pernah dibuat (otomatis oleh
-`UPI-Chatbot-Launcher.exe` saat pertama kali dijalankan).
+`UPI-Chatbot-Launcher.exe` di root project menjalankan backend dan frontend sekaligus, lalu membuka browser otomatis di `http://localhost:3000`.
 
 ---
 
-## ⚙️ Configuration
-
-### Backend `.env`
-
-```env
-# LLM
-OLLAMA_MODEL=qwen2.5:3b
-LLM_REQUEST_TIMEOUT=90
-OLLAMA_NUM_CTX=4096
-
-# Database
-FAISS_INDEX_PATH=./app/data/faiss.index
-CHUNKS_META_PATH=./app/data/chunks_meta.json
-
-# Retrieval
-DEFAULT_TOP_K=3
-HYBRID_RETRIEVAL=true
-```
-
----
-
-## 🔌 API Endpoints
+## 🔌 API Endpoints Utama
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
-| POST | `/api/auth/register` | Register user |
+| POST | `/api/auth/register` | Register user / admin |
 | POST | `/api/auth/login` | Login |
-| POST | `/api/chat` | Chat with RAG |
-| POST | `/api/retrieve` | Retrieve documents only |
-| GET | `/api/source/{doc_id}` | Get source document |
-| GET | `/api/sessions` | List chat sessions |
+| POST | `/api/chat` | Chat dengan RAG & model override |
+| POST | `/api/retrieve` | Retrieval dokumen saja |
+| GET | `/api/retrieve/debug` | Debug panel: latensi & pratinjau prompt |
+| POST | `/api/ingest` | Upload & ingest PDF baru (Admin) |
+| GET | `/api/documents` | List seluruh dokumen di FAISS index |
+| DELETE | `/api/documents` | Hapus dokumen & chunk dari index (Admin) |
+| GET | `/api/source/{doc_id}` | Serve dokumen sumber (PDF / MD / TXT) |
+| GET | `/api/backgrounds` | List gambar background dinamis admin |
 | GET | `/health` | Health check |
 
 ---
 
 ## 📊 Tech Stack
 
-- **Vector DB**: FAISS (local)
-- **Embeddings**: intfloat/multilingual-e5-base (768-dim)
-- **LLM**: Ollama (Qwen 2.5:3B default)
-- **Backend**: FastAPI, Pydantic, SQLite
-- **Frontend**: Next.js 14, TypeScript, Tailwind, Zustand
+- **Vector DB**: FAISS (local index)
+- **Embeddings**: `intfloat/multilingual-e5-base` (768-dim)
+- **LLM**: Ollama (`llama3.1:8b-instruct-q4_K_M` default, `qwen3.5:4b-q4_K_M` optional)
+- **Backend**: FastAPI, Pydantic, SQLite, PyMuPDF, Tesseract OCR
+- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS, Zustand, Framer Motion, PDF.js
 
 ---
 
-## 🔐 Security
+## 📝 Evaluasi RAGAS (LLM-as-a-Judge)
 
-- Passwords: scrypt hashing (n=2^14)
-- API tokens: SHA-256 digest in database
-- CORS: localhost:3000
-- SQL injection prevention: Parameterized queries
-
----
-
-## 📝 Development
-
-### User Management (Backend)
-
-```bash
-python manage_users.py list
-python manage_users.py delete <username> --force
-```
-
-### i18n Translations (Frontend)
-
-- Indonesian: `frontend/locales/id.json`
-- English: `frontend/locales/en.json`
-- Add keys, restart frontend
-
----
-
-## 🛠️ Troubleshooting
-
-### Ollama not using the GPU
-
-If chat answers are slow or time out, check whether Ollama is actually
-using the GPU:
+Skrip evaluasi otomatis RAGAS dapat dijalankan di folder `docs/evaluation/`:
 
 ```powershell
-ollama ps
+cd docs/evaluation
+
+# Evaluasi retrieval & generation dengan dataset substantif
+python run_eval.py --models llama3.1:8b-instruct-q4_K_M qwen3.5:4b-q4_K_M --dataset dataset.substantive.json --top-k 8 --skip-judge
 ```
-
-The `PROCESSOR` column should show `100% GPU` (or close to it). If it shows
-`100% CPU`, Windows hasn't assigned Ollama to the discrete GPU — common on
-laptops with hybrid graphics (NVIDIA Optimus), where the dGPU stays asleep
-until an app is explicitly assigned to it:
-
-1. Open **Settings → System → Display → Graphics**
-2. Find (or add) **`ollama.exe`** and **`ollama app.exe`**
-   (usually in `%LOCALAPPDATA%\Programs\Ollama\`)
-3. Set **GPU preference** to **High performance** (your NVIDIA GPU) for both
-4. Leave **"Optimizations for windowed games"** off — Ollama has no
-   window/game rendering loop, so this setting is a no-op for it
-5. Restart Ollama (see below) for the change to take effect
-
-### Restarting Ollama manually
-
-Windows GPU preference changes only apply to a *new* Ollama process, so
-quitting and relaunching is required after step 3 above (or whenever Ollama
-seems stuck/misbehaving):
-
-**Via the system tray:** right-click the Ollama icon → **Quit**, then
-relaunch it from the Start Menu.
-
-**Via PowerShell:**
-```powershell
-Get-Process -Name "ollama*" | Stop-Process -Force
-Start-Process "$env:LOCALAPPDATA\Programs\Ollama\ollama app.exe"
-```
-
-Verify with `ollama ps` after a chat request — `PROCESSOR` should now show
-GPU usage.
-
-### Why llama3.1:8b-instruct-q4_K_M is the default model
-
-Accuracy over speed: `llama3.1:8b-instruct-q4_K_M` is the intended default.
-`qwen2.5:3b` was only used as a comparison baseline while testing GPU
-offload and isn't meant to ship as the default, even though it's faster and
-lighter on VRAM.
-
-On this 6 GB VRAM card, `llama3.1:8b-instruct-q4_K_M` reaches ~75% GPU
-(~5.6 GB VRAM, `num_ctx=4096`) and takes ~55s per RAG-grounded answer.
-That leaves only ~0.3 GB of VRAM free while the model is resident (30 min
-`keep_alive` after each use) — tight enough to visibly corrupt rendering in
-other GPU-accelerated apps running at the same time (observed in Claude
-Code itself). `qwen2.5:3b` (100% GPU, ~2.1 GB, ~10-15s) remains selectable
-per-request from the Settings model dropdown when speed or multitasking
-matters more than accuracy. See the comments in `backend/.env`
-(`OLLAMA_MODEL`, `LLM_REQUEST_TIMEOUT`, `OLLAMA_NUM_CTX`) for the full
-measurements.
-
-If you notice rendering glitches in other apps while chatting, free the
-VRAM with `ollama stop llama3.1:8b-instruct-q4_K_M` (see
-[Restarting Ollama manually](#restarting-ollama-manually) above for more).
-
-### Incomplete or wrong-sounding answers to "list all X" questions
-
-RAG answers are only as complete as the chunks retrieved. Three fixes went
-into `backend/app/rag/vectorstore.py` and `rag_service.py` after "ada
-fakultas apa saja di UPI?" only listed 2 of UPI's 8 faculties:
-
-1. **Noise filtering** — hybrid retrieval (dense + BM25 fused via
-   Reciprocal Rank Fusion) could previously rank a chunk highly on pure
-   keyword coincidence with zero semantic relevance to the query (e.g. an
-   unrelated article surfacing because it happened to share a word).
-   Chunks with no dense/semantic score are now dropped outright: BM25 only
-   re-ranks candidates dense search already found plausible.
-2. **Wider context window** — a real grounded prompt (system rules +
-   retrieved chunks + few-shot examples + question) measured ~2650 tokens,
-   already over the old `OLLAMA_NUM_CTX=2048`, silently truncating context
-   the model never got to see. Raised to 4096.
-3. **Neighbor-chunk expansion** — long enumerated lists in source documents
-   (like UPI's 8-faculty list) are sometimes split across sequential
-   chunks. Only the chunk with the framing sentence ("berikut adalah...")
-   scores well against a generic query; its continuation reads as a bare
-   list and scores too low to be retrieved on its own. `FaissVectorStore.
-   expand_with_next_neighbor()` now pulls in each retrieved chunk's
-   immediate next chunk from the same source document (same `doc_id`,
-   `chunk_index + 1`) when one exists, so continuations aren't silently
-   dropped. This runs *after* the final top-k selection in
-   `RagService.retrieve()`, not inside `vectorstore.search()` - expanding
-   earlier just means the oversampled-pool truncation discards it again.
-
-If you hit another incomplete-list answer, check `GET /api/retrieve/debug`
-first: it returns the actual retrieved chunks and the exact `prompt_preview`
-sent to the model, which tells you whether the gap is retrieval (wrong/
-missing chunks) or generation (right chunks, model didn't use them).
-
----
-
-## 🗓️ Roadmap
-
-- **v0.1**: Core RAG + auth + i18n ✅
-- **v0.2**: Email service, advanced search
-- **v0.3**: Admin dashboard, analytics
-- **v1.0**: Production deployment
 
 ---
 
@@ -273,4 +119,4 @@ Private development. Not for public distribution.
 
 ---
 
-**Latest Update**: July 17, 2026 (retrieval quality fixes: noise filtering, wider context window, neighbor-chunk expansion)
+**Latest Update**: July 27, 2026 (Sub-kategori ingest, admin document deletion, error retry button, response history sync, and substantive RAGAS benchmark)

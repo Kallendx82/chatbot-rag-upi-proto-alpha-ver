@@ -1,0 +1,92 @@
+[
+  {
+    "id": "KA-01",
+    "question": "Kapan pembayaran UKT/Biaya Pendidikan Mahasiswa Baru Jalur SNBP?",
+    "expected_doc_title": "Kalender Akademik UPI 2026/2027",
+    "expected_keywords": ["UKT", "SNBP", "pembayaran", "biaya pendidikan"],
+    "ground_truth": "Pembayaran UKT/Biaya Pendidikan Mahasiswa Baru Jalur SNBP dijadwalkan pada tanggal 20-30 April 2026 (Semester Ganjil Tahun Akademik 2026/2027).",
+    "category": "kalender_akademik",
+    "difficulty": "easy"
+  },
+  {
+    "id": "KA-02",
+    "question": "Kapan awal perkuliahan semester ganjil 2026/2027?",
+    "expected_doc_title": "Kalender Akademik UPI 2026/2027",
+    "expected_keywords": ["awal perkuliahan", "semester ganjil"],
+    "ground_truth": "Awal perkuliahan Semester Ganjil Tahun Akademik 2026/2027 dijadwalkan pada tanggal 24 Agustus 2026.",
+    "category": "kalender_akademik",
+    "difficulty": "easy"
+  },
+  {
+    "id": "KA-03",
+    "question": "Kapan pengisian IRS dan perwalian?",
+    "expected_doc_title": "Kalender Akademik UPI 2026/2027",
+    "expected_keywords": ["IRS", "perwalian", "pengisian"],
+    "ground_truth": "Pengisian Isian Rencana Studi (IRS) dan perwalian dijadwalkan pada tanggal 20 Juli-10 Agustus 2026 untuk Semester Ganjil, dan tanggal 4-23 Januari 2027 untuk Semester Genap Tahun Akademik 2026/2027.",
+    "category": "kalender_akademik",
+    "difficulty": "medium"
+  },
+  {
+    "id": "KA-04",
+    "question": "Kapan verifikasi data mahasiswa baru jalur SNBT?",
+    "expected_doc_title": "Kalender Akademik UPI 2026/2027",
+    "expected_keywords": ["verifikasi", "SNBT", "mahasiswa baru"],
+    "ground_truth": "Verifikasi Data Mahasiswa Baru Jalur SNBT (bersamaan dengan Pascasarjana S2/S3) dijadwalkan pada tanggal 27-31 Juli 2026 untuk Semester Ganjil, dan tanggal 18-22 Januari 2027 untuk Semester Genap Tahun Akademik 2026/2027.",
+    "category": "kalender_akademik",
+    "difficulty": "easy"
+  },
+  {
+    "id": "KA-05",
+    "question": "Pengajuan cuti akademik maksimalnya kapan?",
+    "expected_doc_title": "Kalender Akademik UPI 2026/2027",
+    "expected_keywords": ["cuti akademik", "pengajuan"],
+    "ground_truth": "Pengajuan cuti akademik untuk Semester Ganjil Tahun Akademik 2026/2027 paling lambat tanggal 21 Agustus 2026 (periode pengajuan 27 Juli-21 Agustus 2026), sedangkan untuk Semester Genap paling lambat tanggal 16 Agustus 2027 (periode 26 Juli-16 Agustus 2027).",
+    "category": "kalender_akademik",
+    "difficulty": "medium"
+  },
+  {
+    "id": "PMB-01",
+    "question": "Bagaimana cara mendaftar di UPI?",
+    "expected_doc_title": "",
+    "expected_keywords": ["pendaftaran", "PMB", "cara daftar"],
+    "ground_truth": "Pendaftaran di UPI dilakukan melalui jalur seleksi yang dipilih: untuk jalur SNBP dan SNBT calon mahasiswa mendaftar secara nasional melalui portal SNPMB, sedangkan untuk Seleksi Mandiri calon mahasiswa mendaftar melalui laman pmb.upi.edu. Setelah dinyatakan lulus seleksi, calon mahasiswa melakukan registrasi administrasi secara langsung (tidak dapat diwakilkan) dengan membayar biaya pendidikan melalui bank yang ditunjuk, menerima akun SIAKKu, lalu mengisi Isian Rencana Studi (IRS) sesuai jadwal yang ditetapkan.",
+    "category": "pmb",
+    "difficulty": "easy"
+  },
+  {
+    "id": "PMB-02",
+    "question": "Apa saja jalur masuk UPI?",
+    "expected_doc_title": "",
+    "expected_keywords": ["jalur masuk", "SNBP", "SNBT", "mandiri"],
+    "ground_truth": "UPI menerima mahasiswa baru melalui lima jalur: (1) SNBP - Seleksi Nasional Berdasarkan Prestasi, berbasis prestasi akademik/portofolio di tingkat sekolah; (2) SNBT - Seleksi Nasional Berdasarkan Tes, melalui UTBK bersama PTN lain; (3) Seleksi Mandiri, terdiri dari SM Reguler dan SM Prestasi Istimewa yang diselenggarakan sendiri oleh UPI; (4) RPL - Rekognisi Pembelajaran Lampau, mengakui pengalaman belajar lampau calon mahasiswa; dan (5) Kerja Sama Kelembagaan, kerja sama UPI dengan mitra pemerintah/universitas/instansi lain.",
+    "category": "pmb",
+    "difficulty": "easy"
+  },
+  {
+    "id": "PPID-01",
+    "question": "Berapa biaya kuliah di UPI?",
+    "expected_doc_title": "",
+    "expected_keywords": ["biaya", "UKT", "kuliah"],
+    "ground_truth": "Biaya kuliah di UPI berupa Uang Kuliah Tunggal (UKT) yang besarannya bervariasi tergantung kelompok UKT (ditentukan berdasarkan kemampuan ekonomi orang tua/wali), program studi, dan jalur masuk - mahasiswa jalur SNBP/SNBT dikenakan UKT reguler, sedangkan jalur Seleksi Mandiri dapat dikenakan tambahan Iuran Pengembangan Institusi (IPI). Rincian nominal per kelompok dan program studi ditetapkan melalui Keputusan Rektor dan dapat berbeda setiap tahun akademik.",
+    "category": "ppid",
+    "difficulty": "easy"
+  },
+  {
+    "id": "AKD-01",
+    "question": "Apa syarat pengajuan cuti akademik?",
+    "expected_doc_title": "",
+    "expected_keywords": ["syarat", "cuti akademik"],
+    "ground_truth": "Permohonan izin cuti akademik dapat diajukan dengan syarat mahasiswa: masih terdaftar sebagai mahasiswa UPI (dibuktikan dengan bukti pembayaran biaya pendidikan pada semester berjalan), tidak berstatus sebagai penerima beasiswa/ikatan dinas/tugas belajar, mendapat persetujuan dari dosen Pembimbing Akademik (PA), dan masih memiliki sisa masa studi. Izin cuti akademik diberikan maksimal untuk 2 semester (berurutan maupun tidak berurutan) dan tetap diperhitungkan sebagai bagian dari masa studi.",
+    "category": "akademik",
+    "difficulty": "medium"
+  },
+  {
+    "id": "AKD-02",
+    "question": "Bagaimana prosedur pengisian IRS?",
+    "expected_doc_title": "",
+    "expected_keywords": ["IRS", "prosedur", "pengisian"],
+    "ground_truth": "Pengisian Isian Rencana Studi (IRS) dilakukan secara daring melalui portal SIAK Mahasiswa UPI Terintegrasi (SIAKKu) sesuai jadwal yang ditetapkan dalam kalender akademik, setelah mahasiswa membayar biaya pendidikan (UKT). Mahasiswa yang sudah membayar UKT tetapi belum mengisi IRS pada jadwal yang ditentukan masih diberi kesempatan mengisi susulan hingga akhir masa Perbaikan Rencana Studi (PRS); mahasiswa yang tidak melakukan IRS sama sekali sesuai jadwal dianggap mengambil cuti akademik.",
+    "category": "akademik",
+    "difficulty": "medium"
+  }
+]
