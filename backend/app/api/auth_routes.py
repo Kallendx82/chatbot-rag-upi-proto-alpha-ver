@@ -19,6 +19,7 @@ from app.schemas.auth import (
     AuthResponse,
     ChangePasswordRequest,
     DeleteAccountRequest,
+    FeedbackSubmitRequest,
     ForgotPasswordRequest,
     LoginRequest,
     MessagesReplaceRequest,
@@ -45,6 +46,13 @@ def _bearer_token(request: Request) -> str:
     return header[7:].strip()
 
 
+def get_optional_user(request: Request) -> dict[str, Any] | None:
+    try:
+        token = _bearer_token(request)
+        return auth_db.user_for_token(token)
+    except HTTPException:
+        return None
+
 def get_current_user(request: Request) -> dict[str, Any]:
     user = auth_db.user_for_token(_bearer_token(request))
     if user is None:
@@ -65,8 +73,12 @@ def get_admin_user(user: dict[str, Any] = Depends(get_current_user)) -> dict[str
 # --- auth --------------------------------------------------------------------
 @router.post("/auth/register", response_model=AuthResponse, tags=["auth"])
 def register(body: RegisterRequest) -> AuthResponse:
+    is_admin = False
+    if body.admin_code == "UPI_ADMIN_2026" and (body.email.endswith("@upi.edu") or body.email.endswith("@student.upi.edu")):
+        is_admin = True
+        
     try:
-        user = auth_db.create_user(body.username, body.password, body.email)
+        user = auth_db.create_user(body.username, body.password, body.email, is_admin=is_admin)
     except ValueError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from None
     return AuthResponse(token=auth_db.issue_token(user["id"]), user=UserInfo(**user))
@@ -135,6 +147,17 @@ def reset_password(body: ResetPasswordRequest) -> Response:
     )
 
 
+@router.post("/auth/feedback", tags=["auth"])
+def submit_feedback(
+    body: FeedbackSubmitRequest,
+    user: dict[str, Any] = Depends(get_current_user),
+) -> Response:
+    auth_db.submit_user_feedback(
+        user["id"], body.satisfaction, body.ease_of_use, body.feedback_text
+    )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 # --- saved chat sessions ------------------------------------------------------
 @router.get("/sessions", response_model=list[SessionSummary], tags=["sessions"])
 def sessions_list(user: dict[str, Any] = Depends(get_current_user)):
@@ -196,12 +219,22 @@ def sessions_replace_messages(
     return {"ok": True, "saved": len(body.messages)}
 
 
-# --- stats (admin) -------------------------------------------------------------
+from datetime import datetime, timedelta, timezone
+
 @router.get("/stats", response_model=StatsResponse, tags=["stats"])
 def stats(_admin: dict[str, Any] = Depends(get_admin_user)) -> StatsResponse:
     per_day: Counter[str] = Counter()
-    questions: Counter[str] = Counter()
+    q_all: Counter[str] = Counter()
+    q_day: Counter[str] = Counter()
+    q_week: Counter[str] = Counter()
+    q_month: Counter[str] = Counter()
+    q_latencies_all: dict[str, list[dict[str, Any]]] = {}
+    q_latencies_day: dict[str, list[dict[str, Any]]] = {}
+    q_latencies_week: dict[str, list[dict[str, Any]]] = {}
+    q_latencies_month: dict[str, list[dict[str, Any]]] = {}
     total = 0
+    now = datetime.now(timezone.utc)
+
     if _CHAT_LOG.is_file():
         with _CHAT_LOG.open(encoding="utf-8") as fh:
             for line in fh:
@@ -213,19 +246,73 @@ def stats(_admin: dict[str, Any] = Depends(get_admin_user)) -> StatsResponse:
                 if not query:
                     continue
                 total += 1
-                per_day[str(rec.get("ts", ""))[:10]] += 1
-                questions[query.lower()] += 1
+                
+                ts_str = str(rec.get("ts", ""))
+                if ts_str:
+                    per_day[ts_str[:10]] += 1
+                
+                query_lower = query.lower()
+                q_all[query_lower] += 1
+                
+                rec_latency = {
+                    "ts": ts_str,
+                    "total_ms": float(rec.get("total_ms", 0) or 0),
+                    "retrieval_ms": float(rec.get("retrieval_ms", 0) or 0),
+                    "generation_ms": float(rec.get("generation_ms", 0) or 0),
+                    "backend": str(rec.get("backend", "ollama")),
+                }
+                if query_lower not in q_latencies_all:
+                    q_latencies_all[query_lower] = []
+                q_latencies_all[query_lower].append(rec_latency)
 
-    top = [
-        {"question": q, "count": n}
-        for q, n in questions.most_common(20)
-    ]
-    days = [
-        {"date": d, "count": n} for d, n in sorted(per_day.items())
-    ]
+                if ts_str:
+                    try:
+                        dt = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+                        if dt.tzinfo is None:
+                            dt = dt.replace(tzinfo=timezone.utc)
+                        delta = now - dt
+                        if delta <= timedelta(days=1):
+                            q_day[query_lower] += 1
+                            if query_lower not in q_latencies_day:
+                                q_latencies_day[query_lower] = []
+                            q_latencies_day[query_lower].append(rec_latency)
+                        if delta <= timedelta(days=7):
+                            q_week[query_lower] += 1
+                            if query_lower not in q_latencies_week:
+                                q_latencies_week[query_lower] = []
+                            q_latencies_week[query_lower].append(rec_latency)
+                        if delta <= timedelta(days=30):
+                            q_month[query_lower] += 1
+                            if query_lower not in q_latencies_month:
+                                q_latencies_month[query_lower] = []
+                            q_latencies_month[query_lower].append(rec_latency)
+                    except ValueError:
+                        pass
+
+    def _make_top(q_counter: Counter[str], latencies_dict: dict[str, list[dict[str, Any]]], limit: int | None = 20) -> list[dict[str, Any]]:
+        res = []
+        items = q_counter.most_common(limit) if limit is not None else q_counter.most_common()
+        for q, n in items:
+            # Sort descending by ts and take top 10
+            recs = sorted(latencies_dict.get(q, []), key=lambda x: x["ts"], reverse=True)[:10]
+            res.append({"question": q, "count": n, "latency_records": recs})
+        return res
+
+    top_all = _make_top(q_all, q_latencies_all, limit=None)
+    top_day = _make_top(q_day, q_latencies_day, limit=100)
+    top_week = _make_top(q_week, q_latencies_week, limit=200)
+    top_month = _make_top(q_month, q_latencies_month, limit=500)
+    days = [{"date": d, "count": n} for d, n in sorted(per_day.items())]
+
+    users_list = auth_db.get_users_list_stats()
+
     return StatsResponse(
         total_questions=total,
         questions_per_day=days,
-        top_questions=top,
+        top_questions=top_all,
+        top_questions_day=top_day,
+        top_questions_week=top_week,
+        top_questions_month=top_month,
+        users_list=users_list,
         **auth_db.account_stats(),
     )

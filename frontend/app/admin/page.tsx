@@ -273,6 +273,8 @@ export default function AdminIngestPage() {
     setFile(f);
   };
 
+  const [publishYear, setPublishYear] = useState("");
+
   const handleSubmit = useCallback(async () => {
     if (!file || !token || !selectedCategory) return;
 
@@ -292,6 +294,7 @@ export default function AdminIngestPage() {
     try {
       const cs = chunkSize ? parseInt(chunkSize, 10) : undefined;
       const ov = overlap ? parseInt(overlap, 10) : undefined;
+      const py = publishYear ? parseInt(publishYear, 10) : undefined;
       if (cs !== undefined && (isNaN(cs) || cs < 100 || cs > 2000)) {
         setError("Ukuran chunk harus antara 100–2000 karakter.");
         setLoading(false);
@@ -302,13 +305,19 @@ export default function AdminIngestPage() {
         setLoading(false);
         return;
       }
-      const res = await api.ingestPdf(token, file, selectedCategory, subcategory || undefined, title || undefined, cs, ov);
+      if (py !== undefined && (isNaN(py) || py < 1900 || py > 2100)) {
+        setError("Tahun terbit harus berupa angka tahun yang valid (1900-2100).");
+        setLoading(false);
+        return;
+      }
+      const res = await api.ingestPdf(token, file, selectedCategory, subcategory || undefined, title || undefined, py, cs, ov);
       setResult(
         `${res.message}${res.chunks_added != null ? ` (${res.chunks_added} potongan ditambahkan)` : ""}`,
       );
       setFile(null);
       setTitle("");
       setSubcategory("");
+      setPublishYear("");
       if (fileRef.current) fileRef.current.value = "";
       fetchDocuments();
     } catch (e: unknown) {
@@ -316,7 +325,7 @@ export default function AdminIngestPage() {
     } finally {
       setLoading(false);
     }
-  }, [file, token, selectedCategory, subcategory, title, chunkSize, overlap, fetchDocuments]);
+  }, [file, token, selectedCategory, subcategory, title, publishYear, chunkSize, overlap, fetchDocuments]);
 
   if (!mounted) return <LoadingScreen />;
 
@@ -483,6 +492,23 @@ export default function AdminIngestPage() {
               value={subcategory}
               onChange={(e) => setSubcategory(e.target.value)}
               placeholder="Contoh: Kalender-Akademik-2026"
+              className="block w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
+            />
+          </div>
+
+          {/* Tahun Akademik Dokumen/Informasi Terbit */}
+          <div>
+            <label className="mb-1.5 block text-sm font-medium">
+              Tahun Akademik Dokumen/Informasi Terbit{" "} - Direkomendasikan untuk diisi
+              <span className="font-normal text-muted-foreground">(opsional, mis. 2026)</span>
+            </label>
+            <input
+              type="number"
+              value={publishYear}
+              onChange={(e) => setPublishYear(e.target.value)}
+              placeholder="Contoh: 2026"
+              min={1900}
+              max={2100}
               className="block w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground"
             />
           </div>

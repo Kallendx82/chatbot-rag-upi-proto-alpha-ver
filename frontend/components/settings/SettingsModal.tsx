@@ -26,6 +26,7 @@ import {
   useSettingsStore,
   useUIStore,
 } from "@/store/settingsStore";
+import { useAuthStore } from "@/store/authStore";
 import { useI18n } from "@/contexts/I18nContext";
 import type { Language, Settings, ThemeMode } from "@/types";
 import { cn } from "@/lib/utils";
@@ -80,6 +81,7 @@ export function SettingsModal() {
   const setOpen = useUIStore((s) => s.setSettingsOpen);
 
   const store = useSettingsStore();
+  const user = useAuthStore((s) => s.user);
   const { language: uiLanguage, setLanguage: setUILanguage } = useI18n();
   // Use the UI language for the modal's own labels to reflect current interface language
   const t = TXT[uiLanguage === "en" ? "en" : "id"];
@@ -98,7 +100,7 @@ export function SettingsModal() {
 
   const dirty = SETTING_KEYS.some((k) => draft[k] !== store[k]) || draft.uiLanguage !== uiLanguage;
 
-  const setField = <K extends keyof Settings>(key: K, value: Settings[K]) =>
+  const setField = <K extends keyof DraftSettings>(key: K, value: DraftSettings[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
 
   const commit = () => {
@@ -230,25 +232,27 @@ export function SettingsModal() {
               </p>
             </div>
 
-            {/* Temperature */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Temperature</Label>
-                <span className="font-mono text-sm text-muted-foreground">
-                  {draft.temperature.toFixed(2)}
-                </span>
+            {/* Temperature (Only visible for Admin users) */}
+            {user?.is_admin && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>Temperature</Label>
+                  <span className="font-mono text-sm text-muted-foreground">
+                    {draft.temperature.toFixed(2)}
+                  </span>
+                </div>
+                <Slider
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={[draft.temperature]}
+                  onValueChange={([v]) => setField("temperature", v)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  (Disarankan ≤ 0.2).
+                </p>
               </div>
-              <Slider
-                min={0}
-                max={1}
-                step={0.05}
-                value={[draft.temperature]}
-                onValueChange={([v]) => setField("temperature", v)}
-              />
-              <p className="text-xs text-muted-foreground">
-                (Disarankan ≤ 0.2).
-              </p>
-            </div>
+            )}
 
             {/* Model label */}
             <div className="space-y-2">
@@ -264,6 +268,7 @@ export function SettingsModal() {
                   <SelectItem value="llama3.1:8b-instruct-q4_K_M">Llama 3.1 8B-Instruct (default)</SelectItem>
                   <SelectItem value="llama3.1:8b">Llama 3.1 8B </SelectItem>
                   <SelectItem value="llama3.2:3b">Llama 3.2 3B</SelectItem>
+                  <SelectItem value="llama3.2:1b-instruct-q4_K_M">Llama 3.2 1B-Instruct (Sangat Cepat)</SelectItem>
                   <SelectItem value="qwen2.5:3b">Qwen 2.5:3B</SelectItem>
                   <SelectItem value="qwen3.5:4b-q4_K_M">Qwen 3.5 4B-q4</SelectItem>
                   <SelectItem value="gemma4:e2b ">gemma4:e2b </SelectItem>
@@ -273,8 +278,7 @@ export function SettingsModal() {
               </Select>
               <p className="text-xs text-muted-foreground">
                 Model lokal melalui Ollama. Llama 3.1 8B-Instruct (default)
-                paling akurat; Qwen 2.5:3B jauh lebih cepat dan hemat VRAM
-                kalau butuh jawaban instan.
+                paling akurat; Llama 3.2 1B-Instruct jauh lebih cepat dan ringan untuk CPU/GPU lokal.
               </p>
             </div>
 

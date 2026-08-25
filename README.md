@@ -15,7 +15,7 @@ Sistem chatbot berbasis Retrieval-Augmented Generation (RAG) untuk menjawab pert
 - **Document Viewer**: Akses dokumen sumber (PDF & Web/Markdown) dengan deep-linking dan penampil internal berbasis `pdf.js`
 - **Retrieval Explainability**: Panel *Retrieval Debug* transparan untuk melihat latensi, skor kemiripan, dan pratinjau prompt grounded
 - **Evaluasi & Benchmarking**: Evaluasi RAGAS (Faithfulness, Answer Relevancy, Context Precision, Context Recall) dengan dataset sampel substantif (`dataset.substantive.json`) dan LLM-as-a-Judge
-- **Security**: User authentication berbasis SQLite dengan scrypt password hashing & role-based access control (RBAC Admin)
+- **Security**: User authentication berbasis SQLite dengan scrypt password hashing, role-based access control (RBAC Admin), serta fitur **Penghapusan Akun Permanen** (User & Admin) dengan *Cascading Delete* untuk menghapus total riwayat percakapan & token demi privasi data.
 
 ---
 
@@ -78,6 +78,8 @@ npm run dev
 |--------|----------|---------|
 | POST | `/api/auth/register` | Register user / admin |
 | POST | `/api/auth/login` | Login |
+| POST | `/api/auth/change-password` | Ubah password akun |
+| DELETE | `/api/auth/delete-account` | Hapus akun permanen & seluruh riwayat obrolan (User & Admin) |
 | POST | `/api/chat` | Chat dengan RAG & model override |
 | POST | `/api/retrieve` | Retrieval dokumen saja |
 | GET | `/api/retrieve/debug` | Debug panel: latensi & pratinjau prompt |

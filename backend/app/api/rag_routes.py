@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse
 
 from app.core.config import Settings, get_settings
 from app.core.container import get_rag_service
-from app.api.auth_routes import get_admin_user
+from app.api.auth_routes import get_admin_user, get_optional_user
 from app.schemas.rag import (
     ChatRequest,
     ChatResponse,
@@ -27,6 +27,18 @@ from app.services.logging_service import log_client_error
 from app.services.rag_service import RagService
 
 router = APIRouter()
+
+_INTERNAL_CATEGORIES = {
+    "Pedoman-Akademik",
+    "Rencana-Strategis",
+    "BiroSDM",
+    "Struktur-Organisasi-UPI-2025",
+    "Kalender-Akademik",
+    "Kalender Akademik",
+    "Dit-Pendidikan-UPI",
+    "Direktorat Pendidikan",
+    "Panduan-SPADA"
+}
 
 
 def _require_ready(rag: RagService) -> None:
@@ -133,16 +145,36 @@ def chat(
     body: ChatRequest,
     rag: RagService = Depends(get_rag_service),
     settings: Settings = Depends(get_settings),
+    user: dict[str, Any] | None = Depends(get_optional_user),
 ) -> ChatResponse:
     """Full RAG turn: retrieve grounded context, then generate a cited answer."""
     _require_ready(rag)
     message = _validate_query(body.message, settings)
+    
+    role = "umum"
+    if user is not None:
+        if user.get("is_admin"):
+            role = "admin"
+        else:
+            email = user.get("email", "").lower()
+            if email.endswith("@upi.edu") or email.endswith("@student.upi.edu"):
+                role = "sivitas"
+    
+    allowed_categories = None
+    if role == "umum":
+        all_categories = {c.get("category") for c in rag._store._meta if c.get("category")}
+        allowed_categories = list(all_categories - _INTERNAL_CATEGORIES)
+        # If there are chunks with no category, we might want to allow them?
+        # Let's add None to allowed_categories so they aren't blocked.
+        allowed_categories.append(None)
+
     result = rag.chat(
         message=message,
         top_k=body.top_k,
         temperature=body.temperature,
         language=body.language or "id",
         model=body.model,
+        allowed_categories=allowed_categories,
     )
     return ChatResponse(
         answer=result["answer"],

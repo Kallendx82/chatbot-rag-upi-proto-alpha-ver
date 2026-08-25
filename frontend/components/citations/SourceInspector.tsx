@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, ExternalLink, FileText, Globe, Hash, Layers, Tag } from "lucide-react";
 
@@ -12,20 +13,27 @@ import { scorePercent } from "@/lib/utils";
 
 /** The grid of citation cards shown beneath an assistant answer. */
 export function SourceList({ sources }: { sources: SourceChunk[] }) {
+  const [collapsed, setCollapsed] = useState(true);
+  
   if (!sources?.length) return null;
   return (
     <div className="mt-4">
-      <div className="mb-2 flex items-center gap-2">
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="mb-2 flex items-center gap-2 hover:bg-surface-muted/50 px-2 py-1 rounded transition-colors text-left"
+      >
         <Layers className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          Sumber ({sources.length})
+        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground select-none">
+          Sumber ({sources.length}) {collapsed ? "▶" : "▼"}
         </span>
-      </div>
-      <div className="grid gap-2 sm:grid-cols-2">
-        {sources.map((s, i) => (
-          <SourceCard key={s.chunk_id || i} source={s} index={i} />
-        ))}
-      </div>
+      </button>
+      {!collapsed && (
+        <div className="grid gap-2 sm:grid-cols-2">
+          {sources.map((s, i) => (
+            <SourceCard key={s.chunk_id || i} source={s} index={i} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

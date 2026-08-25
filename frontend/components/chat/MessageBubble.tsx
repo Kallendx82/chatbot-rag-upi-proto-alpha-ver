@@ -57,6 +57,8 @@ function errorText(error: string | undefined, language: "id" | "en"): string {
   );
 }
 
+import { useConversationStore } from "@/store/conversationStore";
+
 export function MessageBubble({
   message,
   nextMessage,
@@ -75,6 +77,7 @@ export function MessageBubble({
   const isUser = message.role === "user";
   const debugMode = useSettingsStore((s) => s.debugMode);
   const language = useSettingsStore((s) => s.language);
+  const activeId = useConversationStore((s) => s.activeId);
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(message.content);

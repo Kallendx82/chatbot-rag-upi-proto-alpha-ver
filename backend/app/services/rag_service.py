@@ -41,6 +41,8 @@ def _is_smalltalk(message: str) -> bool:
     norm = re.sub(r"[^\w\s]", "", message.lower()).strip()
     if not norm:
         return True
+    if len(norm) <= 3:
+        return True
     if norm in _SMALLTALK_PHRASES:
         return True
     tokens = norm.split()
@@ -258,6 +260,7 @@ class RagService:
         query: str,
         top_k: int | None = None,
         score_threshold: float | None = None,
+        allowed_categories: list[str] | None = None,
     ) -> dict[str, Any]:
         """Run retrieval and return a structured result + timings.
 
@@ -273,7 +276,9 @@ class RagService:
         )
         # Oversample to give the deduper headroom; cap at max_top_k * 3.
         oversample = min(k * 3, max(self._settings.max_top_k * 3, 30))
-        results, timings = self._store.search(query, oversample, threshold)
+        results, timings = self._store.search(
+            query, oversample, threshold, allowed_categories=allowed_categories
+        )
 
         # Drop near-duplicate paragraphs (same boilerplate across many docs).
         # Trim to exactly top_k for reproducibility and scientific rigor.
@@ -314,6 +319,7 @@ class RagService:
         temperature: float | None = None,
         language: str = "id",
         model: str | None = None,
+        allowed_categories: list[str] | None = None,
     ) -> dict[str, Any]:
         """Full RAG turn: retrieve -> build grounded prompt -> generate answer."""
         t0 = time.time()
@@ -361,7 +367,7 @@ class RagService:
                 "generation_latency_ms": 0.0, "total_latency_ms": total_ms,
             }
 
-        retrieval = self.retrieve(message, top_k=top_k)
+        retrieval = self.retrieve(message, top_k=top_k, allowed_categories=allowed_categories)
         chunks = retrieval["results"]
         retrieval_ms = retrieval["timings"]["total_ms"]
 
@@ -443,5 +449,6 @@ class RagService:
             "url": chunk.get("url"),
             "page": chunk.get("page"),
             "section": chunk.get("section"),
+            "year": chunk.get("year") or chunk.get("published_year") or chunk.get("published_date"),
             "text": chunk.get("text", ""),
         }

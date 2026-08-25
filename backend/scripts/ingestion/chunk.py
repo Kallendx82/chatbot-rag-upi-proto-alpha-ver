@@ -152,6 +152,7 @@ def chunk_document(
     source_type: str = "pdf",
     max_chars_override: int | None = None,
     overlap_override: int | None = None,
+    publish_year: int | None = None,
 ) -> list[dict[str, Any]]:
     """Turn one cleaned extract.py record into a flat list of chunk dicts."""
     doc_id = record["doc_id"]
@@ -184,6 +185,7 @@ def chunk_document(
                 "chunk_length": len(piece),
                 "chunk_index": chunk_index,
                 "chunk_id": f"{doc_id}::{chunk_index}",
+                "year": publish_year,
                 "keywords": extract_keywords(piece),
             })
             chunk_index += 1
@@ -198,6 +200,7 @@ def run(
     subcategory: str | None = None,
     max_chars_override: int | None = None,
     overlap_override: int | None = None,
+    publish_year: int | None = None,
 ) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     files = sorted(in_dir.glob("*.json"))
@@ -213,6 +216,7 @@ def run(
             subcategory=subcategory,
             max_chars_override=max_chars_override,
             overlap_override=overlap_override,
+            publish_year=publish_year,
         )
         (out_dir / f.name).write_text(
             json.dumps(chunks, ensure_ascii=False, indent=2), encoding="utf-8"

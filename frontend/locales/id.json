@@ -1,7 +1,7 @@
 {
   "common": {
     "appName": "Chatbot UPI",
-    "subtitle": "-Berbasis Sistem RAG- α ver."
+    "subtitle": "-Berbasis Sistem RAG- α .02 ver."
   },
   "sidebar": {
     "closeSidebar": "Tutup sidebar",
@@ -9,6 +9,7 @@
     "search": "Cari percakapan…",
     "today": "Hari ini",
     "noConversations": "Belum ada percakapan.",
+    "signInToSave": "Masuk untuk menyimpan aktivitas",
     "rename": "Ganti nama",
     "delete": "Hapus",
     "settings": "Pengaturan"
@@ -27,7 +28,7 @@
   },
   "welcome": {
     "heading": "Chatbot UPI",
-    "subtitle": "-Berbasis Sistem RAG- α ver.",
+    "subtitle": "-Berbasis Sistem RAG- α .02 ver.",
     "description": "Tanyakan informasi seputar Universitas Pendidikan Indonesia. Setiap jawaban didukung sumber dokumen resmi yang dapat Anda telusuri.",
     "placeholder": "Tanyakan informasi seputar UPI…",
     "footer": "Jawaban dihasilkan dari dokumen resmi UPI melalui RAG.",

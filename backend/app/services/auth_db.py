@@ -93,6 +93,13 @@ def _db() -> sqlite3.Connection:
             );
             CREATE INDEX IF NOT EXISTS idx_messages_session
                 ON chat_messages(session_id, position);
+            CREATE TABLE IF NOT EXISTS user_feedbacks (
+                user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                satisfaction INTEGER NOT NULL,
+                ease_of_use INTEGER NOT NULL,
+                feedback_text TEXT,
+                created_at TEXT NOT NULL
+            );
             """
         )
         logger.info("Auth DB ready at %s", _DB_PATH)
@@ -120,18 +127,19 @@ def _user_row_to_dict(row: sqlite3.Row) -> dict[str, Any]:
 
 
 # --- users / tokens ---------------------------------------------------------
-def create_user(username: str, password: str, email: str = "") -> dict[str, Any]:
+def create_user(username: str, password: str, email: str = "", is_admin: bool = False) -> dict[str, Any]:
     """Create a user; the very first account becomes admin. Raises ValueError."""
     with _lock:
         db = _db()
         salt = secrets.token_bytes(16)
         is_first = db.execute("SELECT COUNT(*) AS n FROM users").fetchone()["n"] == 0
+        admin_val = 1 if (is_first or is_admin) else 0
         try:
             cur = db.execute(
                 "INSERT INTO users (username, email, pw_salt, pw_hash, is_admin, created_at, updated_at)"
                 " VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (username, email, salt, _hash_password(password, salt),
-                 1 if is_first else 0, _now(), _now()),
+                 admin_val, _now(), _now()),
             )
             db.commit()
         except sqlite3.IntegrityError as e:
@@ -399,3 +407,39 @@ def account_stats() -> dict[str, int]:
         ).fetchone()["n"]
     return {"total_users": users, "total_sessions": sessions,
             "total_saved_questions": messages}
+
+
+def get_users_list_stats() -> list[dict[str, Any]]:
+    with _lock:
+        rows = _db().execute(
+            """
+            SELECT
+                users.id, users.username, users.email, users.is_admin, users.created_at,
+                (SELECT COUNT(*) FROM chat_sessions WHERE user_id = users.id) AS session_count,
+                (SELECT MAX(updated_at) FROM chat_sessions WHERE user_id = users.id) AS last_active,
+                (SELECT satisfaction FROM user_feedbacks WHERE user_id = users.id) AS feedback_satisfaction,
+                (SELECT ease_of_use FROM user_feedbacks WHERE user_id = users.id) AS feedback_ease,
+                (SELECT feedback_text FROM user_feedbacks WHERE user_id = users.id) AS feedback_text
+            FROM users
+            ORDER BY users.created_at DESC
+            """
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def submit_user_feedback(user_id: int, satisfaction: int, ease_of_use: int, feedback_text: str | None) -> None:
+    with _lock:
+        db = _db()
+        db.execute(
+            """
+            INSERT INTO user_feedbacks (user_id, satisfaction, ease_of_use, feedback_text, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET
+                satisfaction = excluded.satisfaction,
+                ease_of_use = excluded.ease_of_use,
+                feedback_text = excluded.feedback_text,
+                created_at = excluded.created_at
+            """,
+            (user_id, satisfaction, ease_of_use, feedback_text, _now())
+        )
+        db.commit()

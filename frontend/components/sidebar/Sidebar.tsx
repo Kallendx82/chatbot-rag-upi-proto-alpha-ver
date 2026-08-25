@@ -11,6 +11,7 @@ import {
   Settings,
   Trash2,
   X,
+  MessageSquareText,
 } from "lucide-react";
 
 import { BrandLogo } from "@/components/ui/BrandLogo";
@@ -27,8 +28,13 @@ import { useI18n } from "@/contexts/I18nContext";
 import type { Conversation } from "@/types";
 import { cn, dayGroup } from "@/lib/utils";
 
+import { Info, LogIn } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
+
 export function Sidebar() {
   const { t } = useI18n();
+  const user = useAuthStore((s) => s.user);
+  const setAuthModalOpen = useUIStore((s) => s.setAuthModalOpen);
   const {
     conversations,
     activeId,
@@ -39,10 +45,20 @@ export function Sidebar() {
   } = useConversationStore();
   const setSidebar = useUIStore((s) => s.setSidebar);
   const setSettingsOpen = useUIStore((s) => s.setSettingsOpen);
+  const setFeedbackOpen = useUIStore((s) => s.setFeedbackOpen);
 
   const [query, setQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
+
+  const handleNewChat = () => {
+    if (!user) {
+      setAuthModalOpen(true);
+      return;
+    }
+    newConversation();
+    if (window.innerWidth < 1024) setSidebar(false);
+  };
 
   // Filter + group conversations by day for a scannable history list.
   const groups = useMemo(() => {
@@ -68,11 +84,11 @@ export function Sidebar() {
   };
 
   return (
-    <div className="flex h-full w-72 flex-col border-r border-border bg-surface-muted/40">
+    <div className="flex h-full w-72 flex-col border-r border-border bg-surface-muted">
       {/* Header */}
       <div className="flex items-center justify-between gap-2 p-3">
         <button
-          onClick={() => newConversation()}
+          onClick={handleNewChat}
           aria-label={`UPI RAG — ${t("sidebar.newChat")}`}
           className="flex items-center gap-2 rounded-lg p-1 -m-1 text-left transition-colors hover:bg-surface/70"
         >
@@ -101,20 +117,32 @@ export function Sidebar() {
         </Tooltip>
       </div>
 
-      {/* New chat */}
+      {/* New chat button */}
       <div className="px-3">
         <Button
           variant="default"
           className="w-full justify-start gap-2"
-          onClick={() => {
-            newConversation();
-            if (window.innerWidth < 1024) setSidebar(false);
-          }}
+          onClick={handleNewChat}
         >
           <MessageSquarePlus className="h-4 w-4" />
           {t("sidebar.newChat")}
         </Button>
       </div>
+
+      {/* Notice for unauthenticated users (Gemini-style) */}
+      {!user && (
+        <div className="mx-3 mt-3 flex items-center justify-between gap-2 rounded-lg border border-border/80 bg-surface/60 px-3 py-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 truncate">
+            <Info className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <button
+              onClick={() => setAuthModalOpen(true)}
+              className="truncate text-left underline underline-offset-2 hover:text-foreground transition-colors"
+            >
+              {t("sidebar.signInToSave")}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Search */}
       <div className="relative px-3 py-3">
@@ -221,7 +249,17 @@ export function Sidebar() {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-border p-3">
+      <div className="border-t border-border p-3 space-y-1">
+        {user && (
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-2 text-primary"
+            onClick={() => setFeedbackOpen(true)}
+          >
+            <MessageSquareText className="h-4 w-4" />
+            Beri Feedback
+          </Button>
+        )}
         <Button
           variant="ghost"
           className="w-full justify-start gap-2"

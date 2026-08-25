@@ -249,6 +249,7 @@ class FaissVectorStore:
         query: str,
         top_k: int,
         score_threshold: float = 0.0,
+        allowed_categories: list[str] | None = None,
     ) -> tuple[list[dict[str, Any]], dict[str, float]]:
         """Retrieve top-k chunks for a query.
 
@@ -271,6 +272,8 @@ class FaissVectorStore:
         # Dense candidate pool: enough rows for fusion (and for the caller's
         # oversample-then-dedupe), but at least the requested k.
         pool = max(k, self._settings.hybrid_candidates) if self._bm25 is not None else k
+        if allowed_categories is not None:
+            pool = max(pool, 200)  # Larger pool to ensure we have enough matches after filtering
 
         t0 = time.time()
         qvec = self._embedder.encode([query], kind="query")
@@ -285,13 +288,15 @@ class FaissVectorStore:
             import numpy as np
             bm = self._bm25.get_scores(_tokenize(query))
             bm25_rows = [int(i) for i in np.argsort(bm)[::-1][:pool]]
-            ordered = _rrf_fuse([dense_rows, bm25_rows])[:k]
+            ordered = _rrf_fuse([dense_rows, bm25_rows])
         else:
-            ordered = dense_rows[:k]
+            ordered = dense_rows
         t3 = time.time()
 
         results: list[dict[str, Any]] = []
         for rank, row in enumerate(ordered, start=1):
+            if len(results) >= k:
+                break
             # Score shown = dense cosine when available (for the UI's % bar).
             # A row absent from dense_score matched ONLY via BM25 keyword
             # overlap with zero semantic similarity to the query - RRF's rank
@@ -307,8 +312,10 @@ class FaissVectorStore:
             if score < score_threshold:
                 continue
             chunk = dict(self._meta[row])
+            if allowed_categories is not None and chunk.get("category") not in allowed_categories:
+                continue
             chunk["score"] = score
-            chunk["rank"] = rank
+            chunk["rank"] = len(results) + 1
             results.append(chunk)
 
         timings = {

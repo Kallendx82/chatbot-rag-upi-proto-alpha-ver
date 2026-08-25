@@ -1,4 +1,0 @@
-Akun:
-
-Username: admin
-Pass: admin@12345 

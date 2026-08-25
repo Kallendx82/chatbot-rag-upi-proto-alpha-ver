@@ -20,8 +20,8 @@ interface SettingsState extends Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  topK: 5,
-  temperature: 0.2,
+  topK: 8,
+  temperature: 0.1,
   language: "id",
   // Intended default (product decision): llama3.1:8b-instruct-q4_K_M for
   // accuracy - qwen2.5:3b was kept only as a speed/VRAM comparison
@@ -34,7 +34,7 @@ export const DEFAULT_SETTINGS: Settings = {
   // matters more than accuracy.
   model: "llama3.1:8b-instruct-q4_K_M",
   theme: "system",
-  debugMode: false,
+  debugMode: true,
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -76,6 +76,8 @@ interface UIState {
   inspectedSource: SourceChunk | null;
   /** Whether the retrieval debug panel is open. */
   debugPanelOpen: boolean;
+  /** Feedback modal state. */
+  feedbackOpen: boolean;
 
   toggleSidebar: () => void;
   setSidebar: (open: boolean) => void;
@@ -83,6 +85,7 @@ interface UIState {
   setAuthModalOpen: (open: boolean) => void;
   inspectSource: (s: SourceChunk | null) => void;
   setDebugPanelOpen: (open: boolean) => void;
+  setFeedbackOpen: (open: boolean) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -91,6 +94,7 @@ export const useUIStore = create<UIState>((set) => ({
   authModalOpen: false,
   inspectedSource: null,
   debugPanelOpen: false,
+  feedbackOpen: false,
 
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
   setSidebar: (open) => set({ sidebarOpen: open }),
@@ -98,4 +102,5 @@ export const useUIStore = create<UIState>((set) => ({
   setAuthModalOpen: (open) => set({ authModalOpen: open }),
   inspectSource: (s) => set({ inspectedSource: s }),
   setDebugPanelOpen: (open) => set({ debugPanelOpen: open }),
+  setFeedbackOpen: (open) => set({ feedbackOpen: open }),
 }));

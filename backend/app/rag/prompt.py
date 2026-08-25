@@ -159,6 +159,12 @@ def format_context(chunks: list[dict[str, Any]]) -> str:
         section = c.get("section")
         if section:
             ref += f", bagian: {section}"
+        
+        # Include year metadata if present (either direct 'year' or parsed from 'published_year')
+        year = c.get("year") or c.get("published_year") or c.get("published_date")
+        if year:
+            ref += f" (Tahun/Tanggal Terbit: {year})"
+            
         blocks.append(f"[{i}] {ref}\n{c.get('text', '').strip()}")
     return "\n\n".join(blocks)
 

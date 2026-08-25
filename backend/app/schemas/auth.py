@@ -13,6 +13,7 @@ class RegisterRequest(BaseModel):
     username: str = Field(..., min_length=3, max_length=32)
     email: str = Field(..., max_length=255)
     password: str = Field(..., min_length=8, max_length=128)
+    admin_code: Optional[str] = None
 
     @field_validator("username")
     @classmethod
@@ -53,6 +54,12 @@ class UserInfo(BaseModel):
     email: str
     is_admin: bool
     created_at: str
+
+
+class FeedbackSubmitRequest(BaseModel):
+    satisfaction: int = Field(..., ge=1, le=5)
+    ease_of_use: int = Field(..., ge=1, le=5)
+    feedback_text: Optional[str] = Field(None, max_length=2000)
 
 
 class AuthResponse(BaseModel):
@@ -104,12 +111,30 @@ class DailyCount(BaseModel):
 class TopQuestion(BaseModel):
     question: str
     count: int
+    latency_records: list[dict[str, Any]] = []
+
+
+class UserStatItem(BaseModel):
+    id: int
+    username: str
+    email: Optional[str] = None
+    is_admin: bool
+    created_at: str
+    session_count: int
+    last_active: Optional[str] = None
+    feedback_satisfaction: Optional[int] = None
+    feedback_ease: Optional[int] = None
+    feedback_text: Optional[str] = None
 
 
 class StatsResponse(BaseModel):
     total_questions: int
     questions_per_day: list[DailyCount]
     top_questions: list[TopQuestion]
+    top_questions_day: list[TopQuestion]
+    top_questions_week: list[TopQuestion]
+    top_questions_month: list[TopQuestion]
     total_users: int
     total_sessions: int
     total_saved_questions: int
+    users_list: list[UserStatItem]

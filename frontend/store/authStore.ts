@@ -64,6 +64,18 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         const token = get().token;
         set({ token: null, user: null });
+        
+        // Reset conversation store state on logout to prevent history leakage
+        try {
+          const { useConversationStore } = await import("@/store/conversationStore");
+          useConversationStore.setState({
+            conversations: [],
+            activeId: null,
+          });
+        } catch (e) {
+          // ignore import/set errors
+        }
+
         if (token) {
           try {
             await api.logout(token);

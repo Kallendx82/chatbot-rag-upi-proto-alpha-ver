@@ -123,8 +123,8 @@ def evaluate_retrieval(
     doc-title substring fallback, since a document can be retrieved for the
     wrong section/page and still count as a "hit" under title matching.
     """
-    params = {"query": question, "top_k": top_k, "score_threshold": score_threshold}
-    resp = requests.get(f"{base_url}/api/retrieve/debug", params=params, timeout=30)
+    body = {"query": question, "top_k": top_k, "score_threshold": score_threshold}
+    resp = requests.post(f"{base_url}/api/retrieve", json=body, timeout=30)
     resp.raise_for_status()
     data = resp.json()
 
@@ -555,7 +555,7 @@ def main() -> int:
     base_url = config["backend_url"].rstrip("/")
     top_k = args.top_k or config["retrieval"]["top_k"]
     score_threshold = config["retrieval"]["score_threshold"]
-    hit_rate_ks = config["evaluation"].get("hit_rate_k", [1, 3, 5])
+    hit_rate_ks = sorted(list(set(config["evaluation"].get("hit_rate_k", [1, 3, 5]) + [8, 10, 16])))
 
     model_cfgs = config.get("models", [])
     if args.models:

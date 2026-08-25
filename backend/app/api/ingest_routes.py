@@ -45,6 +45,7 @@ async def ingest_pdf(
     category: str = Form(..., description="Category label, e.g. 'PPID UPI', 'PMB UPI'"),
     subcategory: str | None = Form(None, description="Optional sub-category label, e.g. 'Kalender-Akademik-2026'"),
     title: str | None = Form(None, description="Optional document title (defaults to filename)"),
+    publish_year: int | None = Form(None, description="Optional publication year of the document, e.g. 2026"),
     chunk_size: int | None = Form(None, description="Max chars per chunk (default auto: 350 for tables, 900 for text)"),
     overlap: int | None = Form(None, description="Overlap sentences between chunks (default 1)"),
     admin: dict[str, Any] = Depends(get_admin_user),
@@ -103,6 +104,7 @@ async def ingest_pdf(
             subcategory=subcategory,
             max_chars_override=chunk_size,
             overlap_override=overlap,
+            publish_year=publish_year,
         )
         rc = embed_step.run(chunks_dir, data_dir)
 

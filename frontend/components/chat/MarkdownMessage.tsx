@@ -62,6 +62,13 @@ export const MarkdownMessage = memo(function MarkdownMessage({
               {children}
             </a>
           ),
+          table: ({ children }) => (
+            <div className="my-3 w-full overflow-x-auto rounded-lg border border-border bg-surface-muted/30">
+              <table className="min-w-full text-sm leading-6 border-collapse">
+                {children}
+              </table>
+            </div>
+          ),
         }}
       >
         {content}

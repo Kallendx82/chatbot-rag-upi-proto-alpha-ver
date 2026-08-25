@@ -10,6 +10,7 @@ import { SettingsModal } from "@/components/settings/SettingsModal";
 import { Sidebar } from "@/components/sidebar/Sidebar";
 import { SourceInspector } from "@/components/citations/SourceInspector";
 import { TopBar } from "@/components/layout/TopBar";
+import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useMounted } from "@/hooks/useMounted";
 import { startAutoSync } from "@/services/sessionSync";
@@ -25,6 +26,8 @@ import { useUIStore } from "@/store/settingsStore";
  * Gated on `useMounted` so the localStorage-backed stores hydrate on the client
  * before first paint, preventing hydration mismatches.
  */
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+
 export function AppShell() {
   const mounted = useMounted();
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
@@ -42,12 +45,7 @@ export function AppShell() {
   }, []);
 
   if (!mounted) {
-    // Minimal skeleton during hydration - avoids SSR/client store mismatch.
-    return (
-      <div className="flex h-dvh items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-pulse rounded-lg bg-surface-muted" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
@@ -91,6 +89,7 @@ export function AppShell() {
         <DebugPanel />
         <SettingsModal />
         <AuthModal />
+        <FeedbackModal />
       </div>
     </TooltipProvider>
   );

@@ -204,13 +204,44 @@ export interface ServerSessionDetail {
   messages: StoredMessage[];
 }
 
+export interface UserStatItem {
+  id: number;
+  username: string;
+  email?: string | null;
+  is_admin: boolean;
+  created_at: string;
+  session_count: number;
+  last_active?: string | null;
+  feedback_satisfaction?: number | null;
+  feedback_ease?: number | null;
+  feedback_text?: string | null;
+}
+
+export interface LatencyRecord {
+  ts: string;
+  total_ms: number;
+  retrieval_ms: number;
+  generation_ms: number;
+  backend?: string;
+}
+
+export interface TopQuestion {
+  question: string;
+  count: number;
+  latency_records: LatencyRecord[];
+}
+
 export interface StatsResponse {
   total_questions: number;
   questions_per_day: { date: string; count: number }[];
-  top_questions: { question: string; count: number }[];
+  top_questions: TopQuestion[];
+  top_questions_day: TopQuestion[];
+  top_questions_week: TopQuestion[];
+  top_questions_month: TopQuestion[];
   total_users: number;
   total_sessions: number;
   total_saved_questions: number;
+  users_list: UserStatItem[];
 }
 
 // ---------------------------------------------------------------------------

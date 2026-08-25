@@ -207,6 +207,15 @@ export const api = {
     });
   },
 
+  submitFeedback(token: string, satisfaction: number, easeOfUse: number, feedbackText?: string): Promise<void> {
+    return requestVoid("/api/auth/feedback", {
+      method: "POST",
+      headers: authHeader(token),
+      body: JSON.stringify({ satisfaction, ease_of_use: easeOfUse, feedback_text: feedbackText || null }),
+      timeoutMs: 15_000,
+    });
+  },
+
   // --- server-saved chat sessions ------------------------------------------
   listSessions(token: string): Promise<ServerSessionSummary[]> {
     return request<ServerSessionSummary[]>("/api/sessions", {
@@ -276,6 +285,7 @@ export const api = {
     category: string,
     subcategory?: string,
     title?: string,
+    publishYear?: number,
     chunkSize?: number,
     overlap?: number,
   ): Promise<{ message: string; filename: string; category: string; subcategory?: string; chunks_added: number | null }> {
@@ -284,6 +294,7 @@ export const api = {
     formData.append("category", category);
     if (subcategory) formData.append("subcategory", subcategory);
     if (title) formData.append("title", title);
+    if (publishYear != null) formData.append("publish_year", String(publishYear));
     if (chunkSize != null) formData.append("chunk_size", String(chunkSize));
     if (overlap != null) formData.append("overlap", String(overlap));
 

@@ -10,12 +10,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useHealth, type ConnectionState } from "@/hooks/useHealth";
+import { useAuthStore } from "@/store/authStore";
 import { useUIStore } from "@/store/settingsStore";
 import { useI18n } from "@/contexts/I18nContext";
 import { cn } from "@/lib/utils";
 
 export function TopBar() {
   const { t } = useI18n();
+  const user = useAuthStore((s) => s.user);
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const setDebugPanelOpen = useUIStore((s) => s.setDebugPanelOpen);
@@ -60,20 +62,22 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setDebugPanelOpen(true)}
-              className="gap-2 border-white/30 bg-transparent text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:border-teal/40 dark:bg-surface dark:text-teal dark:hover:bg-teal/10"
-            >
-              <Bug className="h-4 w-4" />
-              <span className="hidden sm:inline">{t("header.retrievalDebug")}</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t("header.retrievalDebug")}</TooltipContent>
-        </Tooltip>
+        {user?.is_admin && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDebugPanelOpen(true)}
+                className="gap-2 border-white/30 bg-transparent text-primary-foreground hover:bg-white/15 hover:text-primary-foreground dark:border-teal/40 dark:bg-surface dark:text-teal dark:hover:bg-teal/10"
+              >
+                <Bug className="h-4 w-4" />
+                <span className="hidden sm:inline">{t("header.retrievalDebug")}</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{t("header.retrievalDebug")}</TooltipContent>
+          </Tooltip>
+        )}
         <UserMenu />
       </div>
     </header>

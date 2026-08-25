@@ -33,8 +33,8 @@ export function DeleteAccountModal({
   const [mathAnswer, setMathAnswer] = useState("");
 
   const generateCaptcha = () => {
-    setNum1(Math.floor(Math.random() * 9) + 1); // 1-9
-    setNum2(Math.floor(Math.random() * 9) + 1); // 1-9
+    setNum1(Math.floor(Math.random() * 90) + 10); // 10-99
+    setNum2(Math.floor(Math.random() * 90) + 10); // 10-99
     setMathAnswer("");
   };
 
