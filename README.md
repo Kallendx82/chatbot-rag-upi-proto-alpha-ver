@@ -14,7 +14,7 @@ Sebelum menggunakan aplikasi ini, pastikan komputermu (Windows) sudah terinstall
 
 Setelah menginstall Ollama, buka **Command Prompt (CMD)** atau **PowerShell** dan jalankan perintah ini untuk mengunduh model AI (pastikan internet lancar):
 ```bash
-ollama run qwen2.5:3b
+ollama run llama3.1:8b-instruct-q4_K_M
 ```
 *(Catatan: Aplikasi ini secara default dikonfigurasi untuk menggunakan model di atas. Kamu bisa menutup CMD setelah download selesai).*
 
