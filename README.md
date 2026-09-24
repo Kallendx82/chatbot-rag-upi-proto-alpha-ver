@@ -31,13 +31,13 @@ Untuk menjalankan chatbot dan mulai bertanya:
 - *Hanya pada saat pertama kali dijalankan*, aplikasi akan mengunduh dan menginstall semua kebutuhan sistem secara otomatis di latar belakang (mungkin butuh beberapa menit tergantung koneksi internet).
 - Setelah selesai, browser akan otomatis terbuka di `http://localhost:3000` yang menampilkan antarmuka chatbot.
 
-### 2. Menambah Data Dokumen Baru (PDF)
-Aplikasi ini membaca data dari dokumen. Jika kamu ingin menambahkan dokumen PDF baru agar AI menjadi lebih pintar:
-- Cari file **`Add-New-PDF.exe`** di dalam folder utama project ini.
-- **Klik ganda (Double-click)** file tersebut.
-- Akan muncul jendela untuk memilih folder berisi file PDF yang ingin ditambahkan beserta nama kategorinya.
-- Tunggu hingga proses selesai. Aplikasi akan otomatis membaca, mengekstrak, dan memasukkannya ke otak AI.
-- **Penting:** Setelah proses selesai, kamu harus merestart (tutup dan buka ulang) aplikasi chatbot utama agar dokumen baru tersebut dapat dikenali oleh sistem.
+### 2. Menambah Data Dokumen Baru (PDF) - *Khusus Admin*
+Aplikasi ini membaca data dari dokumen PDF. Jika kamu memiliki hak akses Admin, kamu bisa menambahkan dokumen PDF baru agar AI menjadi lebih pintar langsung dari dalam aplikasi:
+1. **Login** ke dalam aplikasi menggunakan akun Admin.
+2. Buka menu **Profil** (Profile).
+3. Klik menu **Tambahkan PDF**.
+4. Isi detail dokumen yang diminta dan tekan **Upload** file PDF-nya.
+5. Tunggu hingga proses selesai. Sistem akan otomatis memproses dan memasukkan dokumen tersebut ke otak AI!
 
 ---
 
