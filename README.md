@@ -4,7 +4,7 @@ Sistem chatbot cerdas berbasis AI untuk menjawab pertanyaan seputar Universitas 
 
 ---
 
-## 📋 Prasyarat (Persiapan Sebelum Instalasi)
+## 📋Persiapan Sebelum Instalasi
 
 Sebelum menggunakan aplikasi ini, pastikan komputermu (Windows) sudah terinstall software berikut:
 
@@ -24,7 +24,7 @@ ollama run qwen2.5:3b
 
 Aplikasi ini sudah dilengkapi dengan *Launcher* (sistem otomatis), jadi kamu tidak perlu mengetik perintah coding apa pun untuk menjalankannya.
 
-### 1. Memulai Chatbot (Aplikasi Utama)
+### 1. Memulai Chatbot
 Untuk menjalankan chatbot dan mulai bertanya:
 - Cari file **`UPI-Chatbot-Launcher.exe`** di dalam folder utama project ini.
 - **Klik ganda (Double-click)** file tersebut.
@@ -41,7 +41,7 @@ Aplikasi ini membaca data dari dokumen. Jika kamu ingin menambahkan dokumen PDF 
 
 ---
 
-## 🛠️ Troubleshooting (Jika Ada Masalah)
+## 🛠️ Troubleshooting
 
 - **Aplikasi Chatbot Lambat / Lemot?**
   Pastikan Ollama menggunakan kartu grafis (GPU) komputermu. Buka **Settings Windows → System → Display → Graphics**, tambahkan `ollama.exe` dan `ollama app.exe`, lalu atur ke **High Performance**. Setelah itu *Quit/Keluar* dari Ollama di icon kanan bawah taskbar, lalu buka kembali.
