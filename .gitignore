@@ -77,6 +77,14 @@ launcher/dist/
 backend/app/data/backups/
 backend/scripts/ingestion/_work/
 
+# RAG data files (large / auto-generated — do NOT commit)
+backend/app/data/faiss.index
+backend/app/data/faiss.index.*
+backend/app/data/chunks_meta.json
+backend/app/data/chunks_meta.json.*
+backend/app/data/sources/
+backend/app/data/logs/
+
 # Keep docs and source code only
 /Dataset/
 /Source code/
